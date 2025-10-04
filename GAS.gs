@@ -75,7 +75,7 @@ function _submit(sheet, p){
   }
 }
 
-/* 軟刪：逐筆覆寫 18..21 ；key→"DEL" */
+/* 軟刪：逐筆覆寫 7..9 */
 function _softDelete(sheet, p){
   var admin_id = String(p.admin_id || "");
   if (!admin_id) 
