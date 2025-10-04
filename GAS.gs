@@ -77,8 +77,18 @@ function _submit(sheet, p){
 
 /* 軟刪：逐筆覆寫 18..21 ；key→"DEL" */
 function _softDelete(sheet, p){
+  var admin_id = String(p.admin_id || "");
+  if (!admin_id) 
+    return _json({status:"error", msg:"no_admin_id"});
   var lastRow = sheet.getLastRow();
-  if (lastRow < 1) 
+  var targets = [];
+  for (var k in p){
+    if (/^row\d+$/.test(k)) {
+      var r = Number(p[k]);
+      if (r && r >= 2 && r <= lastRow) targets.push(r);
+    }
+  }
+  if (targets.length === 0) 
     return _json({status:"error", msg:"not_found"});
 
   var deletedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
@@ -90,7 +100,7 @@ function _softDelete(sheet, p){
   return _json({status:"ok", count: targets.length});
 }
 
-/* 讀取：取底部 150 列，依第16欄 降冪，回傳 fields+values */
+/* 讀取：取底部 150 列，依第1欄 降冪 fields+values */
 function _listRecent(sheet){
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) {
@@ -109,14 +119,6 @@ function _listRecent(sheet){
     row.push(startRow + i);
   });
   values.sort(function(a,b){ return b[0] - a[0]; });
-
-    submittedAt,   // 1
-    p.key,         // 2
-    p.date,        // 3
-    p.ID,          // 4
-    p.shift,       // 5
-    p.dN           // 6
-
 
   var fields = [
 "submittedAt","key","date","ID","shift","dN","row"];
