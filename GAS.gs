@@ -70,7 +70,7 @@ function _submit(sheet, p){
   } else {
     sheet.appendRow([...row, "", ""]);
     var last = sheet.getLastRow();
-    sheet.getRange(last, 2).setNumberFormat('mm/dd');
+    sheet.getRange(last, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
   }
 }
