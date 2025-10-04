@@ -107,11 +107,11 @@ function _listRecent(sheet){
     return _json({status:"error", msg:"no_data"});
   }
 
-  var lastCol  = sheet.getLastColumn() - 2;
+  var lastCol  = sheet.getLastColumn();
   var startRow = Math.max(2, lastRow - 150 + 1);
   var rows     = lastRow - startRow + 1;
 
-  var values = sheet.getRange(startRow, 1, rows, 7).getValues();
+  var values = sheet.getRange(startRow, 1, rows, lastCol).getValues();
 
   const epoch = Date.UTC(1899,11,30);
   values.forEach(function(row, i){
@@ -121,7 +121,7 @@ function _listRecent(sheet){
   values.sort(function(a,b){ return b[0] - a[0]; });
 
   var fields = [
-"submittedAt","key","date","ID","shift","dN","okN","row"];
+"submittedAt","key","date","ID","shift","dN","okN","admin_id","deletedAt","","","row"];
 
   return _json({
     status: "ok", fields: fields, values: values
