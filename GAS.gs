@@ -19,7 +19,6 @@ function doGet(e){
 
 function doPost(e){
   if (!e || !e.postData) return _json({status:"error", msg:"no_post_data"});
-
   // 解析：JSON 優先，否則 x-www-form-urlencoded（e.parameter）
   var p = {};
   try {
@@ -38,16 +37,6 @@ function doPost(e){
   if (action === "ping") return _json({status:"ok"});
   var sheet = _sheet();
   if (!sheet) return _json({status:"error", msg:"sheet_not_found"});
-
-  // 呼叫備份涵式｜該涵式已自鎖
-if (action === "backup") {
-  try {
-    exportFilteredXlsxAndMail();
-    return _json({status:"ok", msg:"backup_done"});
-  } catch (err) {
-    return _json({status:"error", msg:"backup_failed", detail:String(err)});
-  }
-}
 
 // 讀表
   if (action === "list_recent") return _listRecent(sheet);
@@ -70,11 +59,11 @@ function _submit(sheet, p){
     p.key,         // 2
     p.date,        // 3
     p.ID,          // 4
-    p.zA,          // 5
-    p.zB           // 6
+    p.shift,       // 5
+    p.dN           // 6
   ];
 
-  var hitRow = _findRowByKey(sheet, String(p.z2));
+  var hitRow = _findRowByKey(sheet, String(p.key));
   if (hitRow > 0){
     sheet.getRange(hitRow, 1, 1, 6).setValues([row]); // 覆寫 1..6
     return _json({status:"ok", mode:"更新"});
@@ -88,9 +77,6 @@ function _submit(sheet, p){
 
 /* 軟刪：逐筆覆寫 18..21 ；key→"DEL" */
 function _softDelete(sheet, p){
-  var admin_id = String(p.admin_id || "");
-  if (!admin_id) 
-    return _json({status:"error", msg:"no_admin_id"});
   var lastRow = sheet.getLastRow();
   var targets = [];
   for (var k in p){
@@ -129,17 +115,18 @@ function _listRecent(sheet){
     row[0] = _toSerialInt(row[0], epoch);
     row.push(startRow + i);
   });
-  //values.reverse(); // 由新到舊
-  //依第16欄 submitted_at (index=15) 降冪
-  values.sort(function(a,b){ return b[15] - a[15]; });
-  // values.sort(function(a,b){
-  //    return String(b[15]).localeCompare(String(a[15]));
-  //});
+  values.sort(function(a,b){ return b[0] - a[0]; });
+
+    submittedAt,   // 1
+    p.key,         // 2
+    p.date,        // 3
+    p.ID,          // 4
+    p.shift,       // 5
+    p.dN           // 6
+
 
   var fields = [
-"date","shift","part_no","lot","qty","sample_cnt",
-"z07","z08","z09","z10","z11","z12","z13",
-"inspector","remark","submitted_at","key2","key","deleted","row"];
+"submittedAt","key","date","ID","shift","dN","row"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -149,7 +136,7 @@ function _listRecent(sheet){
 /* 工具 */
 function _sheet(){
   var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  return ss ? ss.getSheetByName(SHEET_NAME) : null;
+  return ss ? ss.getSheetByName(sn_1) : null;
 }
 
 function _findRowByKey(sheet, key){
