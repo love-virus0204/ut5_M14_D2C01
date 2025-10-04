@@ -19,8 +19,8 @@
 .label{font-size:11px; color:var(--sub)}
 
 main{display:grid; place-items:center; padding:12px}
-.panel{width:min(560px,92vw); background:rgba(17,24,39,.74); border:1px solid #1f2937; border-radius:16px; box-shadow:var(--shadow); padding:16px}
-.center{display:grid; gap:10px;}
+.panel{width:min(560px,92vw); background:rgba(17,24,39,.74); border:1px solid #1f2937; border-radius:16px; box-shadow:var(--shadow); padding:12px; max-height:70vh; overflow:auto}
+.center{display:grid; gap:8px}
 
 .input{display:flex; justify-content:center}
 .in{width:220px; height:44px; border-radius:12px; border:1px solid #1f2937; background:#0b1324; color:var(--text); font-size:18px; text-align:center; letter-spacing:.18em; outline:none; box-shadow:var(--shadow); caret-color:#7dd3fc; text-transform:uppercase;}
@@ -28,14 +28,14 @@ main{display:grid; place-items:center; padding:12px}
 .mmdd{justify-self:center; background:var(--panel); border:1px solid #1f2937; padding:4px 10px; border-radius:999px; font-weight:700; box-shadow:var(--shadow)}
 
 .group{display:grid; gap:8px}
-.gtitle{font-size:12px; color:var(--sub)}
+.gtitle{font-size:12px; color:#9ca3af; margin-top:6px}
 .btnrow{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
 .btnrow.two{grid-template-columns:repeat(2,1fr)}
 .btn{appearance:none; border:0; border-radius:12px; padding:12px 10px; background:linear-gradient(180deg,var(--btn),#111827); color:#e5e7eb; font-size:15px; font-weight:700; letter-spacing:.06em; box-shadow:var(--shadow); cursor:pointer; transition:transform .08s ease, background .2s ease, outline .2s}
 .btn:hover{background:var(--btn-hover)} .btn:active{transform:translateY(1px)}
 .btn.sel{outline:2px solid #22d3ee; background:linear-gradient(180deg,#0b5e8f,#0a3e5f); box-shadow:0 0 0 2px rgba(34,211,238,.25)}
 
-.actions{display:grid; grid-template-columns:1fr; gap:10px; margin-top:4px}
+.actions{display:grid; grid-template-columns:1fr; gap:8px; margin-top:4px}
 .btn.primary{background:linear-gradient(180deg,#0ea5e9,#0b5e8f)}
 
 .meta{font-size:12px; color:var(--sub)}
@@ -46,42 +46,43 @@ main{display:grid; place-items:center; padding:12px}
 .draft h3{margin:8px 10px; font-size:12px; color:#93c5fd}
 .draft pre{margin:0; padding:10px; max-height:180px; overflow:auto; font-size:12px; line-height:1.5; color:#e5e7eb}
 
-  </style>
+.sect{font-size:14px; font-weight:800; letter-spacing:.08em; text-align:center; margin:0} .btnwrap{width:90%; max-width:520px; margin:4px auto 0} </style>
+
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>D2大夜班跨加報名系統 <span class="ver">v0.5</span></h1>
+    <h1>D2大夜班跨加報名系統 <span class="ver">v0.6</span></h1>
   </header>  <main>
     <div class="panel">
-      <div class="meta" style="margin-bottom:6px">裝置：手機瀏覽器</div>
       <div class="center">
         <div class="input">
           <input id="code" class="in" placeholder="輸入 5 碼" inputmode="latin" autocomplete="off" maxlength="5" pattern="[A-Za-z0-9]{5}" />
         </div>
-        <div id="mmdd" class="mmdd">--/--</div><div class="group">
-      <div class="gtitle">A 選擇</div>
-      <div class="btnrow two">
-        <button class="btn" data-a="1">A1</button>
-        <button class="btn" data-a="2">A2</button>
+        <div id="mmdd" class="mmdd">--/--</div>
+        <h2 class="sect">選擇區</h2>
+        <div class="btnwrap">
+          <div class="group">
+            <div class="gtitle">A 選擇</div>
+            <div class="btnrow two">
+              <button class="btn" data-a="1">A1</button>
+              <button class="btn" data-a="2">A2</button>
+            </div>
+          </div>
+          <div class="group">
+            <div class="gtitle">B 選擇</div>
+            <div class="btnrow">
+              <button class="btn" data-b="上">上</button>
+              <button class="btn" data-b="中">中</button>
+              <button class="btn" data-b="下">下</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" id="sendBtn" disabled>送出</button>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="group">
-      <div class="gtitle">B 選擇</div>
-      <div class="btnrow">
-        <button class="btn" data-b="上">上</button>
-        <button class="btn" data-b="中">中</button>
-        <button class="btn" data-b="下">下</button>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="btn primary" id="sendBtn" disabled>送出</button>
-    </div>
-  </div>
-</div>
-
-<!-- 草稿內容區：僅在送出或已有草稿時顯示 -->
+    </div><!-- 草稿內容區：僅在送出或已有草稿時顯示 -->
 <div class="draft" id="draftBox">
   <h3>草稿內容</h3>
   <pre id="draftOut"></pre>
