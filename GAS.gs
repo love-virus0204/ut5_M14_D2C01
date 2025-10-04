@@ -1,56 +1,23 @@
-/**
- * RT 外觀記錄表 GAS v1.5.3（無欄位驗證）
- * 路由：
- * backup（即時備份)
- * submit|upsert（寫入)
- * soft_delete（軟刪)
- * list_recent（讀取)
- * ping（心跳）
- * 欄位 A..U (1..21)：
- *  1 date
- *  2 shift 
- *  3 part_no 
- *  4 lot 
- *  5 qty 
- *  6 sample_cnt
- *  7 z7 
- *  8 z8 
- *  9 z9 
- *  10 z10 
- *  11 z11
- *  12 z12 
- *  13 z13
- *  14 inspector 
- *  15 remark
- *  16 submitted_at(系統時間|Asia/Taipei)
- *  17 key2
- *  18 key
- *  19 deleted("TRUE"/"FALSE")
- *  20 admin_id
- *  21 deleted_at(系統時間|Asia/Taipei) */
-
-/*
-const SPREADSHEET_ID = '1AYD5Poy7DQmXw-QSHUkFUq0iT7TIxF76BpNilyPsz-U';
-const SHEET_NAME     = 'Records';
-*/
-
 /* 路由 */
 function doGet(e){
   var p = (e && e.parameter) || {};
   var target = String(p.target || "");
   var payload = { status:"ok", msg:"get_disabled" }; // 只要能回
+
   if (!target) return _json(payload);
-  var ss;
+
   try {
-    ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     payload.fileExists = true;
+    // 判斷 sn_1 是否存在
+    var found = ss.getSheets().some(function(sh){ return sh.getName() === sn_1; });
+    if (found) payload.sheetExists = true;
   } catch (_) {
-    return _json(payload); // 檔案不在直回
+    // 連線或開啟錯誤仍直接回傳 payload
   }
-  var found = ss.getSheets().some(function(sh){ return sh.getName() === SHEET_NAME; });
-  if (found) payload.sheetExists = true;
   return _json(payload);
 }
+
 
 function doPost(e){
   if (!e || !e.postData) return _json({status:"error", msg:"no_post_data"});
@@ -97,36 +64,21 @@ if (action === "backup") {
     return _json({status:"error", msg:"unknown_action"});
   }
 
-/* 寫入1..19：命中 key 覆寫 1..19
-   - 維護一份一維 row，更新與新增共用；deleted 一律寫 "TRUE"
-*/
+/* 寫入1..6：命中 key 覆寫 1..6 */
 function _submit(sheet, p){
   var submittedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
   var row = [
-    p.date,               //1
-    p.shift,              //2
-    p.part_no,            // 3
-    p.lot,                // 4
-    p.qty,                // 5
-    p.sample_cnt,         // 6
-    p.z07,                 // 7
-    p.z08,                 // 8
-    p.z09,                 // 9
-    p.z10,                // 10
-    p.z11,                // 11
-    p.z12,                // 12
-    p.z13,                // 13
-    p.inspector,          // 14
-    p.remark,             // 15
-    submittedAt,          // 16
-    p.key2,               // 17
-    p.key,                // 18
-    "TRUE"                // 19
+    submittedAt,   // 1
+    p.key,         // 2
+    p.date,        // 3
+    p.ID,          // 4
+    p.zA,          // 5
+    p.zB           // 6
   ];
 
-  var hitRow = _findRowByKey(sheet, String(p.key));
+  var hitRow = _findRowByKey(sheet, String(p.z2));
   if (hitRow > 0){
-    sheet.getRange(hitRow, 1, 1, 19).setValues([row]); // 覆寫 1..19
+    sheet.getRange(hitRow, 1, 1, 6).setValues([row]); // 覆寫 1..6
     return _json({status:"ok", mode:"更新"});
   } else {
     sheet.appendRow([...row, "", ""]);
@@ -206,7 +158,7 @@ function _findRowByKey(sheet, key){
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return 0;
   var count = lastRow - 1;
-  var keys  = sheet.getRange(2, 18, count, 1).getValues(); // 18=key
+  var keys  = sheet.getRange(2, 2, count, 1).getValues(); // 2
   for (var i=0;i<count;i++){
     if (String(keys[i][0]) === key) return i + 2;
   }
