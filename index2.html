@@ -1,0 +1,167 @@
+<!doctype html>
+
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>D2大夜班跨加報名系統</title>
+  <style>
+    :root{
+      --bg:#0f172a; --panel:#111827cc; --text:#e5e7eb; --sub:#9ca3af;
+      --accent:#22d3ee; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444; --idle:#64748b;
+      --btn:#1f2937; --btn-hover:#334155; --shadow:0 8px 24px rgba(0,0,0,.35); --radius:18px;
+    }
+    html,body{height:100%; background:linear-gradient(135deg,#0b1023,#101a36 45%,#0b1a23); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,Inter,"PingFang TC","Microsoft JhengHei",sans-serif;}
+    .wrap{min-height:100%; display:grid; grid-template-rows:auto 1fr auto;}
+    header{display:flex; align-items:center; justify-content:center; padding:12px 16px;}
+    h1{font-size:20px; letter-spacing:.1em; margin:0; text-align:center;}
+    .clock{position:fixed; right:12px; bottom:12px; background:var(--panel); border:1px solid #1f2937; padding:10px 12px; border-radius:12px; font-variant-numeric:tabular-nums; box-shadow:var(--shadow)}
+    .statusbar{position:fixed; left:12px; bottom:12px; display:flex; gap:12px; align-items:center; background:var(--panel); border:1px solid #1f2937; padding:8px 10px; border-radius:12px; box-shadow:var(--shadow)}
+    .sitem{display:flex; align-items:center; gap:6px}
+    .dot{width:12px; height:12px; border-radius:999px; background:var(--idle); box-shadow:0 0 0 2px #0b1220 inset, 0 0 0 1px #0b1220}
+    .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
+    .label{font-size:12px; color:var(--sub)}main{display:grid; place-items:center; padding:16px}
+.panel{width:min(680px,92vw); background:rgba(17,24,39,.7); border:1px solid #1f2937; border-radius:var(--radius); box-shadow:var(--shadow); padding:20px}
+.center{display:grid; gap:14px;}
+.input{display:flex; justify-content:center}
+.in{
+  width:260px; height:48px; border-radius:14px; border:1px solid #1f2937; background:#0b1324; color:var(--text); font-size:20px; text-align:center; letter-spacing:.2em;
+  outline:none; box-shadow:var(--shadow); caret-color:#7dd3fc; text-transform:uppercase;
+}
+.in:focus{border-color:#2563eb}
+.mmdd{justify-self:center; background:var(--panel); border:1px solid #1f2937; padding:6px 12px; border-radius:999px; font-weight:700; box-shadow:var(--shadow)}
+
+.grid1x3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+.btn{appearance:none; border:0; border-radius:16px; padding:16px 12px; background:linear-gradient(180deg,var(--btn),#111827); color:#e5e7eb; font-size:16px; font-weight:700; letter-spacing:.08em; box-shadow:var(--shadow); cursor:pointer; transition:transform .08s ease, background .2s ease}
+.btn:hover{background:var(--btn-hover)} .btn:active{transform:translateY(1px)}
+.btn.secondary{font-weight:600; opacity:.92}
+
+.meta{font-size:12px; color:var(--sub)}
+.toast{position:fixed; left:50%; top:16px; transform:translateX(-50%); background:#111827; color:#e5e7eb; border:1px solid #1f2937; padding:10px 14px; border-radius:12px; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s ease}
+.toast.show{opacity:1}
+
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>D2大夜班跨加報名系統 <span style="font-size:11px;color:#7dd3fc;border:1px solid #164e63;padding:2px 6px;border-radius:999px;">v0.2</span></h1>
+  </header>  <main>
+    <div class="panel">
+      <div class="meta" style="margin-bottom:8px">操作裝置：手機瀏覽器</div>
+      <div class="center">
+        <!-- 1. 置中輸入框（限英數 5 碼，完成自動轉大寫；再次點擊清空） -->
+        <div class="input">
+          <input id="code" class="in" placeholder="輸入 5 碼" inputmode="latin" autocomplete="off" maxlength="5" pattern="[A-Za-z0-9]{5}" />
+        </div>
+        <!-- 1 & 2 中間插入日期（原左上角 mm/dd，>01:00 視為 d+1） -->
+        <div id="mmdd" class="mmdd">--/--</div>
+        <!-- 2. 三顆按鈕改 1×3 -->
+        <div class="grid1x3">
+          <button class="btn" data-kind="A">送出 A</button>
+          <button class="btn" data-kind="B">送出 B</button>
+          <button class="btn" data-kind="C">送出 C</button>
+        </div>
+        <!-- 3. 指定分頁跳轉按鈕 -->
+        <button class="btn secondary" id="navBtn">前往指定分頁</button>
+      </div>
+    </div>
+  </main>
+</div><!-- 左下狀態列：GAS連線 | 試算表 | 試算表名 --><div class="statusbar" title="狀態面板">
+  <div class="sitem"><span class="dot" id="dotGas"></span><span class="label">GAS連線</span></div>
+  <div class="sitem"><span class="dot" id="dotSs"></span><span class="label">試算表</span></div>
+  <div class="sitem"><span class="dot" id="dotSh"></span><span class="label" id="shLabel">試算表名</span></div>
+</div><!-- 右下台北時區即時時間 --><div class="clock" id="clock">--:--:--</div>
+<div class="toast" id="toast">已送出</div><script>
+// ===== 設定 =====
+const API_URL = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
+const TZ = 'Asia/Taipei';
+const NAV_URL = 'https://example.com/target'; // 指定分頁連結（替換）
+
+// ===== 工具 =====
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+function fmtDate(d,fmt){
+  const z = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit'}).formatToParts(d)
+    .reduce((a,p)=> (a[p.type]=p.value, a), {});
+  switch(fmt){
+    case 'mmdd': return `${z.month}/${z.day}`;
+    case 'time': return `${z.hour}:${z.minute}:${z.second}`;
+    default: return `${z.year}-${z.month}-${z.day} ${z.hour}:${z.minute}:${z.second}`;
+  }
+}
+
+// 中間 mm/dd（>01:00 視為 d+1，每分鐘更新）
+function updateMmdd(){
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, hour:'numeric', minute:'numeric'}).formatToParts(now)
+    .reduce((a,p)=> (a[p.type]=p.value, a), {});
+  const hour = parseInt(parts.hour,10);
+  const base = new Date(now);
+  if(hour >= 1){ base.setDate(base.getDate()+1); }
+  document.getElementById('mmdd').textContent = fmtDate(base,'mmdd');
+}
+
+// 右下時鐘
+function startClock(){
+  const el = document.getElementById('clock');
+  const tick = ()=> el.textContent = fmtDate(new Date(),'time');
+  tick(); setInterval(tick,1000);
+}
+
+// 左下三燈（與前版相同，簡化）
+async function probeStatus(){
+  const dotGas = document.getElementById('dotGas');
+  const dotSs  = document.getElementById('dotSs');
+  const dotSh  = document.getElementById('dotSh');
+  const shLabel= document.getElementById('shLabel');
+  const setDot = (el, cls)=>{ el.classList.remove('ok','warn','bad'); if(cls) el.classList.add(cls); };
+  try{
+    const r = await fetch(API_URL, {method:'POST', body:new URLSearchParams({action:'ping'})});
+    setDot(dotGas, r.ok?'ok':'bad');
+    try{
+      const r2 = await fetch(API_URL, {method:'POST', body:new URLSearchParams({action:'meta'})});
+      if(r2.ok){
+        const j = await r2.json();
+        if(j.status==='ok'){ setDot(dotSs,'ok'); setDot(dotSh,'ok'); if(j.sheetName){ shLabel.textContent=j.sheetName; } }
+      }
+    }catch(e){}
+  }catch(e){ setDot(dotGas,'bad'); }
+}
+
+// 三鍵送出（共同參數 + kind）
+async function send(kind){
+  const v = document.getElementById('code').value.trim();
+  if(!/^[A-Za-z0-9]{5}$/.test(v)){ toast('請輸入 5 碼英數'); return; }
+  const body = new URLSearchParams({ action:'submit', kind, code:v });
+  let ok=false, msg='';
+  try{ const r = await fetch(API_URL,{method:'POST', body}); msg = await r.text(); ok = r.ok; }catch(e){ msg=String(e); }
+  toast(ok?`已送出（${kind}）`:`失敗（${kind}）`);
+  console.log('resp:', msg);
+}
+
+function toast(text){
+  const el = document.getElementById('toast');
+  el.textContent = text; el.classList.add('show'); setTimeout(()=> el.classList.remove('show'), 1800);
+}
+
+// 輸入框限制：僅英數，長度 5；完成自動轉大寫；重新點擊清空
+function bindInput(){
+  const el = document.getElementById('code');
+  el.addEventListener('input',()=>{
+    let x = el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5);
+    el.value = x.toUpperCase();
+  });
+  el.addEventListener('blur',()=>{ el.value = (el.value||'').toUpperCase(); });
+  el.addEventListener('focus',()=>{ if(el.value) el.value=''; });
+}
+
+addEventListener('DOMContentLoaded',()=>{
+  startClock();
+  updateMmdd(); setInterval(updateMmdd,60*1000);
+  bindInput();
+  probeStatus();
+  document.querySelectorAll('.btn[data-kind]').forEach(b=> b.addEventListener('click', ()=> send(b.dataset.kind)) );
+  document.getElementById('navBtn').addEventListener('click', ()=> { location.href = NAV_URL; });
+});
+</script></body>
+</html>
