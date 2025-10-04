@@ -121,7 +121,7 @@ function _listRecent(sheet){
   values.sort(function(a,b){ return b[0] - a[0]; });
 
   var fields = [
-"submittedAt","key","date","ID","shift","dN",""okN,"row"];
+"submittedAt","key","date","ID","shift","dN","okN","row"];
 
   return _json({
     status: "ok", fields: fields, values: values
