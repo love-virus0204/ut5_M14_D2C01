@@ -3,18 +3,16 @@ function doGet(e){
   var p = (e && e.parameter) || {};
   var target = String(p.target || "");
   var payload = { status:"ok", msg:"get_disabled" }; // 只要能回
-
   if (!target) return _json(payload);
-
+  var ss;
   try {
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     payload.fileExists = true;
-    // 判斷 sn_1 是否存在
-    var found = ss.getSheets().some(function(sh){ return sh.getName() === sn_1; });
-    if (found) payload.sheetExists = true;
   } catch (_) {
-    // 連線或開啟錯誤仍直接回傳 payload
+    return _json(payload);
   }
+  var found = ss.getSheets().some(function(sh){ return sh.getName() === sn_1; });
+  if (found) payload.sheetExists = true;
   return _json(payload);
 }
 
