@@ -78,21 +78,14 @@ function _submit(sheet, p){
 /* 軟刪：逐筆覆寫 18..21 ；key→"DEL" */
 function _softDelete(sheet, p){
   var lastRow = sheet.getLastRow();
-  var targets = [];
-  for (var k in p){
-    if (/^row\d+$/.test(k)) {
-      var r = Number(p[k]);
-      if (r && r >= 2 && r <= lastRow) targets.push(r);
-    }
-  }
-  if (targets.length === 0) 
+  if (lastRow < 1) 
     return _json({status:"error", msg:"not_found"});
 
   var deletedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
-  var rowValue  = ["DEL", "FALSE", admin_id, deletedAt]; // 1×4
+  var rowValue  = ["DEL", admin_id, deletedAt]; // 1×3
 
   for (var i = 0; i < targets.length; i++){
-    sheet.getRange(targets[i], 18, 1, 4).setValues([rowValue]);
+    sheet.getRange(targets[i], 7, 1, 3).setValues([rowValue]);
   }
   return _json({status:"ok", count: targets.length});
 }
