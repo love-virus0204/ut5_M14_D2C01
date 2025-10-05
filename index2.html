@@ -142,7 +142,8 @@ function baseYMD(){
   const p=new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hour12:false})
     .formatToParts(now).reduce((a,b)=>(a[b.type]=b.value,a),{});
   let y=+p.year,m=+p.month,d=+p.day,h=+p.hour;
-  if(h>=1){const t=new Date(Date.UTC(y,m-1,d));t.setUTCDate(t.getUTCDate()+1);y=t.getUTCFullYear();m=t.getUTCMonth()+1;d=t.getUTCDate();}
+  const totalMin = h * 60 + m2;
+  if(totalMin>=65){const t=new Date(Date.UTC(y,m-1,d));t.setUTCDate(t.getUTCDate()+1);y=t.getUTCFullYear();m=t.getUTCMonth()+1;d=t.getUTCDate();}
   return {y,m,d};
 }
 function displayMmdd(){const {m,d}=baseYMD();return `${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`;}
