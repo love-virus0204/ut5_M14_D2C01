@@ -142,37 +142,20 @@ async function fetchRecentPOST(){
 
 
 
-
-// 先依「出現順序」鎖定前兩個日期 → 只收這兩天的列 → 各自拆 A/B 並對齊
 function groupForRender(rows){
-  const dates = [];                 // 前兩個日期序號
-  const box = new Map();            // dateSerial -> Array<row>
+  const byDate = new Map();
+  const order  = [];
 
   for (const r of rows){
-    const ds = Number(r.date);
-    if (!Number.isFinite(ds)) continue;
-    if (dates.length < 2 && !dates.includes(ds)) {
-      dates.push(ds);
-      box.set(ds, []);
-    }
-    if (dates.includes(ds)) box.get(ds).push(r);   // 只收前兩天
+    const serial = Number(r.date);
+    if (!Number.isFinite(serial)) continue;
+    if (!byDate.has(serial)) { byDate.set(serial, []); order.push(serial); }
+    byDate.get(serial).push(r);
   }
-
-  const out = [];
-  for (const ds of dates){
-    const list = box.get(ds) || [];
-    const A = [], B = [];
-    for (const r of list){
-      const sh = (r.shift ?? '').toString().trim().toUpperCase()[0]; // 取首字
-      const item = { id: r.id ?? '', dN: r.dN ?? '' };
-      if (sh === 'A') A.push(item);
-      else if (sh === 'B') B.push(item);
-    }
-    const max = Math.max(A.length, B.length);
-    const rows2 = Array.from({length:max}, (_, i)=>({ a: A[i] || null, b: B[i] || null }));
-    out.push({ serial: ds, rows: rows2 });
-  }
-  return out;
+  return order.slice(0, 2).map(serial => ({
+    serial,
+    rows: byDate.get(serial)
+  }));
 }
 
 // 渲染：A 左 | B 右；標題用樣板既有的 serialToMMDD
