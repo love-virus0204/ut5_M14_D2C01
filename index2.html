@@ -224,6 +224,19 @@ async function send(){
 
   showOverlay(true);
   let ok = false, res;
+  try { res = await submitData(payload); ok = res && res.status === 'ok'; }
+  catch(_) { ok = false; }
+  showOverlay(false);
+
+  const status = ok ? 'ok' : 'ng';
+  const flag = (!ok || String(selB).toUpperCase() === 'N') ? 'ng' : 'ok';
+
+  addB({ ts: tsMin(), id, a: selA, b: selB, status, flag });
+  toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
+}
+
+  showOverlay(true);
+  let ok = false, res;
   try { res = await submitData(payload); ok = res && res.status === 'ok'; } catch(_) { ok = false; }
   showOverlay(false);
   addB(ok, id, selA, selB);
