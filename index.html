@@ -313,6 +313,11 @@ addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{selB=b.dataset.b;setSel(document.querySelectorAll('[data-b]'),selB,'b');enableSend();}));
   bindInput();enableSend();startClock();probeStatus();renderB();
   document.getElementById('sendBtn').addEventListener('click',send);
+
+document.querySelectorAll('input').forEach(el=>{
+  el.autocomplete='off';
+  el.autocorrect='off';
+  el.spellcheck=false; });
 });
 </script>
 </body>
