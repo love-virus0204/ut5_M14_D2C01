@@ -87,13 +87,13 @@ main{display:block;padding:8px 0 0;overflow:visible;}
       <div class="input">
         <input id="code" class="in" placeholder="輸入5碼" maxlength="5" autocomplete="off" inputmode="latin">
       </div>
-      <div id="mmdd" class="mmdd">報名 --/-- 跨加</div>
+      <div id="mmdd" class="mmdd">報　名：　 --/-- 跨加</div>
 
       <div class="group">
         <div class="gtitle">A 選擇</div>
         <div class="btnrow two">
           <button class="btn red" data-a="假日">♦假日</button>
-          <button class="btn black" data-a="平">♣平日</button>
+          <button class="btn black" data-a="平日">♣平日</button>
         </div>
       </div>
 
@@ -134,7 +134,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
 const TZ='Asia/Taipei';
-let selA='平', selB='N';
+let selA='平日', selB='N';
 
 /* ===== 日期邏輯 ===== */
 function baseYMD(){
@@ -149,7 +149,7 @@ function displayMmdd(){const {m,d}=baseYMD();return `${String(m).padStart(2,'0')
 function dateSerial(){const {y,m,d}=baseYMD();return Math.floor(Date.UTC(y,m-1,d)/86400000)+25569;}
 function startDateTick(){
   const mmdd=document.getElementById('mmdd');
-  const run=()=>{mmdd.textContent=`報名 ${displayMmdd()} 跨加`;};
+  const run=()=>{mmdd.textContent=`報　名：　 ${displayMmdd()} 跨　加`;};
   run();setInterval(run,60*1000);
 }
 
