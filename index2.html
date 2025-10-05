@@ -171,7 +171,9 @@ function startClock(){
     el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
   };
   tick();
+  baseYMD(d);
   setInterval(tick, 1000);
+  setInterval(baseYMD(d), 5*60*1000);
 }
 
 /* ===== 草稿A ===== */
