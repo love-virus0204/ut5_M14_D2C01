@@ -157,6 +157,7 @@ function startClock(){
 
 /* ===== 日期邏輯 ===== */
 function baseYMD(){
+  if (!tNow) return;
   const tn = tNow.getUTCHours() * 60 + tNow.getUTCMinutes();
   const t = new Date(tNow);
   if (tn >= 65) t.setUTCDate(t.getUTCDate() + 1);
