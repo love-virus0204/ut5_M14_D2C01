@@ -161,7 +161,8 @@ function render(groups){
   if(!root) return;
   root.innerHTML = "";
 
-  groups.forEach((g, idx) => {
+//groups.forEach((g, idx) => {
+  [...groups].reverse().forEach((g, idx) => {
     const sec = document.createElement('section');
 
     const hdr = document.createElement('div');
