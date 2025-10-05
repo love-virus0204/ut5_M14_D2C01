@@ -1,310 +1,214 @@
 <!doctype html>
-
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>D2大夜班跨加報名系統</title>
-  <style>
-    :root{ --bg:#0f172a; --panel:#111827cc; --text:#e5e7eb; --sub:#9ca3af; --accent:#22d3ee; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444; --idle:#64748b; --btn:#1f2937; --btn-hover:#334155; --shadow:0 8px 24px rgba(0,0,0,.35); }
-    html,body{height:100%; background:linear-gradient(135deg,#0b1023,#101a36 45%,#0b1a23); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,Inter,"PingFang TC","Microsoft JhengHei",sans-serif; max-width:100%; overflow-x:hidden} *{box-sizing:border-box}
-    .wrap{min-height:100%; display:grid; grid-template-rows:auto 1fr auto;}
-    header{display:flex; align-items:center; justify-content:center; padding:6px 8px;}
-    h1{font-size:18px; letter-spacing:.06em; margin:0; text-align:center;}
-    .ver{font-size:10px; color:#7dd3fc; border:1px solid #164e63; padding:2px 6px; border-radius:999px; margin-left:8px}.clock{position:fixed; right:10px; bottom:10px; background:var(--panel); border:1px solid #1f2937; padding:8px 10px; border-radius:12px; font-variant-numeric:tabular-nums; box-shadow:var(--shadow)}
-.statusbar{position:fixed; left:10px; bottom:10px; display:flex; gap:10px; align-items:center; background:var(--panel); border:1px solid #1f2937; padding:6px 8px; border-radius:12px; box-shadow:var(--shadow)}
-.sitem{display:flex; align-items:center; gap:6px}
-.dot{width:10px; height:10px; border-radius:999px; background:var(--idle); box-shadow:0 0 0 2px #0b1220 inset, 0 0 0 1px #0b1220}
-.dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
-.label{font-size:11px; color:var(--sub)}
-
-main{display:flex; justify-content:center; align-items:flex-start; padding:6px 0 0}
-.panel{width:min(520px,94vw); background:rgba(17,24,39,.74); border:1px solid #1f2937; border-radius:16px; box-shadow:var(--shadow); padding:10px; max-height:70vh; overflow:auto}
-.center{display:grid; gap:6px}
-
-.input{display:flex; justify-content:center}
-.in{width:220px; height:44px; border-radius:12px; border:1px solid #1f2937; background:#0b1324; color:var(--text); font-size:18px; text-align:center; letter-spacing:.18em; outline:none; box-shadow:var(--shadow); caret-color:#7dd3fc; text-transform:uppercase;}
-.in:focus{border-color:#2563eb}
-.mmdd{justify-self:center; background:var(--panel); border:1px solid #1f2937; padding:4px 10px; border-radius:999px; font-weight:700; box-shadow:var(--shadow)}
-
-.group{display:grid; gap:8px}
-.gtitle{font-size:12px; color:#9ca3af; margin-top:6px}
-.btnrow{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
-.btnrow.two{grid-template-columns:repeat(2,1fr)}
-.btn{appearance:none; border:0; border-radius:12px; padding:12px 10px; background:linear-gradient(180deg,var(--btn),#111827); color:#e5e7eb; font-size:15px; font-weight:700; letter-spacing:.06em; box-shadow:var(--shadow); cursor:pointer; transition:transform .08s ease, background .2s ease, outline .2s}
-.btn:hover{background:var(--btn-hover)} .btn:active{transform:translateY(1px)}
-.btn.sel{outline:2px solid #22d3ee; background:linear-gradient(180deg,#0b5e8f,#0a3e5f); box-shadow:0 0 0 2px rgba(34,211,238,.25)}
-
-.actions{display:grid; grid-template-columns:1fr; gap:8px; margin-top:4px}
-.btn.primary{background:linear-gradient(180deg,#0ea5e9,#0b5e8f)}
-
-.meta{font-size:12px; color:var(--sub)}
-.toast{position:fixed; left:50%; top:12px; transform:translateX(-50%); background:#111827; color:#e5e7eb; border:1px solid #1f2937; padding:8px 12px; border-radius:12px; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s ease}
-.toast.show{opacity:1}
-
-.draft{display:none; width:min(520px,94vw); margin:6px auto 0; background:rgba(2,6,23,.55); border:1px solid #0b1324; border-radius:12px; box-shadow:var(--shadow)}
-.draft h3{margin:8px 10px; font-size:12px; color:#93c5fd}
-.draft pre{margin:0; padding:10px; max-height:160px; overflow:auto; font-size:12px; line-height:1.5; color:#e5e7eb}
-/* 草稿B */
-.draftB{width:min(520px,94vw); margin:6px auto 0; background:rgba(2,6,23,.55); border:1px solid #0b1324; border-radius:12px; box-shadow:var(--shadow); padding:6px}
-.draftB .line{padding:6px 8px; font-size:13px; border-bottom:1px dashed #1f2a44}
-.draftB .line:last-child{border-bottom:0}
-.draftB .ok{color:#86efac}
-.draftB .ng{color:#fca5a5}
-.draft h3{margin:8px 10px; font-size:12px; color:#93c5fd}
-.draft pre{margin:0; padding:10px; max-height:180px; overflow:auto; font-size:12px; line-height:1.5; color:#e5e7eb}
-
-.sect{font-size:14px; font-weight:800; letter-spacing:.08em; text-align:center; margin:2px 0 0} .btnwrap{width:min(90vw,480px); margin:2px auto 0} .overlay{position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; z-index:999} .spinner{width:44px; height:44px; border-radius:50%; border:4px solid rgba(255,255,255,.25); border-top-color:#7dd3fc; animation:spin 1s linear infinite} @keyframes spin{to{transform:rotate(360deg)}} </style>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>D2大夜班跨加報名系統</title>
+<style>
+  :root{--fg:#111;--bg:#fff;--muted:#6b7280;--ok:#22c55e;--bad:#ef4444;--line:#e5e7eb;--btn:#0ea5e9;}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui, -apple-system, "PingFang TC","Microsoft JhengHei", Arial, sans-serif;}
+  .wrap{min-height:100%;display:grid;grid-template-rows:auto 1fr;}
+  header{padding:8px 12px;border-bottom:1px solid var(--line);text-align:center}
+  h1{margin:0;font-size:16px;}
+  main{display:flex;justify-content:center;align-items:flex-start;padding:8px}
+  .panel{width:min(520px,94vw);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .row{margin-top:10px}
+  .center{display:grid;gap:8px}
+  .input{display:flex;justify-content:center}
+  .in{width:220px;height:42px;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:18px;text-transform:uppercase}
+  .mmdd{justify-self:center;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-weight:700}
+  .gtitle{font-size:12px;color:var(--muted)}
+  .btnrow{display:grid;gap:8px}
+  .btnrow.two{grid-template-columns:repeat(2,1fr)}
+  .btnrow.three{grid-template-columns:repeat(3,1fr)}
+  .btn{height:40px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}
+  .btn.sel{outline:2px solid var(--btn);background:#eef6ff}
+  .primary{background:var(--btn);color:#fff;border-color:var(--btn)}
+  .statusbar{position:fixed;left:10px;bottom:10px;display:flex;gap:10px;align-items:center}
+  .sitem{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+  .dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;border:1px solid #94a3b8}
+  .dot.ok{background:var(--ok)} .dot.bad{background:var(--bad)}
+  .clock{position:fixed;right:10px;bottom:10px;font-variant-numeric:tabular-nums;color:#111;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  .draftB{width:min(520px,94vw);margin:8px auto 0;border:1px solid var(--line);border-radius:10px;padding:6px;display:none}
+  .line{padding:6px 8px;border-bottom:1px dashed #e5e7eb;font-size:13px}
+  .line:last-child{border-bottom:0}
+  .ok{color:#16a34a} .ng{color:#dc2626}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>D2大夜班跨加報名系統 <span class="ver">v0.81</span></h1>
-  </header>  <main>
-    <div class="panel">
+  <header><h1>D2大夜班跨加報名系統</h1></header>
+
+  <main>
+    <section class="panel">
       <div class="center">
         <div class="input">
-          <input id="code" class="in" placeholder="輸入 5 碼" inputmode="latin" autocomplete="off" maxlength="5" pattern="[A-Za-z0-9]{5}" />
+          <input id="code" class="in" placeholder="輸入5碼" inputmode="latin" autocomplete="off" maxlength="5">
         </div>
         <div id="mmdd" class="mmdd">--/--</div>
-        <h2 class="sect">選擇區</h2>
-        <div class="btnwrap">
-          <div class="group">
-            <div class="gtitle">A 選擇</div>
-            <div class="btnrow two">
-              <button class="btn" data-a="1">A1</button>
-              <button class="btn" data-a="2">A2</button>
-            </div>
-          </div>
-          <div class="group">
-            <div class="gtitle">B 選擇</div>
-            <div class="btnrow">
-              <button class="btn" data-b="上">上</button>
-              <button class="btn" data-b="中">中</button>
-              <button class="btn" data-b="下">下</button>
-            </div>
-          </div>
-          <div class="actions">
-            <button class="btn primary" id="sendBtn" disabled>送出</button>
+
+        <div class="row">
+          <div class="gtitle">A 選擇</div>
+          <div class="btnrow two">
+            <button class="btn" data-a="1">A1</button>
+            <button class="btn" data-a="2">A2</button>
           </div>
         </div>
+
+        <div class="row">
+          <div class="gtitle">B 選擇</div>
+          <div class="btnrow three">
+            <button class="btn" data-b="上">上</button>
+            <button class="btn" data-b="中">中</button>
+            <button class="btn" data-b="下">下</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <button id="sendBtn" class="btn primary" disabled>送出</button>
+        </div>
       </div>
-    </div><!-- 草稿B：送出結果摘要（無標題，最多10筆） -->
-<div class="draftB" id="draftBBox" style="display:none">
+    </section>
+  </main>
+</div>
+
+<!-- 左下三燈 -->
+<div class="statusbar">
+  <div class="sitem"><span class="dot" id="dotGas"></span>GAS連線</div>
+  <div class="sitem"><span class="dot" id="dotSs"></span>試算表</div>
+  <div class="sitem"><span class="dot" id="dotSh"></span><span id="shLabel">試算表名</span></div>
+</div>
+<!-- 右下時鐘（HHmmss） -->
+<div class="clock" id="clock">------</div>
+
+<!-- 草稿B（無標題，最多10筆） -->
+<div class="draftB" id="draftBoxB">
   <div id="draftB"></div>
 </div>
 
-<!-- 草稿內容區：僅在送出或已有草稿時顯示 -->
-<div class="draft" id="draftBox">
-  <h3>草稿內容</h3>
-  <pre id="draftOut"></pre>
-</div>
-
-  </main>
-</div><div class="statusbar" title="狀態面板">
-  <div class="sitem"><span class="dot" id="dotGas"></span><span class="label">GAS連線</span></div>
-  <div class="sitem"><span class="dot" id="dotSs"></span><span class="label">試算表</span></div>
-  <div class="sitem"><span class="dot" id="dotSh"></span><span class="label" id="shLabel">試算表名</span></div>
-</div><div class="clock" id="clock">--/-- --:--:--</div>
-<div class="toast" id="toast">已送出</div><!-- 上傳中覆蓋層 --><div class="overlay" id="overlay"><div class="spinner"></div></div><script>
+<script>
+/* ===== 常量 ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
 const TZ = 'Asia/Taipei';
-const DRAFT_KEY = 'd2_draft_log_v1';
+let selA = '2'; // 預設
+let selB = '中';
 
-let selA = '2';   // 預設 A=2
-let selB = '中';  // 預設 B=中
-
-function fmtDate(d,fmt){
-  const z = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit'}).formatToParts(d).reduce((a,p)=>(a[p.type]=p.value,a),{});
-  switch(fmt){
-    case 'mmdd': return `${z.month}/${z.day}`;
-    case 'mmdd_hms': return `${z.month}/${z.day} ${z.hour}:${z.minute}:${z.second}`;
-    default: return `${z.year}-${z.month}-${z.day} ${z.hour}:${z.minute}:${z.second}`;
-  }
+/* ===== 時間與日期 ===== */
+function mmddRule(){
+  const now = new Date();
+  const h = parseInt(new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,hour:'2-digit',hour12:false}).format(now),10);
+  const base = new Date(now);
+  if(h >= 1) base.setDate(base.getDate()+1);
+  const p = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit'})
+              .formatToParts(base).reduce((a,b)=>(a[b.type]=b.value,a),{});
+  return `${p.month}/${p.day}`;
 }
+function updateMmdd(){ document.getElementById('mmdd').textContent = mmddRule(); }
+function startClock(){
+  const el = document.getElementById('clock');
+  const tick = ()=>{
+    const t = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})
+                .formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{});
+    el.textContent = `${t.hour}${t.minute}${t.second}`; // HHmmss
+  };
+  tick(); setInterval(tick,1000);
+}
+function tsMin(){
+  const t = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})
+              .formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{});
+  return `${t.month}/${t.day} ${t.hour}:${t.minute}`;
+}
+
+/* ===== 選擇高亮 ===== */
 function setSel(btns, val, attr){
   btns.forEach(b=>{
     const on = b.dataset[attr]===val;
     b.classList.toggle('sel', on);
-    b.setAttribute('aria-pressed', on? 'true':'false');
+    b.setAttribute('aria-pressed', on?'true':'false');
   });
 }
-function submitData(p){
-  var params = new URLSearchParams();
-  params.append('action','submit');
-  params.append('key',   p.key);
-  params.append('date',  p.date);
-  params.append('shift', p.shift);
-  params.append('id',    p.id);
-  params.append('dN',    p.dN);
-  return fetch(API_URL, { method:'POST', body: params, cache:'no-store' })
-    .then(function(r){ return r.text(); })
-    .then(function(t){ try{ return JSON.parse(t); } catch(_){ return {status:'parse_failed', raw:t}; } });
-}
+function enableSend(){ document.getElementById('sendBtn').disabled = !(selA && selB); }
 
-function mmddRule(){
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, hour:'numeric'}).formatToParts(now)
-    .reduce((a,p)=> (a[p.type]=p.value, a), {});
-  const base = new Date(now);
-  if(parseInt(parts.hour,10) >= 1){ base.setDate(base.getDate()+1); }
-  const m = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, month:'2-digit', day:'2-digit'}).formatToParts(base)
-    .reduce((a,p)=> (a[p.type]=p.value, a), {});
-  return `${m.month}${m.day}`;
-}
-
-function fmtTsMin(){
-  const z = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}).formatToParts(new Date())
-    .reduce((a,p)=> (a[p.type]=p.value, a), {});
-  return `${z.month}/${z.day} ${z.hour}:${z.minute}`;
-}
-
-function showOverlay(on){
-  const el = document.getElementById('overlay');
-  el.style.display = on ? 'flex' : 'none';
-}
-
-const DRAFTB_KEY = 'd2_draft_b_v1';
-function loadDraftB(){
-  try{ const raw = localStorage.getItem(DRAFTB_KEY); return raw? JSON.parse(raw): []; }catch(_){ return []; }
-}
-function saveDraftB(arr){ localStorage.setItem(DRAFTB_KEY, JSON.stringify(arr.slice(-10))); }
-function renderDraftB(){
-  const box = document.getElementById('draftBBox');
-  const list = document.getElementById('draftB');
-  const arr = loadDraftB();
+/* ===== 草稿B（最多10筆） ===== */
+const DRAFTB_KEY='d2_draft_b_v1';
+function loadB(){ try{ return JSON.parse(localStorage.getItem(DRAFTB_KEY)||'[]'); }catch(_){ return []; } }
+function saveB(arr){ localStorage.setItem(DRAFTB_KEY, JSON.stringify(arr.slice(-10))); }
+function renderB(){
+  const box=document.getElementById('draftBoxB');
+  const list=document.getElementById('draftB');
+  const arr=loadB();
   if(!arr.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
-  list.innerHTML = arr.map(x=>`<div class="line ${x.ok? 'ok':'ng'}">${x.ts} | ${x.id} | ${x.ok?'ok':'ng'}</div>`).join('');
+  list.innerHTML=arr.map(x=>`<div class="line ${x.ok?'ok':'ng'}">${x.ts} | ${x.id} | ${x.ok?'ok':'ng'}</div>`).join('');
 }
-function logDraftB(ok, id){
-  const arr = loadDraftB();
-  arr.push({ts: fmtTsMin(), id, ok});
-  saveDraftB(arr); renderDraftB();
-}
+function addB(ok,id){ const arr=loadB(); arr.push({ts:tsMin(), id, ok}); saveB(arr); renderB(); }
 
-
-function toast(text){
-  const el = document.getElementById('toast');
-  el.textContent = text; el.classList.add('show'); setTimeout(()=> el.classList.remove('show'), 1600);
-}
-
-function updateMmdd(){ document.getElementById('mmdd').textContent = mmddRule().replace(/^(\d{2})(\d{2})$/, "$1/$2");
-}
-
-function startClock(){
-  const el = document.getElementById('clock');
-  const tick = ()=>{
-    const z = new Intl.DateTimeFormat('zh-Hant-TW', {
-      timeZone: TZ, month:'2-digit', day:'2-digit',
-      hour:'2-digit', minute:'2-digit', second:'2-digit'
-    }).formatToParts(new Date()).reduce((a,p)=>(a[p.type]=p.value,a),{});
-    el.textContent = `${z.month}/${z.day} ${z.hour}:${z.minute}:${z.second}`;
-  };
-  tick(); setInterval(tick, 1000);
-}
-
+/* ===== 連線燈（GET） ===== */
 async function probeStatus(){
-  const dotGas = document.getElementById('dotGas');
-  const dotSs  = document.getElementById('dotSs');
-  const dotSh  = document.getElementById('dotSh');
-  const shLabel= document.getElementById('shLabel');
-  const setDot = (el, cls)=>{ el.classList.remove('ok','warn','bad'); if(cls) el.classList.add(cls); };
+  const gas=document.getElementById('dotGas');
+  const ss =document.getElementById('dotSs');
+  const sh =document.getElementById('dotSh');
+  const lab=document.getElementById('shLabel');
+  const cls=(el,c)=>{el.classList.remove('ok','bad'); el.classList.add(c);};
   try{
-    const r = await fetch(API_URL, {method:'POST', body:new URLSearchParams({action:'ping'})});
-    setDot(dotGas, r.ok?'ok':'bad');
-    try{
-      const r2 = await fetch(API_URL, {method:'POST', body:new URLSearchParams({action:'meta'})});
-      if(r2.ok){ const j = await r2.json(); if(j.status==='ok'){ setDot(dotSs,'ok'); setDot(dotSh,'ok'); if(j.sheetName){ shLabel.textContent=j.sheetName; } } }
-    }catch(e){}
-  }catch(e){ setDot(dotGas,'bad'); }
+    const r=await fetch(API_URL+'?target=1',{method:'GET',cache:'no-store'});
+    cls(gas, r.ok?'ok':'bad');
+    const j=await r.json().catch(()=>null);
+    if(j && j.fileExists) cls(ss,'ok');
+    if(j && j.sheetExists){ cls(sh,'ok'); lab.textContent='sh1'; }
+  }catch(_){ cls(gas,'bad'); }
 }
 
-function loadDraft(){
-  try{
-    const raw = localStorage.getItem(DRAFT_KEY);
-    if(!raw) return [];
-    const arr = JSON.parse(raw);
-    if(Array.isArray(arr) && arr.length){
-      const box = document.getElementById('draftBox');
-      const out = document.getElementById('draftOut');
-      out.textContent = arr.map(x=>`[${x.t}] ${x.msg}`).join('\n');
-      box.style.display = 'block';
-    }
-    return Array.isArray(arr)? arr: [];
-  }catch(e){ return []; }
-}
-function saveDraftLine(msg){
-  const arr = loadDraft();
-  const line = {t: fmtDate(new Date(),'mmdd_hms'), msg};
-  arr.push(line);
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(arr.slice(-200))); // 最多保留 200 筆
-  const box = document.getElementById('draftBox');
-  const out = document.getElementById('draftOut');
-  out.textContent = arr.map(x=>`[${x.t}] ${x.msg}`).join('\n');
-  box.style.display = 'block';
+/* ===== 送出（x-www-form-urlencoded） ===== */
+function submitData(p){
+  const params=new URLSearchParams();
+  params.append('action','submit');
+  params.append('key',  p.key);
+  params.append('date', p.date);
+  params.append('shift',p.shift);
+  params.append('id',   p.id);
+  params.append('dN',   p.dN);
+  return fetch(API_URL,{method:'POST',body:params,cache:'no-store'})
+    .then(r=>r.text())
+    .then(t=>{try{return JSON.parse(t);}catch(_){return {status:'parse_failed',raw:t};}});
 }
 
-async function send(){
-  const id = document.getElementById('code').value.trim().toUpperCase();
-  if(!/^[A-Z0-9]{5}$/.test(id)){ toast('請輸入 5 碼英數'); return; }
-  const date = mmddRule();
-  const payload = { id, date, key: `${date}|${id}`, shift: selB, dN: selA };
-  showOverlay(true);
-  let ok = false, res;
-  try{
-    res = await submitData(payload);
-    ok = res && res.status === 'ok';
-  }catch(_){ ok = false; }
-  showOverlay(false);
-  logDraftB(ok, id); // 寫入草稿B
-  logDraft({event:'submit', payload, res});
-  toast(ok? `已送出（A${selA} / ${selB}）` : '失敗');
-}
-
-
-
+/* ===== 事件 ===== */
 function bindInput(){
-  const el = document.getElementById('code');
-  el.addEventListener('input',()=>{ let x = el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5); el.value = x.toUpperCase(); });
-  el.addEventListener('blur',()=>{ el.value = (el.value||'').toUpperCase(); });
+  const el=document.getElementById('code');
+  el.addEventListener('input',()=>{ let x=el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5); el.value=x.toUpperCase(); });
   el.addEventListener('focus',()=>{ if(el.value) el.value=''; });
 }
 
-addEventListener('DOMContentLoaded',()=>{
-  // 預設高亮（A=2, B=中）
+async function send(){
+  const id=document.getElementById('code').value.trim().toUpperCase();
+  if(!/^[A-Z0-9]{5}$/.test(id)) return; // 前端自行保證
+  const md = mmddRule();                 // "MM/DD"
+  const date = md.replace('/','');       // "MMDD"
+  const payload = { id, date, key:`${date}|${id}`, shift: selB, dN: selA };
+  let ok=false, res;
+  try{ res=await submitData(payload); ok = res && res.status==='ok'; }catch(_){ ok=false; }
+  addB(ok,id);
+}
+
+/* ===== 啟動 ===== */
+addEventListener('DOMContentLoaded', ()=>{
+  // 預設選中
   setSel(document.querySelectorAll('[data-a]'), selA, 'a');
   setSel(document.querySelectorAll('[data-b]'), selB, 'b');
 
-  document.querySelectorAll('[data-a]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      selA = b.dataset.a;
-      setSel(document.querySelectorAll('[data-a]'), selA, 'a');
-      enableSend();
-    });
-  });
-  document.querySelectorAll('[data-b]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      selB = b.dataset.b;
-      setSel(document.querySelectorAll('[data-b]'), selB, 'b');
-      enableSend();
-    });
-  });
+  document.querySelectorAll('[data-a]').forEach(b=> b.addEventListener('click', ()=>{
+    selA=b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA,'a'); enableSend();
+  }));
+  document.querySelectorAll('[data-b]').forEach(b=> b.addEventListener('click', ()=>{
+    selB=b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB,'b'); enableSend();
+  }));
 
-  bindInput();
-  startClock();
-  updateMmdd(); setInterval(updateMmdd, 60*1000);
-  probeStatus();
+  bindInput(); enableSend(); updateMmdd(); setInterval(updateMmdd,60*1000);
+  startClock(); probeStatus(); renderB();
+
   document.getElementById('sendBtn').addEventListener('click', send);
-  enableSend();
-  loadDraft();
-  renderDraftB();
 });
-
-function enableSend(){
-  const btn = document.getElementById('sendBtn');
-  btn.disabled = !(selA && selB);
-}
-</script></body>
+</script>
+</body>
 </html>
