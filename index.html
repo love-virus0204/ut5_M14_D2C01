@@ -271,7 +271,10 @@ function submitData(p){
 
 async function send(){
   const id = document.getElementById('code').value.trim().toUpperCase();
-  if(!/^[A-Z0-9]{5}$/.test(id)) return;
+  if(!/^[A-Z0-9]{5}$/.test(id)){
+  document.getElementById('code').focus();
+  return;
+}
 
   const payload = { id, date: CUR_SER, key: `${CUR_SER}|${id}`, shift: selB, dN: selA };
 
