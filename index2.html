@@ -159,14 +159,23 @@ function startDateTick(){
 
 /* ===== 時鐘 ===== */
 function startClock(){
-  const el=document.getElementById('clock');
-  const tick=()=>{
-    const d=new Date();
-    const md=new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit'}).formatToParts(d).reduce((a,b)=>(a[b.type]=b.value,a),{});
-    const t=new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(d).reduce((a,b)=>(a[b.type]=b.value,a),{});
-    el.textContent=`${md.month}/${md.day} ${t.hour}:${t.minute}:${t.second}`;
+  const el = document.getElementById('clock');
+  const tick = ()=>{
+    const nowMs = Date.now();
+    const utcMs = nowMs + new Date().getTimezoneOffset() * 60000;
+    const d = new Date(utcMs + 8 * 60 * 60 * 1000);
+
+    gTaipeiNow = d;
+    const mm = String(d.getUTCMonth()+1).padStart(2,'0');
+    const dd = String(d.getUTCDate()).padStart(2,'0');
+    const hh = String(d.getUTCHours()).padStart(2,'0');
+    const mi = String(d.getUTCMinutes()).padStart(2,'0');
+    const ss = String(d.getUTCSeconds()).padStart(2,'0');
+
+    el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
   };
-  tick();setInterval(tick,1000);
+  tick();
+  setInterval(tick, 1000);
 }
 
 /* ===== 草稿A ===== */
