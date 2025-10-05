@@ -9,6 +9,7 @@ function doGet(e){
     ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     payload.fileExists = true;
   } catch (_) {
+    payload.fileExists = false;
     return _json(payload);
   }
   var found = ss.getSheets().some(function(sh){ return sh.getName() === sn_1; });
@@ -58,7 +59,7 @@ function _submit(sheet, p){
     submittedAt,   // 1
     p.key,         // 2
     p.date,        // 3
-    p.ID,          // 4
+    p.id,          // 4
     p.shift,       // 5
     p.dN           // 6
   ];
@@ -66,6 +67,7 @@ function _submit(sheet, p){
   var hitRow = _findRowByKey(sheet, String(p.key));
   if (hitRow > 0){
     sheet.getRange(hitRow, 1, 1, 6).setValues([row]); // 覆寫 1..6
+    sheet.getRange(hitRow, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
     sheet.appendRow([...row, "", ""]);
@@ -100,7 +102,7 @@ function _softDelete(sheet, p){
   return _json({status:"ok", count: targets.length});
 }
 
-/* 讀取：取底部 150 列，依第1欄 降冪 fields+values */
+/* 讀取：取底部 160 列，依第1欄 降冪 fields+values */
 function _listRecent(sheet){
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) {
@@ -108,7 +110,7 @@ function _listRecent(sheet){
   }
 
   var lastCol  = sheet.getLastColumn();
-  var startRow = Math.max(2, lastRow - 150 + 1);
+  var startRow = Math.max(2, lastRow - 160 + 1);
   var rows     = lastRow - startRow + 1;
 
   var values = sheet.getRange(startRow, 1, rows, lastCol).getValues();
@@ -121,7 +123,7 @@ function _listRecent(sheet){
   values.sort(function(a,b){ return b[0] - a[0]; });
 
   var fields = [
-"submittedAt","key","date","ID","shift","dN","okN","admin_id","deletedAt","","","row"];
+"submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
 
   return _json({
     status: "ok", fields: fields, values: values
