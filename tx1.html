@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>GAS GET 測試（檢查 sn_1 是否存在）</title>
+<style>
+  body{font-family:system-ui;margin:16px}
+  button{padding:8px 14px;font-size:15px}
+  pre{background:#0b1020;color:#e6f0ff;padding:10px;overflow:auto;max-height:40vh}
+</style>
+
+<h3>GET 測試（檢查 sh1 存在與否）</h3>
+
+<label>API_URL：</label><br>
+<input id="api" style="width:100%;max-width:800px"
+ value="https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec"><br><br>
+
+<button id="go">執行 GET 測試</button>
+
+<h4>回應</h4>
+<pre id="out"></pre>
+
+<script>
+document.getElementById('go').onclick = async ()=>{
+  const url = document.getElementById('api').value.trim() + '?target=1';
+  try{
+    const r = await fetch(url, { method:'GET' });
+    const t = await r.text();
+    document.getElementById('out').textContent = t;
+  }catch(e){
+    document.getElementById('out').textContent = String(e);
+  }
+};
+</script>
