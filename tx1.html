@@ -130,11 +130,16 @@ async function fetchRecentPOST(){
   }
   const F = Object.fromEntries(data.fields.map((k,i)=>[k,i]));
   return data.values.map(a => ({
-    date:a[F.date], shift:a[F.shift], part_no:a[F.part_no], lot:a[F.lot], qty:a[F.qty],
-    sample_cnt:a[F.sample_cnt], z07:a[F.z07], z08:a[F.z08], z09:a[F.z09], z10:a[F.z10],
-    z11:a[F.z11], z12:a[F.z12], z13:a[F.z13], inspector:a[F.inspector], remark:a[F.remark],
-    submitted_at:a[F.submitted_at], key2:a[F.key2], key:a[F.key], deleted:a[F.deleted],
-    row:a[F.row]
+    submittedAt: a[F.submittedAt],
+    key:         a[F.key],
+    date:        Number(a[F.date]),
+    id:          a[F.id],
+    shift:       a[F.shift],
+    dN:          a[F.dN],
+    admin_id:    a[F.admin_id],
+    deletedAt:   a[F.deletedAt],
+    lucky:       a[F.lucky],
+    row:         a[F.row]
   }));
 }
 
