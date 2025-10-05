@@ -139,20 +139,12 @@ let selA='平日', selB='N';
 /* ===== 日期邏輯 ===== */
 function baseYMD(d){
   const tn = d.getUTCHours() * 60 + d.getUTCMinutes();
-  if (tn >= 65){
-    const t = new Date(d);
-    t.setUTCDate(t.getUTCDate() + 1);
-    return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() };
-  }
-  return { y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate() };
-}
-
-function displayMmdd(){const {m,d}=baseYMD();return `${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`;}
-function dateSerial(){const {y,m,d}=baseYMD();return Math.floor(Date.UTC(y,m-1,d)/86400000)+25569;}
-function startDateTick(){
-  const mmdd=document.getElementById('mmdd');
-  const run=()=>{mmdd.textContent=`報　名：　 ${displayMmdd()} 　跨  加`;};
-  run();setInterval(run,60*1000);
+  const t = new Date(d);
+  if (tn >= 65) t.setUTCDate(t.getUTCDate() + 1);
+  const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
+  const dd = String(t.getUTCDate()).padStart(2,'0');
+  const el = document.getElementById('mmdd');
+  if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
 }
 
 /* ===== 時鐘（台北時間）===== */
