@@ -156,14 +156,13 @@ function groupForRender(rows){
 
 // 渲染：A 左 | B 右
 function render(groups){
-  const container = document.getElementById('dataView');
-  if(!container) return;
-  container.innerHTML = '';
+  const box = document.getElementById('viewBox');
+  if(!box) return;
+  box.innerHTML = '';
 
   for(const g of groups){
     const left  = g.rows.filter(r => r.shift === 'A');
     const right = g.rows.filter(r => r.shift === 'B');
-
     const leftHTML  = left.map(r  => `<div>${r.id} , ${r.dN}</div>`).join('');
     const rightHTML = right.map(r => `<div>${r.id} , ${r.dN}</div>`).join('');
 
@@ -175,7 +174,7 @@ function render(groups){
           <div class="col colB">${rightHTML || '<div class="none">－</div>'}</div>
         </div>
       </div>`;
-    container.insertAdjacentHTML('beforeend', block);
+    box.insertAdjacentHTML('beforeend', block);
   }
 }
 
