@@ -46,9 +46,18 @@ font-weight:600;letter-spacing:.05em;cursor:pointer;transition:all .15s ease;}
 .btn.primary{background:linear-gradient(180deg,#2563eb,#1e3a8a);border:none;}
 .btn.primary:hover{background:linear-gradient(180deg,#3b82f6,#1e3a8a);}
 /* 草稿B */
-.draftB{width:80%;max-width:640px;margin:20px auto 0;background:rgba(15,23,42,.8);
-border:1px solid #1f2937;border-radius:12px;padding:10px;display:none;text-align:center;
-box-shadow:0 0 15px rgba(0,0,0,.4),inset 0 0 10px rgba(255,255,255,.05);}
+.draftB{
+  width:100%;
+  max-width:640px;
+  margin:10px auto 0;
+  background:rgba(15,23,42,.8);
+  border-radius:12px;
+  padding:8px 6px;
+  text-align:center;
+  border:none;             /* 移除外框 */
+  box-shadow:none;         /* 移除陰影 */
+}
+
 .line{padding:6px 8px;border-bottom:1px dashed #334155;font-size:13px;}
 .line:last-child{border-bottom:0;}
 .ok{color:var(--ok);} .ng{color:var(--ng);}
@@ -101,9 +110,10 @@ animation:spin 1s linear infinite;}
       <button id="sendBtn" class="btn primary" disabled>送出</button>
     </div>
   </section>
+  <!-- 草稿B區塊放這裡，緊貼主體 -->
+  <div class="draftB" id="draftBoxB"><div id="draftB"></div></div>
 </main>
 
-<div class="draftB" id="draftBoxB"><div id="draftB"></div></div>
 </div>
 
 <!-- 底部狀態列 -->
