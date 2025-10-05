@@ -219,7 +219,7 @@ async function send(){
   const id=document.getElementById('code').value.trim().toUpperCase();
   if(!/^[A-Z0-9]{5}$/.test(id))return;
   const date=dateSerial();
-  const payload = { id, date: CUR_SER, key: `${CUR_SER}|${id}`, shift: selB,dN: selA };
+  const payload = { id, date: CUR_SER, key: `${CUR_SER}|${id}`, shift: selB, dN: selA };
   showOverlay(true);
   let ok=false;try{const res=await submitData(payload);ok=res&&res.status==='ok';}catch(_){ok=false;}
   showOverlay(false);addB(ok,id,selA,selB);
