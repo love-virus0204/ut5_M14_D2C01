@@ -249,11 +249,9 @@ async function send(){
   showOverlay(false);
 
   const status = ok ? 'ok' : 'ng';
-  const bIsN   = String(selB).toUpperCase() === 'N';
-  const flag   = ok ? (bIsN ? 'on' : 'ok') : 'ng';
-
-  const aDisp  = bIsN ? '取消' : `${MD_STR} - ${selA}`;
-
+  const bIsN = String(selB).toUpperCase() === 'N';
+  const flag = ok ? (bIsN ? 'on' : 'ok') : 'ng';
+  const aDisp  = bIsN ? `${MD_STR} - 取消` : `${MD_STR} - ${selA}`;
   addB({ ts: tsMin(), id, a: aDisp, b: selB, status, flag });
 
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
