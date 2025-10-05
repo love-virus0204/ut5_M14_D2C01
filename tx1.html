@@ -149,9 +149,7 @@ function groupForRender(rows){
     if(!byDate.has(serial)) byDate.set(serial, []);
     byDate.get(serial).push(r);
   }
-  return Array.from(byDate.entries())
-    .map(([serial, rows]) => ({ serial, rows }))
-    .slice(0, 2);
+  return Array.from(map.values()).slice(0,2);
 }
 
 // 渲染：A 左 | B 右
