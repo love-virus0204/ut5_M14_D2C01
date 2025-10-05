@@ -140,9 +140,10 @@ async function fetchRecentPOST(){
   }));
 }
 
-// 依「日期序號」分兩組；各組再按 shift 拆 A/B；行數對齊
+
+// 依日期序號分兩組；各組再按 shift 拆 A/B；行數對齊
 function groupForRender(rows){
-  const byDate = new Map(); // key: serial(date), val: {serial, A:[], B:[]}
+  const byDate = new Map(); // key: serial(Number), val:{serial,A:[],B:[]}
 
   for (const r of rows){
     const ds = Number(r.date);
@@ -168,7 +169,7 @@ function groupForRender(rows){
   return out;
 }
 
-// 渲染為「A 左｜B 右」，每列顯示 "id, dN | id, dN"
+// 每列顯示「id,dN | id,dN」，左 A 右 B
 function render(groups){
   const root = document.getElementById('root');
   root.innerHTML = "";
@@ -178,11 +179,11 @@ function render(groups){
 
     const hdr = document.createElement('div');
     hdr.className = "grp";
-    hdr.textContent = "　" + serialToMMDD(g.serial);
+    hdr.textContent = "　" + serialToMMDD(g.serial); // 需已有此函式
     sec.appendChild(hdr);
 
     const table = document.createElement('table');
-    table.classList.add("t" + ((idx % 3) + 1));
+    table.classList.add("t" + ((idx % 3) + 1)); // 依樣板配色循環
     table.innerHTML = '<thead><tr><th>A（id, dN）</th><th>B（id, dN）</th></tr></thead><tbody></tbody>';
     const tb = table.querySelector('tbody');
 
@@ -198,6 +199,8 @@ function render(groups){
     root.appendChild(sec);
   });
 }
+
+
 
 /* 日期序號 → mm/dd */
 function serialToMMDD(n){
