@@ -102,7 +102,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
         <div class="btnrow three">
           <button class="btn" data-b="A">日班 | A</button>
           <button class="btn" data-b="N">取消 | N</button>
-          <button class="btn" data-b="C">小夜 | C</button>
+          <button class="btn" data-b="B">小夜 | B</button>
         </div>
       </div>
 
@@ -149,7 +149,7 @@ function displayMmdd(){const {m,d}=baseYMD();return `${String(m).padStart(2,'0')
 function dateSerial(){const {y,m,d}=baseYMD();return Math.floor(Date.UTC(y,m-1,d)/86400000)+25569;}
 function startDateTick(){
   const mmdd=document.getElementById('mmdd');
-  const run=()=>{mmdd.textContent=`報　名：　 ${displayMmdd()} 跨　加`;};
+  const run=()=>{mmdd.textContent=`報　名：　 ${displayMmdd()} 　跨  加`;};
   run();setInterval(run,60*1000);
 }
 
