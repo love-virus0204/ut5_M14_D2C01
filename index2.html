@@ -163,8 +163,7 @@ function baseYMD(){
   if (tn >= 65) t.setUTCDate(t.getUTCDate() + 1);
   const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
   const dd = String(t.getUTCDate()).padStart(2,'0');
-  const el = document.getElementById('mmdd');
-  if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
+
 }
 
 /* ===== 草稿A ===== */
