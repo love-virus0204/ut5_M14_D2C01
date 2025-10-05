@@ -7,9 +7,9 @@
   <title>D2大夜班跨加報名系統</title>
   <style>
     :root{ --bg:#0f172a; --panel:#111827cc; --text:#e5e7eb; --sub:#9ca3af; --accent:#22d3ee; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444; --idle:#64748b; --btn:#1f2937; --btn-hover:#334155; --shadow:0 8px 24px rgba(0,0,0,.35); }
-    html,body{height:100%; background:linear-gradient(135deg,#0b1023,#101a36 45%,#0b1a23); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,Inter,"PingFang TC","Microsoft JhengHei",sans-serif;}
+    html,body{height:100%; background:linear-gradient(135deg,#0b1023,#101a36 45%,#0b1a23); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,Inter,"PingFang TC","Microsoft JhengHei",sans-serif; max-width:100%; overflow-x:hidden} *{box-sizing:border-box}
     .wrap{min-height:100%; display:grid; grid-template-rows:auto 1fr auto;}
-    header{display:flex; align-items:center; justify-content:center; padding:10px 12px;}
+    header{display:flex; align-items:center; justify-content:center; padding:6px 8px;}
     h1{font-size:18px; letter-spacing:.06em; margin:0; text-align:center;}
     .ver{font-size:10px; color:#7dd3fc; border:1px solid #164e63; padding:2px 6px; border-radius:999px; margin-left:8px}.clock{position:fixed; right:10px; bottom:10px; background:var(--panel); border:1px solid #1f2937; padding:8px 10px; border-radius:12px; font-variant-numeric:tabular-nums; box-shadow:var(--shadow)}
 .statusbar{position:fixed; left:10px; bottom:10px; display:flex; gap:10px; align-items:center; background:var(--panel); border:1px solid #1f2937; padding:6px 8px; border-radius:12px; box-shadow:var(--shadow)}
@@ -18,9 +18,9 @@
 .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
 .label{font-size:11px; color:var(--sub)}
 
-main{display:grid; place-items:center; padding:12px}
-.panel{width:min(560px,92vw); background:rgba(17,24,39,.74); border:1px solid #1f2937; border-radius:16px; box-shadow:var(--shadow); padding:12px; max-height:70vh; overflow:auto}
-.center{display:grid; gap:8px}
+main{display:grid; place-items:center; padding:8px}
+.panel{width:min(520px,94vw); background:rgba(17,24,39,.74); border:1px solid #1f2937; border-radius:16px; box-shadow:var(--shadow); padding:10px; max-height:70vh; overflow:auto}
+.center{display:grid; gap:6px}
 
 .input{display:flex; justify-content:center}
 .in{width:220px; height:44px; border-radius:12px; border:1px solid #1f2937; background:#0b1324; color:var(--text); font-size:18px; text-align:center; letter-spacing:.18em; outline:none; box-shadow:var(--shadow); caret-color:#7dd3fc; text-transform:uppercase;}
@@ -46,13 +46,13 @@ main{display:grid; place-items:center; padding:12px}
 .draft h3{margin:8px 10px; font-size:12px; color:#93c5fd}
 .draft pre{margin:0; padding:10px; max-height:180px; overflow:auto; font-size:12px; line-height:1.5; color:#e5e7eb}
 
-.sect{font-size:14px; font-weight:800; letter-spacing:.08em; text-align:center; margin:0} .btnwrap{width:90%; max-width:520px; margin:4px auto 0} </style>
+.sect{font-size:14px; font-weight:800; letter-spacing:.08em; text-align:center; margin:2px 0 0} .btnwrap{width:min(90vw,480px); margin:2px auto 0} </style>
 
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>D2大夜班跨加報名系統 <span class="ver">v0.6</span></h1>
+    <h1>D2大夜班跨加報名系統 <span class="ver">v0.7</span></h1>
   </header>  <main>
     <div class="panel">
       <div class="center">
@@ -117,6 +117,30 @@ function setSel(btns, val, attr){
     b.setAttribute('aria-pressed', on? 'true':'false');
   });
 }
+function submitData(p){
+  var params = new URLSearchParams();
+  params.append('action','submit');
+  params.append('key',   p.key);
+  params.append('date',  p.date);
+  params.append('shift', p.shift);
+  params.append('id',    p.id);
+  params.append('dN',    p.dN);
+  return fetch(API_URL, { method:'POST', body: params, cache:'no-store' })
+    .then(function(r){ return r.text(); })
+    .then(function(t){ try{ return JSON.parse(t); } catch(_){ return {status:'parse_failed', raw:t}; } });
+}
+
+function mmddRule(){
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, hour:'numeric'}).formatToParts(now)
+    .reduce((a,p)=> (a[p.type]=p.value, a), {});
+  const base = new Date(now);
+  if(parseInt(parts.hour,10) >= 1){ base.setDate(base.getDate()+1); }
+  const m = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, month:'2-digit', day:'2-digit'}).formatToParts(base)
+    .reduce((a,p)=> (a[p.type]=p.value, a), {});
+  return `${m.month}${m.day}`;
+}
+
 function toast(text){
   const el = document.getElementById('toast');
   el.textContent = text; el.classList.add('show'); setTimeout(()=> el.classList.remove('show'), 1600);
@@ -178,15 +202,16 @@ function saveDraftLine(msg){
 }
 
 async function send(){
-  const v = document.getElementById('code').value.trim();
-  if(!/^[A-Za-z0-9]{5}$/.test(v)){ toast('請輸入 5 碼英數'); return; }
-  const body = new URLSearchParams({ action:'submit', code:v, A: selA, B: selB });
-  let ok=false, msg='';
-  try{ const r = await fetch(API_URL,{method:'POST', body}); msg = await r.text(); ok = r.ok; }catch(e){ msg=String(e); }
-  const summary = `送出 A${selA} / ${selB}，code=${v}，結果=${ok?'OK':'NG'}`;
-  saveDraftLine(summary);
-  toast(ok?`已送出（A${selA} / ${selB}）`:`失敗（A${selA} / ${selB}）`);
+  const id = document.getElementById('code').value.trim().toUpperCase();
+  if(!/^[A-Z0-9]{5}$/.test(id)){ toast('請輸入 5 碼英數'); return; }
+  const date = mmddRule();
+  const payload = { id, date, key: `${date}|${id}`, shift: selB, dN: selA };
+  const res = await submitData(payload);
+  logDraft({event:'submit', payload, res});
+  const ok = res && res.status === 'ok';
+  toast(ok? `已送出（A${selA} / ${selB}）` : '失敗');
 }
+
 
 function bindInput(){
   const el = document.getElementById('code');
