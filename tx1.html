@@ -78,9 +78,6 @@ function setNetLight(msg){
   txt.textContent = msg ? "GAS" : "回傳";
 }
 
-/* TRUE 判定 */
-function isAlive(v){ return String(v).toUpperCase() === "TRUE"; }
-
 /* timeout fetch */
 function fetchWithTimeout(url, options, timeout){
   return Promise.race([
@@ -143,22 +140,63 @@ async function fetchRecentPOST(){
   }));
 }
 
-/* 分組：依 date + shift，不排序，只取前三組 */
+// 依「日期序號」分兩組；各組再按 shift 拆 A/B；行數對齊
 function groupForRender(rows){
-  const alive = rows.filter(r => isAlive(r.deleted));
-  const map = new Map();
-  for (const r of alive){
-    const serial = Number(r.date);
-    const sh = r.shift;
-    const key = serial + '|' + sh;
-    if (!map.has(key)) map.set(key, { serial, sh, rows: [] });
-    map.get(key).rows.push({
-      part_no: r.part_no ?? "",
-      lot: r.lot ?? "",
-      qty: r.qty ?? ""
-    });
+  const byDate = new Map(); // key: serial(date), val: {serial, A:[], B:[]}
+
+  for (const r of rows){
+    const ds = Number(r.date);
+    if (!Number.isFinite(ds)) continue;
+    if (!byDate.has(ds)) byDate.set(ds, { serial: ds, A: [], B: [] });
+
+    const item = { id: r.id ?? "", dN: r.dN ?? "" };
+    const sh = String(r.shift).toUpperCase();
+    if (sh === 'A') byDate.get(ds).A.push(item);
+    else if (sh === 'B') byDate.get(ds).B.push(item);
   }
-  return Array.from(map.values()).slice(0,2);
+
+  const out = [];
+  for (const [serial, g] of byDate){
+    const max = Math.max(g.A.length, g.B.length);
+    const rows2 = Array.from({length:max}, (_, i) => ({
+      a: g.A[i] || null,
+      b: g.B[i] || null
+    }));
+    out.push({ serial, rows: rows2 });
+    if (out.length === 2) break; // 僅取兩組日期
+  }
+  return out;
+}
+
+// 渲染為「A 左｜B 右」，每列顯示 "id, dN | id, dN"
+function render(groups){
+  const root = document.getElementById('root');
+  root.innerHTML = "";
+
+  groups.forEach((g, idx) => {
+    const sec = document.createElement('section');
+
+    const hdr = document.createElement('div');
+    hdr.className = "grp";
+    hdr.textContent = "　" + serialToMMDD(g.serial);
+    sec.appendChild(hdr);
+
+    const table = document.createElement('table');
+    table.classList.add("t" + ((idx % 3) + 1));
+    table.innerHTML = '<thead><tr><th>A（id, dN）</th><th>B（id, dN）</th></tr></thead><tbody></tbody>';
+    const tb = table.querySelector('tbody');
+
+    for (const r of g.rows){
+      const left  = r.a ? `${r.a.id}, ${r.a.dN}` : '';
+      const right = r.b ? `${r.b.id}, ${r.b.dN}` : '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${left}</td><td>${right}</td>`;
+      tb.appendChild(tr);
+    }
+
+    sec.appendChild(table);
+    root.appendChild(sec);
+  });
 }
 
 /* 日期序號 → mm/dd */
@@ -168,34 +206,6 @@ function serialToMMDD(n){
   const mm = String(dt.getUTCMonth()+1).padStart(2,"0");
   const dd = String(dt.getUTCDate()).padStart(2,"0");
   return mm + "/" + dd;
-}
-
-/* 渲染 欄位 */
-function render(groups){
-  const root = document.getElementById('root');
-  root.innerHTML = "";
-  groups.forEach((g, idx) => {
-    const sec = document.createElement('section');
-
-    const hdr = document.createElement('div');
-    hdr.className = "grp";
-    // hdr.textContent = "日期：" + serialToMMDD(g.serial) + " 班別：" + g.sh;
-    hdr.textContent = "　" + serialToMMDD(g.serial) + " - " + g.sh;
-    sec.appendChild(hdr);
-
-    const table = document.createElement('table');
-    table.classList.add("t" + ((idx % 3) + 1));
-    table.innerHTML = '<thead><tr><th>料號</th><th>批號</th><th>數量</th></tr></thead><tbody></tbody>';
-    const tb = table.querySelector('tbody');
-
-    for (const r of g.rows){
-      const tr = document.createElement('tr');
-      tr.innerHTML = "<td>"+r.part_no+"</td><td>"+r.lot+"</td><td>"+r.qty+"</td>";
-      tb.appendChild(tr);
-    }
-    sec.appendChild(table);
-    root.appendChild(sec);
-  });
 }
 
 /* 主流程：倒數→GET→POST→渲染 */
