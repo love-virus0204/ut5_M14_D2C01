@@ -157,21 +157,16 @@ function startDateTick(){
   run();setInterval(run,60*1000);
 }
 
-/* ===== 時鐘 ===== */
+/* ===== 時鐘（台北時間）===== */
 function startClock(){
   const el = document.getElementById('clock');
   const tick = ()=>{
-    const nowMs = Date.now();
-    const utcMs = nowMs + new Date().getTimezoneOffset() * 60000;
-    const d = new Date(utcMs + 8 * 60 * 60 * 1000);
-
-    gTaipeiNow = d;
-    const mm = String(d.getUTCMonth()+1).padStart(2,'0');
-    const dd = String(d.getUTCDate()).padStart(2,'0');
-    const hh = String(d.getUTCHours()).padStart(2,'0');
-    const mi = String(d.getUTCMinutes()).padStart(2,'0');
-    const ss = String(d.getUTCSeconds()).padStart(2,'0');
-
+    const d = new Date(Date.now() + 8 * 60 * 60 * 1000);
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    const hh = String(d.getUTCHours()).padStart(2, '0');
+    const mi = String(d.getUTCMinutes()).padStart(2, '0');
+    const ss = String(d.getUTCSeconds()).padStart(2, '0');
     el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
   };
   tick();
