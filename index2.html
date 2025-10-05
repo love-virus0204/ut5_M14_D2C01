@@ -54,6 +54,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 
 .draftB .ok { color: #22c55e; }
 .draftB .ng { color: #ef4444; }
+.draftB .on { color: #ffd700; }
 /* 草稿B（主體下方，無外框，置中） */
 .draftB{
   width:100%;max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8);
@@ -246,9 +247,12 @@ async function send(){
   showOverlay(false);
 
   const status = ok ? 'ok' : 'ng';
-  const flag = (!ok || String(selB).toUpperCase() === 'N') ? 'ng' : 'ok';
+  const bIsN = String(selB).toUpperCase() === 'N';
+  const flag  = ok ? (bIsN ? 'on' : 'ok') : 'ng';
+  const aDisp = bIsN ? '取消' : selA;
 
-  addB({ ts: tsMin(), id, a: selA, b: selB, status, flag });
+  addB({ ts: tsMin(), id, a: aDisp, b: selB, status, flag });
+
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
 
