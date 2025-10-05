@@ -1,93 +1,185 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>D2名單瀏覽</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>D2｜名單瀏覽</title>
 <style>
-:root{--bg:#0b1220;--panel:#1a2333cc;--text:#e5e7eb;--sub:#94a3b8;--line:#1f2937;--accent:#22d3ee}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,"Microsoft JhengHei",sans-serif}
-.container{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
-h1{margin:8px 0 12px;font-size:18px;letter-spacing:.08em;color:var(--accent)}
-.wrap{width:min(720px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:10px}
-.head{display:grid;grid-template-columns:1fr 1fr;text-align:center;color:var(--sub);margin-bottom:6px}
-.row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px dashed #1f2a44}
-.row:last-child{border-bottom:0}
-.cell{padding:8px 10px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cell.l{color:#7dd3fc}.cell.r{color:#fcd34d}
-.spinner{border:4px solid rgba(255,255,255,.2);border-top:4px solid var(--accent);border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:40px auto}
+:root{--bg:#0b1220;--panel:#0f172acc;--text:#e5e7eb;--sub:#94a3b8;--line:#1f2937;--accent:#22d3ee}
+html,body{height:100%;margin:0;background:linear-gradient(135deg,#0b1023,#101a36 45%,#0b1a23);color:var(--text);font-family:system-ui,Inter,"PingFang TC","Microsoft JhengHei",sans-serif}
+.container{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px}
+h1{margin:6px 0 8px;font-size:18px;letter-spacing:.08em;color:var(--accent);text-align:center}
+.panel{width:min(900px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:10px}
+.section{margin:8px 0 10px}
+.sect-hd{display:flex;justify-content:space-between;align-items:center;margin:2px 0 6px}
+.sect-title{font-size:14px;color:#93c5fd}
+.count{font-size:12px;color:#a7f3d0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card{background:#0b1324;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.card h3{margin:0;padding:6px 8px;font-size:13px;color:#c7d2fe;border-bottom:1px solid var(--line);text-align:center}
+.table{max-height:48vh;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px dashed #1f2a44;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
+.empty{padding:14px;color:var(--sub);text-align:center}
+.spinner{border:4px solid rgba(255,255,255,.2);border-top:4px solid var(--accent);border-radius:50%;width:42px;height:42px;animation:spin 1s linear infinite;margin:40px auto}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hidden{display:none}
-.footer{margin-top:10px;font-size:12px;color:var(--sub)}
-.btn{margin-top:8px;appearance:none;border:0;border-radius:10px;background:linear-gradient(180deg,#0ea5e9,#0369a1);padding:8px 18px;color:#fff;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:transform .12s}
+.btn{appearance:none;border:0;border-radius:10px;background:linear-gradient(180deg,#0ea5e9,#0369a1);padding:8px 18px;color:#fff;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:transform .12s}
 .btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(1px)}
+.footer{font-size:12px;color:var(--sub)}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>D2大夜班跨加報名名單</h1>
+  <h1>D2 大夜班跨加｜名單瀏覽</h1>
 
   <div id="loading" class="spinner"></div>
-  <section id="box" class="wrap hidden">
-    <div class="head"><div>A 班</div><div>B 班</div></div>
-    <div id="rows"></div>
+
+  <section id="box" class="panel hidden">
+    <!-- 動態塞入兩大筆（依日期） -->
+    <div id="sections"></div>
   </section>
 
-  <button class="btn" onclick="loadData(LAST_PAYLOAD)">重新整理</button>
-  <div class="footer">更新：<span id="uTime">--/-- --:--</span></div>
+  <button class="btn" id="reload">重新整理</button>
+  <div class="footer">更新：<span id="ut">--/-- --:--</span></div>
 </div>
 
 <script>
+/* ===== 常數（沿用你現有 POST 模式）===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
 const TZ = 'Asia/Taipei';
-let LAST_PAYLOAD = null; // 記住最近一次查詢參數
 
-function pad(n){return String(n).padStart(2,'0')}
-function nowStr(){
-  const d=new Date(Date.now()+8*60*60*1000);
-  return `${pad(d.getUTCMonth()+1)}/${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
-}
+/* ===== 工具 ===== */
+const pad=n=>String(n).padStart(2,'0');
+const nowTPE=()=>new Date(Date.now()+8*60*60*1000);
+const mdFromSerial=s=>{const t=new Date((s-25569)*86400000);return `${pad(t.getUTCMonth()+1)}/${pad(t.getUTCDate())}`};
 
-/* ===== 照抄你的 POST 模式（不預設參數）===== */
+/* ===== 照樣板的 POST：只用 URLSearchParams，讓 payload 自行決定 ===== */
 async function fetchList(payload){
-  const body = new URLSearchParams(payload);          // 僅用 x-www-form-urlencoded
-  const r = await fetch(API_URL, { method:'POST', body });
-  const txt = await r.text();
-  try{ return JSON.parse(txt); } catch(_){ return []; } // 你的後端會直接回陣列
-}
-
-/* ===== 渲染：shift=A 左，shift=B 右；列格式 {id,dN | id,dN} ===== */
-function render(list){
-  const A = list.filter(x=>String(x.shift).toUpperCase()==='A');
-  const B = list.filter(x=>String(x.shift).toUpperCase()==='B');
-  const max = Math.max(A.length, B.length);
-  let html = '';
-  for(let i=0;i<max;i++){
-    const a = A[i] ? `${A[i].id||''}, ${A[i].dN||''}` : '';
-    const b = B[i] ? `${B[i].id||''}, ${B[i].dN||''}` : '';
-    html += `<div class="row"><div class="cell l">${a}</div><div class="cell r">${b}</div></div>`;
+  const body = new URLSearchParams(payload);             // x-www-form-urlencoded
+  const r    = await fetch(API_URL,{method:'POST',body});
+  const txt  = await r.text();
+  // 兩種兼容：直接陣列 or {status,fields,values}
+  let j; try{ j = JSON.parse(txt) }catch(_){ return {rows:[]} }
+  if (Array.isArray(j)) return {rows:j};                 // 已是物件陣列
+  if (j && j.status==='ok' && Array.isArray(j.fields) && Array.isArray(j.values)){
+    const F = Object.fromEntries(j.fields.map((k,i)=>[k,i]));
+    const rows = j.values.map(a=>({
+      submittedAt:a[F.submittedAt],
+      key:a[F.key],
+      date:Number(a[F.date]),
+      id:a[F.id],
+      shift:a[F.shift],
+      dN:a[F.dN],
+      admin_id:a[F.admin_id],
+      deletedAt:a[F.deletedAt],
+      lucky:a[F.lucky],
+      row:a[F.row]
+    }));
+    return {rows};
   }
-  if(!max) html = `<div class="row"><div class="cell l">目前無資料</div><div class="cell r"></div></div>`;
-  document.getElementById('rows').innerHTML = html;
+  return {rows:[]};
 }
 
-/* ===== 封裝流程：外部傳 payload 進來 ===== */
+/* ===== 依「兩大筆資料（date 不同）」→ 各自拆 A/B → 配對列 ===== */
+function splitTwoGroups(rows){
+  const alive = rows.filter(x=>!x.deletedAt);
+  // 取出最多兩個日期序號（依出現順序）
+  const dates = [];
+  for(const r of alive){ if(!dates.includes(r.date)){ dates.push(r.date); if(dates.length===2) break; } }
+  // 兩大筆（如果只有一個日期也可渲染）
+  return dates.map(dSer=>{
+    const subset = alive.filter(x=>x.date===dSer);
+    const A = subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id??'', dN:x.dN??''}));
+    const B = subset.filter(x=>String(x.shift).toUpperCase()==='B').map(x=>({id:x.id??'', dN:x.dN??''}));
+    const max = Math.max(A.length,B.length);
+    const pairs = Array.from({length:max},(_,i)=>({a:A[i]||null, b:B[i]||null}));
+    return { dateSerial:dSer, pairs };
+  });
+}
+
+/* ===== 渲染：每大筆一個 section；每列顯示「id,dN | id,dN」===== */
+function render(groups){
+  const root = document.getElementById('sections');
+  root.innerHTML = '';
+
+  if(!groups.length){
+    root.innerHTML = `<div class="empty">目前無資料</div>`;
+    return;
+  }
+
+  for(const g of groups){
+    const sec = document.createElement('div');
+    sec.className = 'section';
+
+    const hd = document.createElement('div');
+    hd.className = 'sect-hd';
+    const title = document.createElement('div');
+    title.className = 'sect-title';
+    title.textContent = `日期：${mdFromSerial(g.dateSerial)}`;
+    const cnt = document.createElement('div');
+    cnt.className = 'count';
+    cnt.textContent = `筆數：${g.pairs.length}`;
+    hd.appendChild(title); hd.appendChild(cnt);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+
+    // 左 A
+    const cardA = document.createElement('div');
+    cardA.className = 'card';
+    cardA.innerHTML = `<h3>A 班</h3><div class="table"><table><thead><tr><th>ID</th><th>dN</th></tr></thead><tbody id="tbA_${g.dateSerial}"></tbody></table></div>`;
+    // 右 B
+    const cardB = document.createElement('div');
+    cardB.className = 'card';
+    cardB.innerHTML = `<h3>B 班</h3><div class="table"><table><thead><tr><th>ID</th><th>dN</th></tr></thead><tbody id="tbB_${g.dateSerial}"></tbody></table></div>`;
+
+    grid.appendChild(cardA); grid.appendChild(cardB);
+    sec.appendChild(hd); sec.appendChild(grid);
+    root.appendChild(sec);
+
+    const ta = document.getElementById(`tbA_${g.dateSerial}`);
+    const tb = document.getElementById(`tbB_${g.dateSerial}`);
+
+    // 逐列填入（對齊行數）
+    for(const p of g.pairs){
+      const trA = document.createElement('tr');
+      const trB = document.createElement('tr');
+      if(p.a){ trA.innerHTML = `<td>${p.a.id}</td><td>${p.a.dN}</td>`; } else { trA.innerHTML = `<td></td><td></td>`; }
+      if(p.b){ trB.innerHTML = `<td>${p.b.id}</td><td>${p.b.dN}</td>`; } else { trB.innerHTML = `<td></td><td></td>`; }
+      ta.appendChild(trA); tb.appendChild(trB);
+    }
+
+    // 空清單提示
+    if(!g.pairs.length){
+      ta.parentElement.innerHTML = `<div class="empty">此日期無資料</div>`;
+      tb.parentElement.innerHTML = `<div class="empty">此日期無資料</div>`;
+    }
+  }
+}
+
+/* ===== 流程 ===== */
 async function loadData(payload){
-  LAST_PAYLOAD = payload; // 記錄本次查詢參數
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('box').classList.add('hidden');
 
-  let data=[];
-  try{ data = await fetchList(payload); }catch(_){ data=[]; }
+  let rows=[];
+  try{ const {rows:r}=await fetchList(payload); rows=r.slice(0,160); }catch(_){ rows=[]; }
 
-  render(Array.isArray(data)?data:[]);
+  const groups = splitTwoGroups(rows);
+  render(groups);
+
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('box').classList.remove('hidden');
-  document.getElementById('uTime').textContent = nowStr();
+
+  const d=nowTPE(); document.getElementById('ut').textContent=`${pad(d.getUTCMonth()+1)}/${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
 }
 
-/* 首次載入時，你自行決定帶什麼參數 */
-loadData({ action:'list_recent' }); // ← 與你原專案一致；要改你直接改這行
+/* ===== 首次與刷新（參數你可改）===== */
+const DEFAULT_PAYLOAD = { action:'list_recent' }; // 與你樣板一致；需改就改這行
+document.getElementById('reload').addEventListener('click',()=>loadData(DEFAULT_PAYLOAD));
+loadData(DEFAULT_PAYLOAD);
 </script>
 </body>
 </html>
