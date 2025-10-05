@@ -140,7 +140,7 @@ let selA='平日', selB='N';
 
 /* ===== 時鐘（台北時間）===== */
 let CUR_SER = null;
-let CUR_MD  = '';
+let MD_STR  = '';
 let tNow = null;
 function startClock(){
   const el = document.getElementById('clock');
@@ -168,7 +168,7 @@ function baseYMD(){
   CUR_SER = Math.floor(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate())/86400000) + 25569;
   const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
   const dd = String(t.getUTCDate()).padStart(2,'0');
-  CUR_MD  = `${m}/${day}`;
+  MD_STR  = `${m}/${day}`;
   const el = document.getElementById('mmdd');
   if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
 }
@@ -249,9 +249,10 @@ async function send(){
   showOverlay(false);
 
   const status = ok ? 'ok' : 'ng';
-  const bIsN = String(selB).toUpperCase() === 'N';
-  const flag  = ok ? (bIsN ? 'on' : 'ok') : 'ng';
-  const aDisp = bIsN ? '取消' : selA;
+  const bIsN   = String(selB).toUpperCase() === 'N';
+  const flag   = ok ? (bIsN ? 'on' : 'ok') : 'ng';
+
+  const aDisp  = bIsN ? '取消' : `${MD_STR} - ${selA}`;
 
   addB({ ts: tsMin(), id, a: aDisp, b: selB, status, flag });
 
