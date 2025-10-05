@@ -136,6 +136,8 @@ const API_URL='https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFI
 const TZ='Asia/Taipei';
 let selA='平日', selB='N';
 
+
+
 /* ===== 日期邏輯 ===== */
 function baseYMD(d){
   const tn = d.getUTCHours() * 60 + d.getUTCMinutes();
@@ -148,22 +150,21 @@ function baseYMD(d){
 }
 
 /* ===== 時鐘（台北時間）===== */
+let tNow = null;
 function startClock(){
   const el = document.getElementById('clock');
   const tick = ()=>{
-    const d = new Date(Date.now() + 8 * 60 * 60 * 1000);
-    gtNow = d;
-    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const dd = String(d.getUTCDate()).padStart(2, '0');
-    const hh = String(d.getUTCHours()).padStart(2, '0');
-    const mi = String(d.getUTCMinutes()).padStart(2, '0');
-    const ss = String(d.getUTCSeconds()).padStart(2, '0');
+    tNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
+    const mm = String(tNow.getUTCMonth() + 1).padStart(2,'0');
+    const dd = String(tNow.getUTCDate()).padStart(2,'0');
+    const hh = String(tNow.getUTCHours()).padStart(2,'0');
+    const mi = String(tNow.getUTCMinutes()).padStart(2,'0');
+    const ss = String(tNow.getUTCSeconds()).padStart(2,'0');
     el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
   };
   tick();
-  baseYMD(d);
   setInterval(tick, 1000);
-  setInterval(baseYMD(d), 5*60*1000);
+  setInterval(()=>baseYMD(tNow), 5*60*1000);
 }
 
 /* ===== 草稿A ===== */
