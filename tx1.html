@@ -143,13 +143,17 @@ async function fetchRecentPOST(){
 
 
 function groupForRender(rows){
-  const byDate = new Map();
-  for(const r of rows){
+  const map = new Map();
+  for (const r of rows){
     const serial = Number(r.date);
-    if(!byDate.has(serial)) byDate.set(serial, []);
-    byDate.get(serial).push(r);
+    if (!map.has(serial)) map.set(serial, { serial, rows: [] });
+    map.get(serial).rows.push({
+      id:  r.id ?? "",
+      dN:  r.dN ?? "",
+      shift: r.shift ?? ""
+    });
   }
-  return Array.from(map.values()).slice(0,2);
+  return Array.from(map.values()).slice(0, 2);
 }
 
 // 渲染：A 左 | B 右
