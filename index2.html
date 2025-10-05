@@ -3,47 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>D2大夜班跨加報名系統</title>
+<title>D2 大夜班跨加報名</title>
 <style>
-  :root{--fg:#111;--bg:#fff;--muted:#6b7280;--ok:#22c55e;--bad:#ef4444;--line:#e5e7eb;--btn:#0ea5e9;}
-  html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui, -apple-system, "PingFang TC","Microsoft JhengHei", Arial, sans-serif;}
-  .wrap{min-height:100%;display:grid;grid-template-rows:auto 1fr;}
-  header{padding:8px 12px;border-bottom:1px solid var(--line);text-align:center}
-  h1{margin:0;font-size:16px;}
-  main{display:flex;justify-content:center;align-items:flex-start;padding:8px}
-  .panel{width:min(520px,94vw);border:1px solid var(--line);border-radius:12px;padding:12px}
-  .row{margin-top:10px}
-  .center{display:grid;gap:8px}
+  :root{
+    --fg:#0f172a; --bg:#f8fafc; --card:#ffffff; --line:#e5e7eb;
+    --muted:#6b7280; --brand:#2563eb; --ok:#16a34a; --bad:#dc2626;
+  }
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",Arial,sans-serif;overscroll-behavior:none}
+  .wrap{min-height:100%;display:grid;grid-template-rows:auto 1fr}
+  header{padding:10px 12px;border-bottom:1px solid var(--line);text-align:center}
+  h1{margin:0;font-size:18px;font-weight:700}
+  main{display:flex;justify-content:center;align-items:flex-start;padding:10px}
+  .panel{width:min(560px,96vw);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+  .grid{display:grid;gap:10px}
+  .mmdd{justify-self:center;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-weight:700;background:#f1f5f9}
   .input{display:flex;justify-content:center}
-  .in{width:220px;height:42px;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:18px;text-transform:uppercase}
-  .mmdd{justify-self:center;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-weight:700}
-  .gtitle{font-size:12px;color:var(--muted)}
+  .in{width:240px;height:44px;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:18px;text-transform:uppercase;background:#fff}
+  .gtitle{font-size:12px;color:var(--muted);margin-top:4px}
+  .row{display:grid;gap:8px}
   .btnrow{display:grid;gap:8px}
   .btnrow.two{grid-template-columns:repeat(2,1fr)}
   .btnrow.three{grid-template-columns:repeat(3,1fr)}
-  .btn{height:40px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}
-  .btn.sel{outline:2px solid var(--btn);background:#eef6ff}
-  .primary{background:var(--btn);color:#fff;border-color:var(--btn)}
-  .statusbar{position:fixed;left:10px;bottom:10px;display:flex;gap:10px;align-items:center}
+  .btn{height:42px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}
+  .btn.sel{outline:2px solid var(--brand);background:#eef2ff}
+  .primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .primary:disabled{opacity:.5}
+  /* 草稿B */
+  .draftB{width:min(560px,96vw);margin:10px auto 0;border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;display:none}
+  .line{padding:6px 8px;border-bottom:1px dashed #e5e7eb;font-size:13px}
+  .line:last-child{border-bottom:0}
+  .ok{color:var(--ok)} .ng{color:var(--bad)}
+  /* 狀態與時鐘 */
+  .statusbar{position:fixed;left:10px;bottom:10px;display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px}
   .sitem{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
   .dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;border:1px solid #94a3b8}
   .dot.ok{background:var(--ok)} .dot.bad{background:var(--bad)}
-  .clock{position:fixed;right:10px;bottom:10px;font-variant-numeric:tabular-nums;color:#111;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
-  .draftB{width:min(520px,94vw);margin:8px auto 0;border:1px solid var(--line);border-radius:10px;padding:6px;display:none}
-  .line{padding:6px 8px;border-bottom:1px dashed #e5e7eb;font-size:13px}
-  .line:last-child{border-bottom:0}
-  .ok{color:#16a34a} .ng{color:#dc2626}
+  .clock{position:fixed;right:10px;bottom:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header><h1>D2大夜班跨加報名系統</h1></header>
+  <header><h1>D2 大夜班跨加報名</h1></header>
 
   <main>
     <section class="panel">
-      <div class="center">
+      <div class="grid">
         <div class="input">
-          <input id="code" class="in" placeholder="輸入5碼" inputmode="latin" autocomplete="off" maxlength="5">
+          <input id="code" class="in" placeholder="輸入 5 碼" maxlength="5" autocomplete="off" inputmode="latin">
         </div>
         <div id="mmdd" class="mmdd">--/--</div>
 
@@ -64,63 +70,62 @@
           </div>
         </div>
 
-        <div class="row">
-          <button id="sendBtn" class="btn primary" disabled>送出</button>
-        </div>
+        <button id="sendBtn" class="btn primary" disabled>送出</button>
       </div>
     </section>
   </main>
 </div>
 
-<!-- 左下三燈 -->
+<!-- 左下三燈（GET） -->
 <div class="statusbar">
   <div class="sitem"><span class="dot" id="dotGas"></span>GAS連線</div>
   <div class="sitem"><span class="dot" id="dotSs"></span>試算表</div>
   <div class="sitem"><span class="dot" id="dotSh"></span><span id="shLabel">試算表名</span></div>
 </div>
-<!-- 右下時鐘（HHmmss） -->
-<div class="clock" id="clock">------</div>
+<!-- 右下時鐘：mm/dd HH:mm:ss -->
+<div class="clock" id="clock">--/-- --:--:--</div>
 
-<!-- 草稿B（無標題，最多10筆） -->
-<div class="draftB" id="draftBoxB">
-  <div id="draftB"></div>
-</div>
+<!-- 草稿B：最多10筆 -->
+<div class="draftB" id="draftBoxB"><div id="draftB"></div></div>
 
 <script>
 /* ===== 常量 ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
 const TZ = 'Asia/Taipei';
-let selA = '2'; // 預設
+let selA = '2';    // 預設
 let selB = '中';
 
-/* ===== 時間與日期 ===== */
+/* ===== 工具：時間 ===== */
 function mmddRule(){
   const now = new Date();
   const h = parseInt(new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,hour:'2-digit',hour12:false}).format(now),10);
   const base = new Date(now);
   if(h >= 1) base.setDate(base.getDate()+1);
   const p = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit'})
-              .formatToParts(base).reduce((a,b)=>(a[b.type]=b.value,a),{});
+            .formatToParts(base).reduce((a,b)=>(a[b.type]=b.value,a),{});
   return `${p.month}/${p.day}`;
 }
 function updateMmdd(){ document.getElementById('mmdd').textContent = mmddRule(); }
 function startClock(){
   const el = document.getElementById('clock');
   const tick = ()=>{
-    const t = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})
-                .formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{});
-    el.textContent = `${t.hour}${t.minute}${t.second}`; // HHmmss
+    const d = new Date();
+    const md = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit'}).formatToParts(d)
+               .reduce((a,b)=>(a[b.type]=b.value,a),{});
+    const t  = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(d)
+               .reduce((a,b)=>(a[b.type]=b.value,a),{});
+    el.textContent = `${md.month}/${md.day} ${t.hour}:${t.minute}:${t.second}`; // mm/dd HH:mm:ss
   };
-  tick(); setInterval(tick,1000);
+  tick(); setInterval(tick, 1000);
 }
 function tsMin(){
   const t = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})
-              .formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{});
+            .formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{});
   return `${t.month}/${t.day} ${t.hour}:${t.minute}`;
 }
 
-/* ===== 選擇高亮 ===== */
-function setSel(btns, val, attr){
+/* ===== 高亮與送出權限 ===== */
+function setSel(btns,val,attr){
   btns.forEach(b=>{
     const on = b.dataset[attr]===val;
     b.classList.toggle('sel', on);
@@ -129,19 +134,19 @@ function setSel(btns, val, attr){
 }
 function enableSend(){ document.getElementById('sendBtn').disabled = !(selA && selB); }
 
-/* ===== 草稿B（最多10筆） ===== */
+/* ===== 草稿B：最多10筆 ===== */
 const DRAFTB_KEY='d2_draft_b_v1';
 function loadB(){ try{ return JSON.parse(localStorage.getItem(DRAFTB_KEY)||'[]'); }catch(_){ return []; } }
-function saveB(arr){ localStorage.setItem(DRAFTB_KEY, JSON.stringify(arr.slice(-10))); }
+function saveB(a){ localStorage.setItem(DRAFTB_KEY, JSON.stringify(a.slice(-10))); }
 function renderB(){
-  const box=document.getElementById('draftBoxB');
-  const list=document.getElementById('draftB');
-  const arr=loadB();
+  const box = document.getElementById('draftBoxB');
+  const list= document.getElementById('draftB');
+  const arr = loadB();
   if(!arr.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
-  list.innerHTML=arr.map(x=>`<div class="line ${x.ok?'ok':'ng'}">${x.ts} | ${x.id} | ${x.ok?'ok':'ng'}</div>`).join('');
+  list.innerHTML = arr.map(x=>`<div class="line ${x.ok?'ok':'ng'}">${x.ts} | ${x.id} | ${x.ok?'ok':'ng'}</div>`).join('');
 }
-function addB(ok,id){ const arr=loadB(); arr.push({ts:tsMin(), id, ok}); saveB(arr); renderB(); }
+function addB(ok,id){ const a=loadB(); a.push({ts:tsMin(), id, ok}); saveB(a); renderB(); }
 
 /* ===== 連線燈（GET） ===== */
 async function probeStatus(){
@@ -151,17 +156,17 @@ async function probeStatus(){
   const lab=document.getElementById('shLabel');
   const cls=(el,c)=>{el.classList.remove('ok','bad'); el.classList.add(c);};
   try{
-    const r=await fetch(API_URL+'?target=1',{method:'GET',cache:'no-store'});
+    const r = await fetch(API_URL+'?target=1',{method:'GET',cache:'no-store'});
     cls(gas, r.ok?'ok':'bad');
-    const j=await r.json().catch(()=>null);
+    const j = await r.json().catch(()=>null);
     if(j && j.fileExists) cls(ss,'ok');
     if(j && j.sheetExists){ cls(sh,'ok'); lab.textContent='sh1'; }
   }catch(_){ cls(gas,'bad'); }
 }
 
-/* ===== 送出（x-www-form-urlencoded） ===== */
+/* ===== 傳送（URLSearchParams, x-www-form-urlencoded） ===== */
 function submitData(p){
-  const params=new URLSearchParams();
+  const params = new URLSearchParams();
   params.append('action','submit');
   params.append('key',  p.key);
   params.append('date', p.date);
@@ -179,12 +184,11 @@ function bindInput(){
   el.addEventListener('input',()=>{ let x=el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5); el.value=x.toUpperCase(); });
   el.addEventListener('focus',()=>{ if(el.value) el.value=''; });
 }
-
 async function send(){
   const id=document.getElementById('code').value.trim().toUpperCase();
-  if(!/^[A-Z0-9]{5}$/.test(id)) return; // 前端自行保證
-  const md = mmddRule();                 // "MM/DD"
-  const date = md.replace('/','');       // "MMDD"
+  if(!/^[A-Z0-9]{5}$/.test(id)) return;
+  const md = mmddRule();            // "MM/DD"
+  const date = md.replace('/','');  // "MMDD"
   const payload = { id, date, key:`${date}|${id}`, shift: selB, dN: selA };
   let ok=false, res;
   try{ res=await submitData(payload); ok = res && res.status==='ok'; }catch(_){ ok=false; }
@@ -192,21 +196,14 @@ async function send(){
 }
 
 /* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded', ()=>{
-  // 預設選中
+addEventListener('DOMContentLoaded',()=>{
+  // 預設 A=2, B=中
   setSel(document.querySelectorAll('[data-a]'), selA, 'a');
   setSel(document.querySelectorAll('[data-b]'), selB, 'b');
-
-  document.querySelectorAll('[data-a]').forEach(b=> b.addEventListener('click', ()=>{
-    selA=b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA,'a'); enableSend();
-  }));
-  document.querySelectorAll('[data-b]').forEach(b=> b.addEventListener('click', ()=>{
-    selB=b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB,'b'); enableSend();
-  }));
-
+  document.querySelectorAll('[data-a]').forEach(b=> b.addEventListener('click', ()=>{ selA=b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA,'a'); enableSend(); }));
+  document.querySelectorAll('[data-b]').forEach(b=> b.addEventListener('click', ()=>{ selB=b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB,'b'); enableSend(); }));
   bindInput(); enableSend(); updateMmdd(); setInterval(updateMmdd,60*1000);
   startClock(); probeStatus(); renderB();
-
   document.getElementById('sendBtn').addEventListener('click', send);
 });
 </script>
