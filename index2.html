@@ -140,6 +140,7 @@ let selA='平日', selB='N';
 
 /* ===== 時鐘（台北時間）===== */
 let CUR_SER = null;
+let CUR_MD  = '';
 let tNow = null;
 function startClock(){
   const el = document.getElementById('clock');
@@ -167,6 +168,7 @@ function baseYMD(){
   CUR_SER = Math.floor(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate())/86400000) + 25569;
   const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
   const dd = String(t.getUTCDate()).padStart(2,'0');
+  CUR_MD  = `${m}/${day}`;
   const el = document.getElementById('mmdd');
   if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
 }
