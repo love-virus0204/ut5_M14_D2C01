@@ -29,7 +29,18 @@
   .primary{background:var(--brand);color:#fff;border-color:var(--brand)}
   .primary:disabled{opacity:.5}
   /* 草稿B */
-  .draftB{width:min(560px,96vw);margin:10px auto 0;border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;display:none}
+  .draftB{
+    width:100%;
+    max-width:640px;
+    margin:10px auto 0;
+    background:rgba(15,23,42,.8);
+    border-radius:12px;
+    padding:8px 6px;
+    text-align:center;
+    border:none;
+    box-shadow:none;
+  }
+
   .line{padding:6px 8px;border-bottom:1px dashed #e5e7eb;font-size:13px}
   .line:last-child{border-bottom:0}
   .ok{color:var(--ok)} .ng{color:var(--bad)}
@@ -73,6 +84,8 @@
         <button id="sendBtn" class="btn primary" disabled>送出</button>
       </div>
     </section>
+    <!-- 草稿B區塊放這裡，緊貼主體 -->
+    <div class="draftB" id="draftBoxB"><div id="draftB"></div></div>
   </main>
 </div>
 
@@ -84,9 +97,6 @@
 </div>
 <!-- 右下時鐘：mm/dd HH:mm:ss -->
 <div class="clock" id="clock">--/-- --:--:--</div>
-
-<!-- 草稿B：最多10筆 -->
-<div class="draftB" id="draftBoxB"><div id="draftB"></div></div>
 
 <script>
 /* ===== 常量 ===== */
