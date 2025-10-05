@@ -1,49 +1,39 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>GAS submit 可視化測試</title>
+<title>GAS 一鍵 Submit 測試（x-www-form-urlencoded）</title>
 <style>
   body{font-family:system-ui; margin:16px}
-  button{padding:10px 14px; font-size:16px; margin-right:8px}
-  .ok{color:#0a0}
-  .ng{color:#c00}
-  pre{background:#0b1020; color:#e6f0ff; padding:10px; overflow:auto; max-height:40vh}
+  button{padding:10px 14px; font-size:16px}
+  pre{background:#0b1020;color:#e6f0ff;padding:10px;overflow:auto;max-height:45vh}
   .row{margin:10px 0}
 </style>
 
-<h3>GAS submit 測試</h3>
+<h3>一鍵測試（POST → URLSearchParams）</h3>
+
 <div class="row">
-  <label>API_URL</label>
-  <input id="api" style="width:100%;max-width:720px" value="https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec">
+  <label>API_URL</label><br>
+  <input id="api" style="width:100%;max-width:820px"
+         value="https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec">
 </div>
 
 <div class="row">
-  <button id="go_id">一鍵送出（鍵名：id）</button>
-  <button id="go_ID">一鍵送出（鍵名：ID）</button>
-  <button id="ping">Ping</button>
-  <span id="status"></span>
+  <button id="send">送出 submit</button>
 </div>
 
-<h4>送出 Payload</h4>
+<h4>送出 Payload（form-urlencoded）</h4>
 <pre id="payload"></pre>
 
 <h4>回應</h4>
 <pre id="resp"></pre>
 
-<h4>即時紀錄</h4>
-<pre id="log"></pre>
-
 <script>
 const TZ="Asia/Taipei";
-const $ = s=>document.querySelector(s);
-function ts(){
-  const z=new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(new Date())
-    .reduce((a,p)=>(a[p.type]=p.value,a),{});
-  return `${z.month}/${z.day} ${z.hour}:${z.minute}:${z.second}`;
-}
-function log(line){ const el=$("#log"); el.textContent += `[${ts()}] ${line}\n`; el.scrollTop=el.scrollHeight; }
 
+// 產 5 碼英數（大寫）
 function genID(){return Array.from({length:5},()=> "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.random()*36|0]).join("");}
-function mmddWithRule(){
+
+// >01:00 算 d+1，回 mmdd
+function mmddRule(){
   const now=new Date();
   const h=parseInt(new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,hour:'2-digit'}).format(now),10);
   const base=new Date(now); if(h>=1) base.setDate(base.getDate()+1);
@@ -52,50 +42,32 @@ function mmddWithRule(){
   return `${p.month}${p.day}`;
 }
 
-function buildPayload(keyCase){
-  const id = genID();
-  const date = mmddWithRule();
-  const base = { action:'submit', key:`${date}|${id}`, date, shift:'中', dN:'2' };
-  if(keyCase==='id'){ base.id = id; } else { base.ID = id; }
-  return base;
-}
+function show(el,data){ el.textContent = typeof data==='string' ? data : JSON.stringify(data,null,2); }
 
-function showPayload(obj){
-  $("#payload").textContent = JSON.stringify(obj, null, 2);
-}
+document.getElementById('send').onclick = async ()=>{
+  const API_URL = document.getElementById('api').value.trim();
+  const id   = genID();          // 自動 ID（不手填）
+  const date = mmddRule();       // 自動日期
 
-async function post(body){
-  const api=$("#api").value.trim();
-  const r = await fetch(api, { method:'POST', body: new URLSearchParams(body) });
-  const text = await r.text();
-  $("#resp").textContent = text;
-  $("#status").textContent = r.ok ? "HTTP "+r.status : "HTTP "+r.status;
-  $("#status").className = r.ok ? "ok" : "ng";
-  log(`HTTP ${r.status} | ${text.slice(0,120).replace(/\\n/g,' ')}`);
-}
+  // 鍵名依後端：action, key, date, id, shift, dN
+  const payload = {
+    action: 'submit',
+    key:    `${date}|${id}`,
+    date:   date,
+    id:     id,
+    shift:  '中',
+    dN:     '2'
+  };
 
-$("#go_id").onclick = async ()=>{
-  const payload = buildPayload('id'); showPayload(payload);
-  $("#status").textContent="送出中…"; $("#status").className="";
-  try{ await post(payload); }catch(e){ $("#resp").textContent=String(e); $("#status").textContent="NetworkError"; $("#status").className="ng"; log(String(e)); }
-};
+  show(document.getElementById('payload'), payload);
 
-$("#go_ID").onclick = async ()=>{
-  const payload = buildPayload('ID'); showPayload(payload);
-  $("#status").textContent="送出中…"; $("#status").className="";
-  try{ await post(payload); }catch(e){ $("#resp").textContent=String(e); $("#status").textContent="NetworkError"; $("#status").className="ng"; log(String(e)); }
-};
-
-$("#ping").onclick = async ()=>{
-  const api=$("#api").value.trim();
-  $("#status").textContent="Ping…"; $("#status").className="";
   try{
-    const r=await fetch(api,{method:'POST',body:new URLSearchParams({action:'ping'})});
-    const t=await r.text();
-    $("#resp").textContent=t; $("#status").textContent=`Ping ${r.ok?'OK':'NG'} (${r.status})`; $("#status").className=r.ok?"ok":"ng";
-    log(`Ping ${r.status} | ${t}`);
+    const body = new URLSearchParams(payload); // 僅用 x-www-form-urlencoded
+    const r = await fetch(API_URL, { method:'POST', body });
+    const txt = await r.text();
+    show(document.getElementById('resp'), txt);
   }catch(e){
-    $("#resp").textContent=String(e); $("#status").textContent="NetworkError"; $("#status").className="ng"; log(String(e));
+    show(document.getElementById('resp'), String(e));
   }
 };
 </script>
