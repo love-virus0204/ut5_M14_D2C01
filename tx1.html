@@ -154,9 +154,10 @@ function groupForRender(rows){
     .slice(0, 2);
 }
 
-// 渲染：A 左 | B 右；標題用樣板既有的 serialToMMDD
+// 渲染：A 左 | B 右
 function render(groups){
-  const container = document.getElementById('list'); // 你的顯示區
+  const container = document.getElementById('dataView');
+  if(!container) return;
   container.innerHTML = '';
 
   for(const g of groups){
@@ -173,11 +174,11 @@ function render(groups){
           <div class="col colA">${leftHTML || '<div class="none">－</div>'}</div>
           <div class="col colB">${rightHTML || '<div class="none">－</div>'}</div>
         </div>
-      </div>
-    `;
+      </div>`;
     container.insertAdjacentHTML('beforeend', block);
   }
 }
+
  
 
 
