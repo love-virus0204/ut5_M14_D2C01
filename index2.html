@@ -139,10 +139,12 @@ let selA='平日', selB='N';
 /* ===== 日期邏輯 ===== */
 function baseYMD(d){
   const tn = d.getUTCHours() * 60 + d.getUTCMinutes();
-  if (tn >=65){
+  if (tn >= 65){
     const t = new Date(d);
     t.setUTCDate(t.getUTCDate() + 1);
     return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() };
+  }
+  return { y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate() };
 }
 
 function displayMmdd(){const {m,d}=baseYMD();return `${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`;}
