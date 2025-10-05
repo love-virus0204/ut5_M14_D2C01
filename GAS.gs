@@ -120,7 +120,12 @@ function _listRecent(sheet){
     row[2] = _toSerialInt(row[2], epoch);
     row.push(startRow + i);
   });
-  values.sort(function(a,b){ return b[0] - a[0]; });
+
+  values.sort((a,b)=> a[4].localeCompare(b[4]));
+  values.sort((a,b)=>{
+  return String(a[3]).localeCompare(String(b[3]), 'en', { numeric:true });
+});
+  values.sort((a,b)=> b[2] - a[2]);
 
   var fields = [
 "submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
