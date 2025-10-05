@@ -143,7 +143,7 @@ function baseYMD(){
     .formatToParts(now).reduce((a,b)=>(a[b.type]=b.value,a),{});
   let y=+p.year,m=+p.month,d=+p.day,h=+p.hour,m2 = +p.minute;
   const totalMin = h * 60 + m2;
-  if (totalMin >= 65) {
+  if (totalMin >= 0) {
     const t = new Date(y, m - 1, d + 1);
     y = t.getFullYear();m = t.getMonth() + 1;d = t.getDate();
   }
