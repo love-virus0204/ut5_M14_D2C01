@@ -143,8 +143,11 @@ function baseYMD(){
     .formatToParts(now).reduce((a,b)=>(a[b.type]=b.value,a),{});
   let y=+p.year,m=+p.month,d=+p.day,h=+p.hour;
   const totalMin = h * 60 + m2;
-  if(totalMin>=65){const t=new Date(Date.UTC(y,m-1,d));t.setUTCDate(t.getUTCDate()+1);y=t.getUTCFullYear();m=t.getUTCMonth()+1;d=t.getUTCDate();}
-  return {y,m,d};
+  if (totalMin >= 65) {
+    const t = new Date(y, m - 1, d + 1);
+    y = t.getFullYear();m = t.getMonth() + 1;d = t.getDate();
+  }
+  return { y, m, d };
 }
 function displayMmdd(){const {m,d}=baseYMD();return `${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`;}
 function dateSerial(){const {y,m,d}=baseYMD();return Math.floor(Date.UTC(y,m-1,d)/86400000)+25569;}
