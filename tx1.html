@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>跨加報名記錄｜瀏覽</title>
+<title>報名記錄表｜瀏覽</title>
 <style>
   :root{ --bg:#f8fafc; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb; --brand:#0f766e; --ok:#10b981; --err:#ef4444; }
   html,body{height:100%}
@@ -55,7 +55,7 @@
 
 <script>
 /* API URL */
-const API_URL = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
+const API_BASE = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
 
 const baseUTC = Date.UTC(1899,11,30);
 
@@ -158,7 +158,7 @@ function groupForRender(rows){
       qty: r.qty ?? ""
     });
   }
-  return Array.from(map.values()).slice(0,3);
+  return Array.from(map.values()).slice(0,2);
 }
 
 /* 日期序號 → mm/dd */
