@@ -1,11 +1,46 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>GAS submit 一鍵測試</title>
-<button id="go">一鍵送出</button>
-<pre id="out"></pre>
+<title>GAS submit 可視化測試</title>
+<style>
+  body{font-family:system-ui; margin:16px}
+  button{padding:10px 14px; font-size:16px; margin-right:8px}
+  .ok{color:#0a0}
+  .ng{color:#c00}
+  pre{background:#0b1020; color:#e6f0ff; padding:10px; overflow:auto; max-height:40vh}
+  .row{margin:10px 0}
+</style>
+
+<h3>GAS submit 測試</h3>
+<div class="row">
+  <label>API_URL</label>
+  <input id="api" style="width:100%;max-width:720px" value="https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec">
+</div>
+
+<div class="row">
+  <button id="go_id">一鍵送出（鍵名：id）</button>
+  <button id="go_ID">一鍵送出（鍵名：ID）</button>
+  <button id="ping">Ping</button>
+  <span id="status"></span>
+</div>
+
+<h4>送出 Payload</h4>
+<pre id="payload"></pre>
+
+<h4>回應</h4>
+<pre id="resp"></pre>
+
+<h4>即時紀錄</h4>
+<pre id="log"></pre>
+
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec";
 const TZ="Asia/Taipei";
+const $ = s=>document.querySelector(s);
+function ts(){
+  const z=new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(new Date())
+    .reduce((a,p)=>(a[p.type]=p.value,a),{});
+  return `${z.month}/${z.day} ${z.hour}:${z.minute}:${z.second}`;
+}
+function log(line){ const el=$("#log"); el.textContent += `[${ts()}] ${line}\n`; el.scrollTop=el.scrollHeight; }
 
 function genID(){return Array.from({length:5},()=> "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.random()*36|0]).join("");}
 function mmddWithRule(){
@@ -17,17 +52,50 @@ function mmddWithRule(){
   return `${p.month}${p.day}`;
 }
 
-document.getElementById('go').onclick=async()=>{
-  const id=genID();
-  const date=mmddWithRule();
-  const payload={ action:'submit', key:`${date}|${ID}`, date, id, shift:'中', dN:'2' };
-  const body=new URLSearchParams(payload); // x-www-form-urlencoded
+function buildPayload(keyCase){
+  const id = genID();
+  const date = mmddWithRule();
+  const base = { action:'submit', key:`${date}|${id}`, date, shift:'中', dN:'2' };
+  if(keyCase==='id'){ base.id = id; } else { base.ID = id; }
+  return base;
+}
 
+function showPayload(obj){
+  $("#payload").textContent = JSON.stringify(obj, null, 2);
+}
+
+async function post(body){
+  const api=$("#api").value.trim();
+  const r = await fetch(api, { method:'POST', body: new URLSearchParams(body) });
+  const text = await r.text();
+  $("#resp").textContent = text;
+  $("#status").textContent = r.ok ? "HTTP "+r.status : "HTTP "+r.status;
+  $("#status").className = r.ok ? "ok" : "ng";
+  log(`HTTP ${r.status} | ${text.slice(0,120).replace(/\\n/g,' ')}`);
+}
+
+$("#go_id").onclick = async ()=>{
+  const payload = buildPayload('id'); showPayload(payload);
+  $("#status").textContent="送出中…"; $("#status").className="";
+  try{ await post(payload); }catch(e){ $("#resp").textContent=String(e); $("#status").textContent="NetworkError"; $("#status").className="ng"; log(String(e)); }
+};
+
+$("#go_ID").onclick = async ()=>{
+  const payload = buildPayload('ID'); showPayload(payload);
+  $("#status").textContent="送出中…"; $("#status").className="";
+  try{ await post(payload); }catch(e){ $("#resp").textContent=String(e); $("#status").textContent="NetworkError"; $("#status").className="ng"; log(String(e)); }
+};
+
+$("#ping").onclick = async ()=>{
+  const api=$("#api").value.trim();
+  $("#status").textContent="Ping…"; $("#status").className="";
   try{
-    const r=await fetch(API_URL,{method:'POST',body});
-    document.getElementById('out').textContent=await r.text();
+    const r=await fetch(api,{method:'POST',body:new URLSearchParams({action:'ping'})});
+    const t=await r.text();
+    $("#resp").textContent=t; $("#status").textContent=`Ping ${r.ok?'OK':'NG'} (${r.status})`; $("#status").className=r.ok?"ok":"ng";
+    log(`Ping ${r.status} | ${t}`);
   }catch(e){
-    document.getElementById('out').textContent=String(e);
+    $("#resp").textContent=String(e); $("#status").textContent="NetworkError"; $("#status").className="ng"; log(String(e));
   }
 };
 </script>
