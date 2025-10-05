@@ -253,13 +253,6 @@ async function send(){
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
 
-  showOverlay(true);
-  let ok = false, res;
-  try { res = await submitData(payload); ok = res && res.status === 'ok'; } catch(_) { ok = false; }
-  showOverlay(false);
-  addB(ok, id, selA, selB);
-}
-
 /* ===== 輸入與選項 ===== */
 function bindInput(){
   const el=document.getElementById('code');
