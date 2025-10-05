@@ -48,7 +48,7 @@
     </div>
     <div class="foot">
       <div class="net"><span id="net-dot" class="dot"></span><span id="net-msg">回傳</span></div>
-      <div>版本 browse v0.1.2　|　<span id="now"></span></div>
+      <div>版本 browse v0.1.3　|　<span id="now"></span></div>
     </div>
   </div>
 </div>
@@ -143,50 +143,44 @@ async function fetchRecentPOST(){
 
 
 
-// 先依日期切兩張表 → 每表內再拆 A/B 並配對
+// 先依「出現順序」鎖定前兩個日期 → 只收這兩天的列 → 各自拆 A/B 並對齊
 function groupForRender(rows){
-  // 1) 依日期保序分箱
-  const byDate = new Map();            // key: serial(Number) → Array<row>
-  const order  = [];
-  for(const r of rows){
+  const dates = [];                 // 前兩個日期序號
+  const box = new Map();            // dateSerial -> Array<row>
+
+  for (const r of rows){
     const ds = Number(r.date);
-    if(!Number.isFinite(ds)) continue;
-    if(!byDate.has(ds)){ byDate.set(ds, []); order.push(ds); }
-    byDate.get(ds).push(r);
-    if(order.length === 2 && ds !== order[0] && ds !== order[1]) break; // 最多兩張
+    if (!Number.isFinite(ds)) continue;
+    if (dates.length < 2 && !dates.includes(ds)) {
+      dates.push(ds);
+      box.set(ds, []);
+    }
+    if (dates.includes(ds)) box.get(ds).push(r);   // 只收前兩天
   }
 
-  // 2) 每張表：拆 A / B → 行數對齊成 {a,b}
   const out = [];
-  for(const serial of order.slice(0,2)){
-    const list = byDate.get(serial);
+  for (const ds of dates){
+    const list = box.get(ds) || [];
     const A = [], B = [];
-    for(const r of list){
-      const sh = String(r.shift).trim().toUpperCase();
-      const item = { id: r.id ?? "", dN: r.dN ?? "" };
-      if(sh === 'A') A.push(item);
-      else if(sh === 'B') B.push(item);
+    for (const r of list){
+      const sh = (r.shift ?? '').toString().trim().toUpperCase()[0]; // 取首字
+      const item = { id: r.id ?? '', dN: r.dN ?? '' };
+      if (sh === 'A') A.push(item);
+      else if (sh === 'B') B.push(item);
     }
     const max = Math.max(A.length, B.length);
-    const rows2 = Array.from({length:max}, (_,i)=>({ a: A[i]||null, b: B[i]||null }));
-    out.push({ serial, rows: rows2 });
+    const rows2 = Array.from({length:max}, (_, i)=>({ a: A[i] || null, b: B[i] || null }));
+    out.push({ serial: ds, rows: rows2 });
   }
   return out;
 }
 
-// 渲染：每列顯示 "id, dN | id, dN"
+// 渲染：A 左 | B 右；標題用樣板既有的 serialToMMDD
 function render(groups){
   const root = document.getElementById('root');
   root.innerHTML = '';
 
-  const mmdd = n=>{
-    const t = new Date((Number(n)-25569)*86400000);
-    const m = String(t.getUTCMonth()+1).padStart(2,'0');
-    const d = String(t.getUTCDate()).padStart(2,'0');
-    return `${m}/${d}`;
-  };
-
-  if(!groups.length){
+  if (!groups.length){
     root.innerHTML = '<section><div class="grp">　--/--</div><table class="t1"><tbody><tr><td>目前無資料</td><td></td></tr></tbody></table></section>';
     return;
   }
@@ -196,7 +190,7 @@ function render(groups){
 
     const hdr = document.createElement('div');
     hdr.className = 'grp';
-    hdr.textContent = '　' + mmdd(g.serial);
+    hdr.textContent = '　' + serialToMMDD(g.serial);
     sec.appendChild(hdr);
 
     const table = document.createElement('table');
@@ -204,7 +198,7 @@ function render(groups){
     table.innerHTML = '<thead><tr><th>A（id, dN）</th><th>B（id, dN）</th></tr></thead><tbody></tbody>';
     const tb = table.querySelector('tbody');
 
-    for(const r of g.rows){
+    for (const r of g.rows){
       const left  = r.a ? `${r.a.id}, ${r.a.dN}` : '';
       const right = r.b ? `${r.b.id}, ${r.b.dN}` : '';
       const tr = document.createElement('tr');
@@ -216,7 +210,6 @@ function render(groups){
     root.appendChild(sec);
   });
 }
-
 
 
 
