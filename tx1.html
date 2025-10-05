@@ -144,55 +144,41 @@ async function fetchRecentPOST(){
 
 function groupForRender(rows){
   const byDate = new Map();
-  const order  = [];
-
-  for (const r of rows){
+  for(const r of rows){
     const serial = Number(r.date);
-    if (!Number.isFinite(serial)) continue;
-    if (!byDate.has(serial)) { byDate.set(serial, []); order.push(serial); }
+    if(!byDate.has(serial)) byDate.set(serial, []);
     byDate.get(serial).push(r);
   }
-  return order.slice(0, 2).map(serial => ({
-    serial,
-    rows: byDate.get(serial)
-  }));
+  return Array.from(byDate.entries())
+    .map(([serial, rows]) => ({ serial, rows }))
+    .slice(0, 2);
 }
 
 // 渲染：A 左 | B 右；標題用樣板既有的 serialToMMDD
 function render(groups){
-  const root = document.getElementById('root');
-  root.innerHTML = '';
+  const container = document.getElementById('list'); // 你的顯示區
+  container.innerHTML = '';
 
-  if (!groups.length){
-    root.innerHTML = '<section><div class="grp">　--/--</div><table class="t1"><tbody><tr><td>目前無資料</td><td></td></tr></tbody></table></section>';
-    return;
+  for(const g of groups){
+    const left  = g.rows.filter(r => r.shift === 'A');
+    const right = g.rows.filter(r => r.shift === 'B');
+
+    const leftHTML  = left.map(r  => `<div>${r.id} , ${r.dN}</div>`).join('');
+    const rightHTML = right.map(r => `<div>${r.id} , ${r.dN}</div>`).join('');
+
+    const block = `
+      <div class="day-group">
+        <h3>${g.serial}</h3>
+        <div class="cols">
+          <div class="col colA">${leftHTML || '<div class="none">－</div>'}</div>
+          <div class="col colB">${rightHTML || '<div class="none">－</div>'}</div>
+        </div>
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', block);
   }
-
-  groups.forEach((g, idx)=>{
-    const sec = document.createElement('section');
-
-    const hdr = document.createElement('div');
-    hdr.className = 'grp';
-    hdr.textContent = '　' + serialToMMDD(g.serial);
-    sec.appendChild(hdr);
-
-    const table = document.createElement('table');
-    table.className = 't' + ((idx % 3) + 1);
-    table.innerHTML = '<thead><tr><th>A（id, dN）</th><th>B（id, dN）</th></tr></thead><tbody></tbody>';
-    const tb = table.querySelector('tbody');
-
-    for (const r of g.rows){
-      const left  = r.a ? `${r.a.id}, ${r.a.dN}` : '';
-      const right = r.b ? `${r.b.id}, ${r.b.dN}` : '';
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${left}</td><td>${right}</td>`;
-      tb.appendChild(tr);
-    }
-
-    sec.appendChild(table);
-    root.appendChild(sec);
-  });
 }
+ 
 
 
 
