@@ -1,73 +1,42 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>GAS 一鍵 Submit 測試（x-www-form-urlencoded）</title>
-<style>
-  body{font-family:system-ui; margin:16px}
-  button{padding:10px 14px; font-size:16px}
-  pre{background:#0b1020;color:#e6f0ff;padding:10px;overflow:auto;max-height:45vh}
-  .row{margin:10px 0}
-</style>
+<title>GAS 一鍵 Submit（form-urlencoded, no fetch）</title>
 
-<h3>一鍵測試（POST → URLSearchParams）</h3>
-
-<div class="row">
-  <label>API_URL</label><br>
-  <input id="api" style="width:100%;max-width:820px"
-         value="https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec">
-</div>
-
-<div class="row">
-  <button id="send">送出 submit</button>
-</div>
-
-<h4>送出 Payload（form-urlencoded）</h4>
-<pre id="payload"></pre>
-
-<h4>回應</h4>
-<pre id="resp"></pre>
+<!-- 修改成你的 Web App /exec -->
+<form id="f" method="POST" action="https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec">
+  <input type="hidden" name="action" value="submit">
+  <input type="hidden" name="key"   id="key">
+  <input type="hidden" name="date"  id="date">
+  <input type="hidden" name="id"    id="id">     <!-- 小寫 id -->
+  <input type="hidden" name="shift" value="中">
+  <input type="hidden" name="dN"    value="2">
+  <button type="button" id="go">一鍵送出</button>
+</form>
 
 <script>
 const TZ="Asia/Taipei";
 
-// 產 5 碼英數（大寫）
-function genID(){return Array.from({length:5},()=> "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.random()*36|0]).join("");}
-
-// >01:00 算 d+1，回 mmdd
+function genID(){
+  const CH="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let s=""; for(let i=0;i<5;i++) s+=CH[Math.random()*CH.length|0];
+  return s;
+}
 function mmddRule(){
   const now=new Date();
   const h=parseInt(new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,hour:'2-digit'}).format(now),10);
   const base=new Date(now); if(h>=1) base.setDate(base.getDate()+1);
-  const p=new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit'}).formatToParts(base)
-    .reduce((a,b)=>(a[b.type]=b.value,a),{});
+  const p=new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit'})
+            .formatToParts(base).reduce((a,b)=>(a[b.type]=b.value,a),{});
   return `${p.month}${p.day}`;
 }
 
-function show(el,data){ el.textContent = typeof data==='string' ? data : JSON.stringify(data,null,2); }
-
-document.getElementById('send').onclick = async ()=>{
-  const API_URL = document.getElementById('api').value.trim();
-  const id   = genID();          // 自動 ID（不手填）
-  const date = mmddRule();       // 自動日期
-
-  // 鍵名依後端：action, key, date, id, shift, dN
-  const payload = {
-    action: 'submit',
-    key:    `${date}|${id}`,
-    date:   date,
-    id:     id,
-    shift:  '中',
-    dN:     '2'
-  };
-
-  show(document.getElementById('payload'), payload);
-
-  try{
-    const body = new URLSearchParams(payload); // 僅用 x-www-form-urlencoded
-    const r = await fetch(API_URL, { method:'POST', body });
-    const txt = await r.text();
-    show(document.getElementById('resp'), txt);
-  }catch(e){
-    show(document.getElementById('resp'), String(e));
-  }
+document.getElementById('go').onclick = ()=>{
+  const id = genID();
+  const date = mmddRule();
+  document.getElementById('id').value = id;
+  document.getElementById('date').value = date;
+  document.getElementById('key').value = `${date}|${id}`;
+  document.getElementById('f').submit();   // 表單直送，Content-Type 由瀏覽器自動設為 x-www-form-urlencoded
 };
 </script>
+```0
