@@ -8,7 +8,7 @@
 :root{
   --footer-h: 48px;
   --bg:#0b1220; --panel:#1a2333cc; --glass:#1f2937aa; --text:#e5e7eb; --sub:#94a3b8;
-  --accent:#22d3ee; --ok:#22c55e; --ng:#ef4444;
+  --accent:#22d3ee; 
 }
 html,body{ padding-bottom:var(--footer-h); margin:0;height:100%;background:radial-gradient(circle at top,#0b1725,#060b15 80%);
   color:var(--text);font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
@@ -61,7 +61,6 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 }
 .line{padding:6px 8px;border-bottom:1px dashed #334155;font-size:13px;}
 .line:last-child{border-bottom:0;}
-.ok{color:var(--ok);} .ng{color:var(--ng);}
 
 /* 底部狀態列 */
 .footerbar{ height:var(--footer-h);position:fixed;left:0;bottom:0;width:100%;display:flex;justify-content:space-between;align-items:center;
@@ -70,7 +69,6 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 }
 .sitem{display:flex;align-items:center;gap:6px;}
 .dot{width:10px;height:10px;border-radius:50%;background:#475569;}
-.dot.ok{background:var(--ok);} .dot.bad{background:var(--ng);}
 .clock{font-variant-numeric:tabular-nums;color:var(--accent);}
 .ver{color:#60a5fa;font-weight:700;}
 
