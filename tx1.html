@@ -157,26 +157,46 @@ function groupForRender(rows){
 
 // 渲染：A 左 | B 右
 function render(groups){
-  const box = document.getElementById('viewBox');
-  if(!box) return;
-  box.innerHTML = '';
+  const root = document.getElementById('root');
+  if(!root) return;
+  root.innerHTML = "";
 
-  for(const g of groups){
-    const left  = g.rows.filter(r => r.shift === 'A');
-    const right = g.rows.filter(r => r.shift === 'B');
-    const leftHTML  = left.map(r  => `<div>${r.id} , ${r.dN}</div>`).join('');
-    const rightHTML = right.map(r => `<div>${r.id} , ${r.dN}</div>`).join('');
+  groups.forEach((g, idx) => {
+    const sec = document.createElement('section');
 
-    const block = `
-      <div class="day-group">
-        <h3>${g.serial}</h3>
-        <div class="cols">
-          <div class="col colA">${leftHTML || '<div class="none">－</div>'}</div>
-          <div class="col colB">${rightHTML || '<div class="none">－</div>'}</div>
-        </div>
-      </div>`;
-    box.insertAdjacentHTML('beforeend', block);
-  }
+    const hdr = document.createElement('div');
+    hdr.className = "grp";
+    hdr.textContent = "　" + serialToMMDD(g.serial);
+    sec.appendChild(hdr);
+
+    // 拆左右 A/B
+    const A = g.rows.filter(r => String(r.shift).toUpperCase()==='A');
+    const B = g.rows.filter(r => String(r.shift).toUpperCase()==='B');
+    const max = Math.max(A.length,B.length);
+
+    // 建表格
+    const table = document.createElement('table');
+    table.classList.add("t" + ((idx % 3) + 1));
+    table.innerHTML = '<thead><tr><th>A班（id,dN）</th><th>B班（id,dN）</th></tr></thead><tbody></tbody>';
+    const tb = table.querySelector('tbody');
+
+    for(let i=0;i<max;i++){
+      const tr = document.createElement('tr');
+      const a = A[i] ? `${A[i].id ?? ''}, ${A[i].dN ?? ''}` : '';
+      const b = B[i] ? `${B[i].id ?? ''}, ${B[i].dN ?? ''}` : '';
+      tr.innerHTML = `<td>${a}</td><td>${b}</td>`;
+      tb.appendChild(tr);
+    }
+
+    if(max===0){
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>目前無資料</td><td></td>';
+      tb.appendChild(tr);
+    }
+
+    sec.appendChild(table);
+    root.appendChild(sec);
+  });
 }
 
  
