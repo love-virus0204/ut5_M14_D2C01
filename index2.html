@@ -150,8 +150,9 @@ function startClock(){
     el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
   };
   tick();
+  /* baseYMD(); */
   setInterval(tick, 1000);
-  setInterval(()=>baseYMD(), 5*60*1000);
+  setInterval(baseYMD, 5*60*1000);
 }
 
 /* ===== 日期邏輯 ===== */
