@@ -52,6 +52,8 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 .btn.primary{background:linear-gradient(180deg,#2563eb,#1e3a8a);border:none;}
 .btn.primary:hover{background:linear-gradient(180deg,#3b82f6,#1e3a8a);}
 
+.draftB .ok { color: #22c55e; }
+.draftB .ng { color: #ef4444; }
 /* 草稿B（主體下方，無外框，置中） */
 .draftB{
   width:100%;max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8);
@@ -178,19 +180,35 @@ function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 const DRAFTB_KEY='d2_draft_b_v1';
 function loadB(){try{return JSON.parse(localStorage.getItem(DRAFTB_KEY)||'[]');}catch(_){return[];}}
 function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,10)));} // 最新在上只保留10
+
 function tsMin(){
-  const t=new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})
-    .formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{});
-  return `${t.month}/${t.day} ${t.hour}:${t.minute}`;
+  const d = new Date(Date.now() + 8*60*60*1000);
+  const mm = String(d.getUTCMonth()+1).padStart(2,'0');
+  const dd = String(d.getUTCDate()).padStart(2,'0');
+  const hh = String(d.getUTCHours()).padStart(2,'0');
+  const mi = String(d.getUTCMinutes()).padStart(2,'0');
+  return `${mm}/${dd} ${hh}:${mi}`;
 }
+
+function addB(item){
+  const arr = loadB();
+  arr.unshift(item);
+  saveB(arr.slice(0,10));
+  renderB();
+}
+
 function renderB(){
-  const box=document.getElementById('draftBoxB');const list=document.getElementById('draftB');
-  const arr=loadB();
-  if(!arr.length){box.style.display='none';list.innerHTML='';return;}
+  const box  = document.getElementById('draftBBox');
+  const list = document.getElementById('draftB');
+  const arr  = loadB();
+  if(!arr.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
-  list.innerHTML=arr.map(x=>`<div class="line ${x.ok?'ok':'ng'}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.ok?'ok':'ng'}</div>`).join('');
+  list.innerHTML = arr.map(x =>
+    `<div class="line ${x.flag}">
+       ${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.status}
+     </div>`
+  ).join('');
 }
-function addB(ok,id,a,b){const arr=loadB();arr.unshift({ts:tsMin(),id,a,b,ok});saveB(arr);renderB();}
 
 /* ===== 狀態燈（GET） ===== */
 async function probeStatus(){
