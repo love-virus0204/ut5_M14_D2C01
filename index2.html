@@ -190,18 +190,19 @@ function toast(text){
   el.textContent = text; el.classList.add('show'); setTimeout(()=> el.classList.remove('show'), 1600);
 }
 
-function updateMmdd(){
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, hour:'numeric', minute:'numeric'}).formatToParts(now).reduce((a,p)=>(a[p.type]=p.value,a),{});
-  const hour = parseInt(parts.hour,10);
-  const base = new Date(now);
-  if(hour >= 1){ base.setDate(base.getDate()+1); }
-  document.getElementById('mmdd').textContent = fmtDate(base,'mmdd');
+function updateMmdd(){ document.getElementById('mmdd').textContent = mmddRule().replace(/^(\d{2})(\d{2})$/, "$1/$2");
 }
+
 function startClock(){
   const el = document.getElementById('clock');
-  const tick = ()=> el.textContent = fmtDate(new Date(),'mmdd_hms');
-  tick(); setInterval(tick,1000);
+  const tick = ()=>{
+    const z = new Intl.DateTimeFormat('zh-Hant-TW', {
+      timeZone: TZ, month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', second:'2-digit'
+    }).formatToParts(new Date()).reduce((a,p)=>(a[p.type]=p.value,a),{});
+    el.textContent = `${z.month}/${z.day} ${z.hour}:${z.minute}:${z.second}`;
+  };
+  tick(); setInterval(tick, 1000);
 }
 
 async function probeStatus(){
@@ -272,30 +273,33 @@ function bindInput(){
 }
 
 addEventListener('DOMContentLoaded',()=>{
-  // 預設選取 A2、B中
+  // 預設高亮（A=2, B=中）
   setSel(document.querySelectorAll('[data-a]'), selA, 'a');
   setSel(document.querySelectorAll('[data-b]'), selB, 'b');
-  document.querySelectorAll('[data-a]').forEach(b=> b.addEventListener('click', ()=>{ selA = b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA,'a'); enableSend(); }));
-  document.querySelectorAll('[data-b]').forEach(b=> b.addEventListener('click', ()=>{ selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB,'b'); enableSend(); }));
+
+  document.querySelectorAll('[data-a]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      selA = b.dataset.a;
+      setSel(document.querySelectorAll('[data-a]'), selA, 'a');
+      enableSend();
+    });
+  });
+  document.querySelectorAll('[data-b]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      selB = b.dataset.b;
+      setSel(document.querySelectorAll('[data-b]'), selB, 'b');
+      enableSend();
+    });
+  });
 
   bindInput();
   startClock();
-  updateMmdd(); setInterval(updateMmdd,60*1000);
+  updateMmdd(); setInterval(updateMmdd, 60*1000);
   probeStatus();
   document.getElementById('sendBtn').addEventListener('click', send);
   enableSend();
-  loadDraft(); // 舊草稿A
-  renderDraftB(); // 草稿B
-});
-  document.querySelectorAll('[data-b]').forEach(b=> b.addEventListener('click', ()=>{ selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB,'b'); enableSend(); }));
-
-  bindInput();
-  startClock();
-  updateMmdd(); setInterval(updateMmdd,60*1000);
-  probeStatus();
-  document.getElementById('sendBtn').addEventListener('click', send);
-  enableSend();
-  loadDraft(); // 讀草稿，有才顯示
+  loadDraft();
+  renderDraftB();
 });
 
 function enableSend(){
