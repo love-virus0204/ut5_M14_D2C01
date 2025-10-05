@@ -1,0 +1,63 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>GAS 一鍵 Submit 測試</title>
+<style>
+  body{font-family:system-ui; padding:16px}
+  button{padding:10px 14px; font-size:16px}
+  pre{background:#111;color:#eee;padding:10px;overflow:auto;max-height:40vh}
+</style>
+<h3>GAS 一鍵 Submit 測試</h3>
+<button id="go">一鍵送出（POST x-www-form-urlencoded）</button>
+
+<h4>Payload</h4><pre id="p"></pre>
+<h4>Response</h4><pre id="r"></pre>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec"; // 你的 API
+const TZ = "Asia/Taipei";
+
+// 產生 5 碼英數 ID（大寫）
+function genID(){
+  const CH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let s = "";
+  for(let i=0;i<5;i++) s += CH[Math.floor(Math.random()*CH.length)];
+  return s;
+}
+
+// >01:00 視為 d+1 → 回 mmdd
+function cDate(){
+  const now = new Date();
+  const z = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, hour:'2-digit'}).formatToParts(now)
+              .reduce((a,p)=>(a[p.type]=p.value,a),{});
+  const base = new Date(now);
+  if(parseInt(z.hour,10) >= 1) base.setDate(base.getDate()+1);
+  const p = new Intl.DateTimeFormat('zh-Hant-TW',{timeZone:TZ, month:'2-digit', day:'2-digit'})
+              .formatToParts(base).reduce((a,p)=>(a[p.type]=p.value,a),{});
+  return `${p.month}${p.day}`;
+}
+
+function show(el, data){
+  el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+}
+
+document.getElementById('go').onclick = async ()=>{
+  // 預設值：A=2、B=中、c_date=規則計算、id=自動
+  const payload = {
+    action: 'submit',
+    id: genID(),
+    c_date: cDate(),
+    A: '2',
+    B: '中'
+  };
+  show(document.getElementById('p'), payload);
+
+  try{
+    const body = new URLSearchParams(payload);
+    const resp = await fetch(API_URL, { method:'POST', body });
+    const txt = await resp.text();
+    show(document.getElementById('r'), txt);
+  }catch(e){
+    show(document.getElementById('r'), String(e));
+  }
+};
+</script>
