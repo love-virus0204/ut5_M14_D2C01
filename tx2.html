@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>跨加報名記錄｜瀏覽</title>
+<title>報名記錄表｜瀏覽</title>
 <style>
   :root{ --bg:#f8fafc; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb; --brand:#0f766e; --ok:#10b981; --err:#ef4444; }
   html,body{height:100%}
@@ -143,6 +143,7 @@ async function fetchRecentPOST(){
   }));
 }
 
+/* 分兩組日期 → 各組內依 shift 拆 A|B，行數對齊 */
 function groupForRender(rows){
   const alive = rows.filter(r => !r.deletedAt);
   const dates = [];
@@ -163,16 +164,6 @@ function groupForRender(rows){
   });
 }
 
-/* 日期序號 → mm/dd */
-function serialToMMDD(n){
-  const days = Math.floor(Number(n));
-  const dt = new Date(baseUTC + days*86400000);
-  const mm = String(dt.getUTCMonth()+1).padStart(2,"0");
-  const dd = String(dt.getUTCDate()).padStart(2,"0");
-  return mm + "/" + dd;
-}
-
-/* 渲染 欄位 */
 /* 渲染：每列顯示「id,dN | id,dN」，左 A 右 B */
 function render(groups){
   const root = document.getElementById('root');
@@ -200,6 +191,16 @@ function render(groups){
     sec.appendChild(table);
     root.appendChild(sec);
   });
+}
+
+
+/* 日期序號 → mm/dd */
+function serialToMMDD(n){
+  const days = Math.floor(Number(n));
+  const dt = new Date(baseUTC + days*86400000);
+  const mm = String(dt.getUTCMonth()+1).padStart(2,"0");
+  const dd = String(dt.getUTCDate()).padStart(2,"0");
+  return mm + "/" + dd;
 }
 
 /* 主流程：倒數→GET→POST→渲染 */
