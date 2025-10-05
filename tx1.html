@@ -141,53 +141,70 @@ async function fetchRecentPOST(){
 }
 
 
-// 依日期序號分兩組；各組再按 shift 拆 A/B；行數對齊
+
+
+// 先依日期切兩張表 → 每表內再拆 A/B 並配對
 function groupForRender(rows){
-  const byDate = new Map(); // key: serial(Number), val:{serial,A:[],B:[]}
-
-  for (const r of rows){
+  // 1) 依日期保序分箱
+  const byDate = new Map();            // key: serial(Number) → Array<row>
+  const order  = [];
+  for(const r of rows){
     const ds = Number(r.date);
-    if (!Number.isFinite(ds)) continue;
-    if (!byDate.has(ds)) byDate.set(ds, { serial: ds, A: [], B: [] });
-
-    const item = { id: r.id ?? "", dN: r.dN ?? "" };
-    const sh = String(r.shift).toUpperCase();
-    if (sh === 'A') byDate.get(ds).A.push(item);
-    else if (sh === 'B') byDate.get(ds).B.push(item);
+    if(!Number.isFinite(ds)) continue;
+    if(!byDate.has(ds)){ byDate.set(ds, []); order.push(ds); }
+    byDate.get(ds).push(r);
+    if(order.length === 2 && ds !== order[0] && ds !== order[1]) break; // 最多兩張
   }
 
+  // 2) 每張表：拆 A / B → 行數對齊成 {a,b}
   const out = [];
-  for (const [serial, g] of byDate){
-    const max = Math.max(g.A.length, g.B.length);
-    const rows2 = Array.from({length:max}, (_, i) => ({
-      a: g.A[i] || null,
-      b: g.B[i] || null
-    }));
+  for(const serial of order.slice(0,2)){
+    const list = byDate.get(serial);
+    const A = [], B = [];
+    for(const r of list){
+      const sh = String(r.shift).trim().toUpperCase();
+      const item = { id: r.id ?? "", dN: r.dN ?? "" };
+      if(sh === 'A') A.push(item);
+      else if(sh === 'B') B.push(item);
+    }
+    const max = Math.max(A.length, B.length);
+    const rows2 = Array.from({length:max}, (_,i)=>({ a: A[i]||null, b: B[i]||null }));
     out.push({ serial, rows: rows2 });
-    if (out.length === 2) break; // 僅取兩組日期
   }
   return out;
 }
 
-// 每列顯示「id,dN | id,dN」，左 A 右 B
+// 渲染：每列顯示 "id, dN | id, dN"
 function render(groups){
   const root = document.getElementById('root');
-  root.innerHTML = "";
+  root.innerHTML = '';
 
-  groups.forEach((g, idx) => {
+  const mmdd = n=>{
+    const t = new Date((Number(n)-25569)*86400000);
+    const m = String(t.getUTCMonth()+1).padStart(2,'0');
+    const d = String(t.getUTCDate()).padStart(2,'0');
+    return `${m}/${d}`;
+  };
+
+  if(!groups.length){
+    root.innerHTML = '<section><div class="grp">　--/--</div><table class="t1"><tbody><tr><td>目前無資料</td><td></td></tr></tbody></table></section>';
+    return;
+  }
+
+  groups.forEach((g, idx)=>{
     const sec = document.createElement('section');
 
     const hdr = document.createElement('div');
-    hdr.className = "grp";
-    hdr.textContent = "　" + serialToMMDD(g.serial); // 需已有此函式
+    hdr.className = 'grp';
+    hdr.textContent = '　' + mmdd(g.serial);
     sec.appendChild(hdr);
 
     const table = document.createElement('table');
-    table.classList.add("t" + ((idx % 3) + 1)); // 依樣板配色循環
+    table.className = 't' + ((idx % 3) + 1);
     table.innerHTML = '<thead><tr><th>A（id, dN）</th><th>B（id, dN）</th></tr></thead><tbody></tbody>';
     const tb = table.querySelector('tbody');
 
-    for (const r of g.rows){
+    for(const r of g.rows){
       const left  = r.a ? `${r.a.id}, ${r.a.dN}` : '';
       const right = r.b ? `${r.b.id}, ${r.b.dN}` : '';
       const tr = document.createElement('tr');
@@ -199,6 +216,11 @@ function render(groups){
     root.appendChild(sec);
   });
 }
+
+
+
+
+
 
 
 
