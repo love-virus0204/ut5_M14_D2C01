@@ -168,7 +168,7 @@ function baseYMD(){
   CUR_SER = Math.floor(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate())/86400000) + 25569;
   const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
   const dd = String(t.getUTCDate()).padStart(2,'0');
-  MD_STR  = `${m}/${day}`;
+  MD_STR  = `${mm}/${dd}`;
   const el = document.getElementById('mmdd');
   if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
 }
