@@ -201,7 +201,7 @@ function _listRecent2(sheet) {
     row.push(startRow + i);
   });
 
-  values.sort((a, b) => String(a[0]).localeCompare(String(b[0]), 'en', { numeric: true }));
+  values.sort(function(a,b){ return b[4] - a[4]; });
 
   const fields = ["id", "name", "tier", "limit_date", "updatedAt", "row"];
 
