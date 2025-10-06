@@ -161,9 +161,9 @@ return sh;
 function _findRowByKey(sheet, key, ct){
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return 0;
-  var count = lastRow - 1;
-  var keys  = sheet.getRange(2, ct, count, 1).getValues(); // 18=key
-  for (var i=0;i<count;i++){
+  var rows = lastRow - 1;
+  var keys  = sheet.getRange(2, ct, rows, 1).getValues();
+  for (var i=0;i<rows;i++){
     if (String(keys[i][0]) === key) return i + 2;
   }
   return 0;
@@ -206,9 +206,7 @@ function _listRecent2(sheet) {
   const fields = ["id", "name", "tier", "limit_date", "updatedAt", "row"];
 
   return _json({
-    status: "ok",
-    fields: fields,
-    values: values
+    status: "ok", fields: fields, values: values
   });
 }
 
