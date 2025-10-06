@@ -197,6 +197,7 @@ function _listRecent2(sheet) {
   const startRow = 2;
 
   values.forEach(function(row, i) {
+    row[3] = _toSerialInt(row[3], epoch);
     row.push(startRow + i);
   });
 
