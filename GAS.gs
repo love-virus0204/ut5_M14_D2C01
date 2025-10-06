@@ -65,7 +65,7 @@ function doPost(e){
     default:
       return _json({ status: "error", msg: "unknown_action" });
   }
-
+}
 /* 寫入1..6：命中 key 覆寫 1..6 */
 function _submit(sheet, p){
   var submittedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
