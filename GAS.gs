@@ -78,7 +78,7 @@ function _submit(sheet, p){
     p.dN           // 6
   ];
 
-  var hitRow = _findRowByKey(sheet, String(p.key));
+  var hitRow = _findRowByKey(sheet, String(p.key), 2);
   if (hitRow > 0){
     sheet.getRange(hitRow, 1, 1, 6).setValues([row]); // 覆寫 1..6
     sheet.getRange(hitRow, 3).setNumberFormat('mm/dd');
@@ -159,11 +159,11 @@ throw _json({ status: "error", msg: "sheet_not_found" });
 return sh;
 }
 
-function _findRowByKey(sheet, key){
+function _findRowByKey(sheet, key, ct){
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return 0;
   var count = lastRow - 1;
-  var keys  = sheet.getRange(2, 2, count, 1).getValues(); // 2
+  var keys  = sheet.getRange(2, ct, count, 1).getValues(); // 18=key
   for (var i=0;i<count;i++){
     if (String(keys[i][0]) === key) return i + 2;
   }
@@ -224,7 +224,7 @@ function _upsert(sheet, p){
     updatedAt      // E updatedAt
   ];
 
-  const hitRow = _findRowByKey(sheet, String(p.id));
+  const hitRow = _findRowByKey(sheet, String(p.id), 1);
 
   if (hitRow > 0){
     sheet.getRange(hitRow, 1, 1, 5).setValues([row]);
