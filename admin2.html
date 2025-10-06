@@ -96,33 +96,39 @@
 
   <!-- 下：輸入卡片 -->
   <section class="bottom">
-    <div class="form-wrap">
-      <form class="form" onsubmit="return false;">
-        <div class="field">
-          <label for="id">ID（固定 5 碼英數大寫）</label>
-          <input id="id" class="ctl w-id" type="text" maxlength="5" autocapitalize="characters" autocomplete="off" />
-        </div>
-        <div class="field">
-          <label for="name">名字</label>
-          <input id="name" class="ctl w-name" type="text" autocomplete="off" />
-        </div>
-        <div class="field">
-          <label for="tier">級距（0–5，預設 3）</label>
-          <select id="tier" class="ctl w-tier">
-            <option value="0">0</option><option value="1">1</option>
-            <option value="2">2</option><option value="3" selected>3</option>
-            <option value="4">4</option><option value="5">5</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="limit">limit（天數；純數字，可空）</label>
-          <input id="limit" class="ctl w-limit" type="number" inputmode="numeric" min="0" step="1" />
-        </div>
-        <div class="actions">
-          <button id="btnUpload" class="btn primary">上傳</button>
-        </div>
-      </form>
+<div class="form-wrap">
+  <form class="form" onsubmit="return false;">
+    <!-- 第一行 -->
+    <div class="row">
+      <div class="field">
+        <label for="id">　I　D　</label>
+        <input id="id" class="ctl w-id" type="text" maxlength="5" />
+      </div>
+      <div class="field">
+        <label for="name">名　字</label>
+        <input id="name" class="ctl w-name" type="text" />
+      </div>
     </div>
+    <!-- 第二行 -->
+    <div class="row">
+      <div class="field">
+        <label for="tier">級距（0–5）</label>
+        <select id="tier" class="ctl w-tier">
+          <option value="0">0</option><option value="1">1</option>
+          <option value="2">2</option><option value="3" selected>3</option>
+          <option value="4">4</option><option value="5">5</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="limit">limit（禁跨天數）</label>
+        <input id="limit" class="ctl w-limit" type="number" min="0" step="1" />
+      </div>
+      <div class="actions">
+        <button id="btnUpload" class="btn primary">上傳</button>
+      </div>
+    </div>
+  </form>
+</div>
   </section>
 </div>
 
