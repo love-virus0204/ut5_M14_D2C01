@@ -32,24 +32,38 @@ function doPost(e){
     return _json({status:"error", msg:"bad_json"});
   }
 
-  var action = String(p.action||"").toLowerCase();
-  if (!action) return _json({status:"error", msg:"unknown_action"});
+  var action = String(p.action || "").toLowerCase();
+  if (!action) return _json({ status: "error", msg: "unknown_action" });
 
-  if (action === "ping") return _json({status:"ok"});
-  var sheet = _sheet();
-  if (!sheet) return _json({status:"error", msg:"sheet_not_found"});
+  sheet = _sheet(sn_1);
+  switch (action) {
+    case "ping":
+      return _json({ status: "ok" });
 
-// 讀表
-  if (action === "list_recent") return _listRecent(sheet);
+    case "list_recent":
+      return _listRecent(sheet);
 
-// 寫入/軟刪：加鎖
-  if (action === "submit" || action === "upsert" || action === "soft_delete"){
-    return withLock(60000, () => {
-      if (action === "soft_delete") return _softDelete(sheet, p);
-      return _submit(sheet, p);
-    });
-  }
-    return _json({status:"error", msg:"unknown_action"});
+    case "list_recent2":
+      sheet = _sheet(sn_2);
+      return _listRecent2(sheet);
+
+    case "submit":
+    case "upsert":
+    case "soft_delete":
+      return withLock(60000, () => {
+        switch (action) {
+          case "submit":
+            return _submit(sheet, p);
+          case "soft_delete":
+            return _softDelete(sheet, p);
+          case "upsert":
+            sheet = _sheet(sn_2);
+            return _upsert(sheet, p);
+        }
+      });
+
+    default:
+      return _json({ status: "error", msg: "unknown_action" });
   }
 
 /* 寫入1..6：命中 key 覆寫 1..6 */
@@ -136,9 +150,13 @@ function _listRecent(sheet){
 }
 
 /* 工具 */
-function _sheet(){
-  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  return ss ? ss.getSheetByName(sn_1) : null;
+function _sheet(sn) {
+var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+var sh = ss ? ss.getSheetByName(sn) : null;
+if (!sh) {
+throw _json({ status: "error", msg: "sheet_not_found" });
+}
+return sh;
 }
 
 function _findRowByKey(sheet, key){
@@ -164,4 +182,57 @@ function _toSerialInt(v, epoch){
 function _json(obj){
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+
+function _listRecent2(sheet){
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return _json({status:"error", msg:"no_data"});
+  }
+
+  var lastCol  = sheet.getLastColumn();
+  var values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+
+  const epoch = Date.UTC(1899,11,30);
+  values.forEach(function(row, i){
+    row[2] = _toSerialInt(row[2], epoch);
+    row.push(startRow + i);
+  });
+
+  values.sort((a,b)=>{
+  return String(a[3]).localeCompare(String(b[3]), 'en', { numeric:true });
+});
+
+  var fields = [
+"updatedAt","id","name","tier","limit_date","row"];
+
+  return _json({
+    status: "ok", fields: fields, values: values
+  });
+}
+
+
+function _upsert(sheet, p){
+  var updatedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
+  var row = [
+    submittedAt,   // 1
+    p.id,          // 2
+    p.name,        // 3
+    p.limit_date,  // 4
+    p.shift,       // 5
+    p.dN           // 6
+  ];
+
+  var hitRow = _findRowByKey(sheet, String(p.key));
+  if (hitRow > 0){
+    sheet.getRange(hitRow, 1, 1, 6).setValues([row]); // 覆寫 1..6
+    sheet.getRange(hitRow, 3).setNumberFormat('mm/dd');
+    return _json({status:"ok", mode:"更新"});
+  } else {
+    sheet.appendRow([...row, "", ""]);
+    var last = sheet.getLastRow();
+    sheet.getRange(last, 3).setNumberFormat('mm/dd');
+    return _json({status:"ok", mode:"新增"});
+  }
 }
