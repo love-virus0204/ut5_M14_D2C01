@@ -208,22 +208,28 @@
   setInterval(pingGas, 45000);
 
   // ====== 清單渲染 ======
-  function renderTable(values){
-    rows.innerHTML = '';
-    for (const v of values){
-      const id = v[0], name = v[1], tier = v[2], rawLimit = v[3];
-      const ymd = (typeof rawLimit === 'number') ? serialToYmd(rawLimit) : (rawLimit || '');
-      const tr = document.createElement('tr');
-      tr.dataset.id = id;
-      tr.innerHTML = `<td class="col-id">${id}</td>
-                      <td class="col-name">${name}</td>
-                      <td class="col-tier">${tier}</td>
-                      <td class="col-limit">${ymd}</td>`;
-      tr.onclick = () => fillForm(id, name, tier, ymd);
-      rows.appendChild(tr);
-      rowById[id] = tr;
-    }
+function renderTable(values){
+  rows.innerHTML = '';
+  for (const v of values){
+    const id = v[0], name = v[1], tier = v[2], rawLimit = v[3];
+    const ymd =
+      rawLimit === 0
+        ? '永久'
+        : (typeof rawLimit === 'number'
+            ? serialToYmd(rawLimit)
+            : (rawLimit || ''));
+    const tr = document.createElement('tr');
+    tr.dataset.id = id;
+    tr.innerHTML = `
+      <td class="col-id">${id}</td>
+      <td class="col-name">${name}</td>
+      <td class="col-tier">${tier}</td>
+      <td class="col-limit">${ymd}</td>`;
+    tr.onclick = () => fillForm(id, name, tier, ymd);
+    rows.appendChild(tr);
+    rowById[id] = tr;
   }
+}
 
   function appendOrReplaceBottom(p){
     const old = rowById[p.id];
