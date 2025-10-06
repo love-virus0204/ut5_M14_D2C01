@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>資料庫管理頁</title>
+<style>
+html,body{height:100%;margin:0;font-family:sans-serif}
+.page{display:flex;flex-direction:column;height:100%}
+
+/* 區塊1 可捲動 */
+.top{flex:1 1 auto;overflow-y:auto;padding:10px;box-sizing:border-box;border-bottom:1px solid #ccc}
+.top header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+tr:hover{background:#f3f3f3;cursor:pointer}
+
+/* 區塊2 固定 */
+.bottom{flex:0 0 140px;border-top:1px solid #ccc;background:#fafafa;padding:10px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center}
+.form-row{display:flex;gap:10px;margin-bottom:10px}
+input,select{padding:6px;font-size:14px}
+
+/* 按鈕 */
+button{padding:6px 14px;font-size:14px;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+
+/* 遮罩 */
+#mask{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.2);display:none;align-items:center;justify-content:center;z-index:1000}
+.loader{border:4px solid #f3f3f3;border-top:4px solid #333;border-radius:50%;width:36px;height:36px;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="page">
+  <section class="top">
+    <header>
+      <h3>資料庫列表</h3>
+      <button id="btnReload">更新</button>
+    </header>
+    <table>
+      <thead><tr><th>ID</th><th>姓名</th><th>級距</th><th>限定日期</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </section>
+
+  <section class="bottom">
+    <div class="form-row">
+      <label>ID <input id="id" maxlength="5"></label>
+      <label>姓名 <input id="name"></label>
+      <label>級距 
+        <select id="tier">
+          <option value="0">0</option><option value="1">1</option>
+          <option value="2">2</option><option value="3" selected>3</option>
+          <option value="4">4</option><option value="5">5</option>
+        </select>
+      </label>
+      <label>限定日期 <input id="limit_date" placeholder="yyyy-mm-dd"></label>
+    </div>
+    <div>
+      <button id="btnUpload">上傳</button>
+    </div>
+  </section>
+</div>
+
+<!-- 遮罩 -->
+<div id="mask"><div class="loader"></div></div>
+
+<script>
+const GAS_URL='你的GAS部署網址';
+const rows=document.getElementById('rows');
+const mask=document.getElementById('mask');
+const rowById=Object.create(null);
+let uploadCount=0;
+
+/* 遮罩控制 */
+function showMask(){mask.style.display='flex'}
+function hideMask(){mask.style.display='none'}
+
+/* 清空並渲染表 */
+function renderTable(values){
+  rows.innerHTML='';
+  for(const v of values){
+    const tr=document.createElement('tr');
+    tr.dataset.id=v[0];
+    tr.innerHTML=`<td>${v[0]}</td><td>${v[1]}</td><td>${v[2]}</td><td>${v[3]||''}</td>`;
+    tr.onclick=()=>fillForm(v);
+    rows.appendChild(tr);
+    rowById[v[0]]=tr;
+  }
+}
+
+/* 重新讀取 */
+function reloadData(){
+  showMask();
+  const params=new URLSearchParams();
+  params.append('action','list_recent2');
+  fetch(GAS_URL,{method:'POST',body:params})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok') renderTable(d.values);
+      hideMask();
+    })
+    .catch(e=>{console.error(e);hideMask()});
+}
+
+/* 填表 */
+function fillForm(v){
+  id.value=v[0];
+  name.value=v[1];
+  tier.value=v[2];
+  limit_date.value=v[3]||'';
+}
+
+/* 上傳 */
+function uploadOne(){
+  const p={
+    id:id.value.trim().toUpperCase(),
+    name:name.value.trim(),
+    tier:parseInt(tier.value,10),
+    limit_date:limit_date.value.trim()
+  };
+  // 驗證
+  if(!/^[A-Z0-9]{5}$/.test(p.id)) return alert('ID需為5碼英數大寫');
+  if(!p.name) return alert('姓名不得為空');
+  if(isNaN(p.tier)||p.tier<0||p.tier>5) return alert('級距需0~5');
+  if(p.limit_date && !/^\d{4}-\d{2}-\d{2}$/.test(p.limit_date)) return alert('日期格式錯誤');
+
+  showMask();
+  const params=new URLSearchParams();
+  params.append('action','upsert');
+  params.append('id',p.id);
+  params.append('name',p.name);
+  params.append('tier',p.tier);
+  params.append('limit_date',p.limit_date);
+
+  fetch(GAS_URL,{method:'POST',body:params})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok'){
+        const old=rowById[p.id];
+        if(old) old.remove();
+        const tr=document.createElement('tr');
+        tr.dataset.id=p.id;
+        tr.innerHTML=`<td>${p.id}</td><td>${p.name}</td><td>${p.tier}</td><td>${p.limit_date}</td>`;
+        tr.onclick=()=>fillForm([p.id,p.name,p.tier,p.limit_date]);
+        rows.appendChild(tr);
+        rowById[p.id]=tr;
+
+        uploadCount++;
+        if(uploadCount>=10){uploadCount=0;reloadData();}
+        id.value='';name.value='';tier.value='3';limit_date.value='';
+      }else alert(d.msg||'上傳失敗');
+      hideMask();
+    })
+    .catch(e=>{console.error(e);hideMask()});
+}
+
+/* 綁定按鈕 */
+document.getElementById('btnReload').onclick=reloadData;
+document.getElementById('btnUpload').onclick=uploadOne;
+
+/* 初始載入 */
+window.addEventListener('load',reloadData);
+</script>
+</body>
+</html>
