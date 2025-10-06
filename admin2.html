@@ -34,9 +34,8 @@
   /* 欄寬（依實際數值預設） */
   th.col-id,    td.col-id    { width:7ch; }
   th.col-name,  td.col-name  { width:10em; }
-  th.col-tier,  td.col-tier  { width:3ch; }
+  th.col-tier,  td.col-tier  { width:5ch; }
   th.col-limit, td.col-limit { width:10ch; }
-  /* 只有「名字」需省略號保護 */
   td.col-name {
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
@@ -132,7 +131,8 @@
 
 <script>
   // ====== 元件參照 ======
-  const GAS_URL = '請填入你的GAS部署網址'; // e.g. https://script.google.com/macros/s/XXXX/exec
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
+
   const rows = document.getElementById('rows');
   const gasBadge = document.getElementById('gasStatus');
   const clockEl = document.getElementById('clock');
