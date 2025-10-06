@@ -131,7 +131,6 @@ function _listRecent(sheet){
 
   const epoch = Date.UTC(1899,11,30);
   values.forEach(function(row, i){
-    row[2] = _toSerialInt(row[2], epoch);
     row.push(startRow + i);
   });
 
