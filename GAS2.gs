@@ -34,7 +34,7 @@ function sweepExpiredAndNotify() {
     }
 
     if (notify.length) {
-      const title = nowStr + ' 解禁名單';
+      const title = ymd + ' 解禁名單';
       const body  = notify.join('\n');
       try {
         MailApp.sendEmail(MAIL_TO, title, body);
