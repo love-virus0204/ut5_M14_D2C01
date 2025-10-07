@@ -318,7 +318,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       const baseSerial = baseSerialFromTPE(base);
       limitSerial = baseSerial + Number(p.limit);
       ymdShow = serialToYmd(limitSerial);
-    } // 空或 0 → 維持空值
+    } //
 
     showMask();
     const form=new URLSearchParams();
@@ -333,7 +333,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       .then(resp=>{
         if(resp.status==='ok'){
           appendOrReplaceBottom({id:p.id,name:p.name,tier:p.tier,ymd: ymdShow});
-          uploadCount++; if(uploadCount>=10){ uploadCount=0; reloadData(); }
+          uploadCount++; if(uploadCount>=10){ uploadCount=0; setTimeout(reloadData, 1000); }
           idEl.value=''; nameEl.value=''; tierEl.value='3'; limitEl.value='';
         }else{
           alert(resp.msg||'上傳失敗');
