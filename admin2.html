@@ -244,10 +244,8 @@
     rows.innerHTML='';
     for(const v of values){
       const id=v[0], name=v[1], tier=v[2], rawLimit=v[3];
-      const ymd = (rawLimit===0 || rawLimit==='0')
-                  ? '永久'
-                  : (typeof rawLimit==='number' ? serialToYmd(rawLimit) : (rawLimit||''));
-      const tr=document.createElement('tr');
+      const ymd = (rawLimit == 0) ? '永久' : serialToYmd(rawLimit);
+      const tr = document.createElement('tr');
       tr.dataset.id=id;
       tr.innerHTML = `
         <td class="col-id" title="${id}">${id}</td>
