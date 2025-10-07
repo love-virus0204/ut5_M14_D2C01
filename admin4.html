@@ -49,11 +49,10 @@
   .cell{display:flex;flex-direction:column;gap:4px;min-width:0;max-width:100%;}
   label{font-size:.92em;color:#4b5563;}
   /* 固定輸入寬（非%） */
+  .cell.limit { flex:0 0 4ch; }
   .cell.id    { flex:0 0 10ch; }
   .cell.name  { flex:1 1 auto; }
   .cell.tier  { flex:0 0 6ch; }
-  .cell.limit { flex:0 0 10ch; }
-  .cell.blank { flex:1 1 auto; }
   .cell.submit{ flex:0 0 auto; display:flex; justify-content:flex-end; }
   /* 控件 */
   .ctl{width:100%;padding:9px 10px;font-size:1em;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#111827;}
@@ -106,8 +105,10 @@
       <div style="opacity:.6;font-size:.9em;">單筆上傳，累積 10 筆自動刷新</div>
     </div>
     <div class="panel-body form-body">
-      <!-- 第1行：ID | 名字 | 級距 -->
       <div class="row">
+        <div class="cell limit">
+          <input id="limit" class="ctl" inputmode="numeric" />
+        </div>
         <div class="cell id">
           <input id="id" class="ctl" maxlength="5" autocomplete="off" />
         </div>
@@ -120,13 +121,6 @@
             <option selected>3</option><option>4</option><option>5</option>
           </select>
         </div>
-      </div>
-      <!-- 第2行：limit | 空白 | 上傳 -->
-      <div class="row">
-        <div class="cell limit">
-          <input id="limit" class="ctl" inputmode="numeric" />
-        </div>
-        <div class="cell blank"></div>
         <div class="cell submit">
           <button id="btnUpload" class="btn primary">上傳</button>
         </div>
