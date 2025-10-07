@@ -1,36 +1,36 @@
 function sweepExpiredAndNotify() {
   return withLock(60000, () => {
-    sheet = _sheet(sn_2);
-    const resp = _listRecent2(sheet);
-    // if (!resp || resp.status !== 'ok') return;
+    const sh = _sheet(sn_2);
+    const lastRow = sh.getLastRow();
+    if (lastRow < 2) return;
 
-    const F = resp.fields;
-    const iId  = F.indexOf('id');
-    const iLim = F.indexOf('limit_date');
-    const iRow = F.indexOf('row');
-
+    const values = sh.getRange(2, 1, lastRow - 1, 5).getValues(); // A:E
+    const epoch = Date.UTC(1899, 11, 30);
     const nowStr = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
-    const epoch = Date.UTC(1899,11,30);
     const newTn  = _toSerialInt(nowStr, epoch);
 
-    const hits = [];
     const notify = [];
 
-    resp.values.forEach(v => {
-      const limit = v[iLim];
-      if (limit && newTn > limit) {
-        const row = v[iRow];
-        hits.push(row);
-        notify.push(`ID:${v[iId]} 限制日:${serialToYmd(limit)}`);
-        sheet.getRange(row, 5).setValue('');
-        sheet.getRange(row, 4).setValue(2);
+    for (let i = 0; i < values.length; i++) {
+      const [id, name, tier, limit, flag] = values[i];
+      const limitSerial = _toSerialInt(limit, epoch); // ← 加這行：統一轉序號
+      if (limitSerial && newTn > limitSerial) {
+        const row = i + 2;
+        sh.getRange(row, 4).setValue(2);
+        sh.getRange(row, 5).setValue('');
+        sh.getRange(row, 6).setValue(nowStr);
+        notify.push(`ID:${id} 限制日:${serialToYmd(limitSerial)}`);
       }
-    });
+    }
 
     if (notify.length) {
       const title = nowStr + ' 解禁名單';
       const body  = notify.join('\n');
-      MailApp.sendEmail(MAIL_TO, title, body);
+      try {
+        MailApp.sendEmail(MAIL_TO, title, body);
+      } catch (e) {
+        Logger.log('寄信失敗: ' + e.message);
+      }
     }
   });
 }
