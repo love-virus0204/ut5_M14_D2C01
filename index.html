@@ -1,311 +1,319 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>資料庫管理 · 行政灰</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>D2大夜班跨加報名系統</title>
 <style>
-  :root { --font:16px; --wrap:90vw; }
-  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:var(--font);background:#eef1f5;color:#1f2937;line-height:1.4;}
-  *{box-sizing:border-box;}
+:root{
+  --footer-h: 48px;
+  --bg:#0b1220; --panel:#1a2333cc; --glass:#1f2937aa; --text:#e5e7eb; --sub:#94a3b8;
+  --accent:#22d3ee;
+}
+html,body{ padding-bottom:var(--footer-h); margin:0;height:100%;background:radial-gradient(circle at top,#0b1725,#060b15 80%);
+  color:var(--text);font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  overflow-x:hidden;box-sizing:border-box;
+}
+*,*::before,*::after{box-sizing:inherit}
 
-  .page{min-height:100%;display:flex;flex-direction:column;}
+header{
+  text-align:center;padding:16px 0;font-size:20px;font-weight:700;letter-spacing:.08em;
+  background:linear-gradient(90deg,#0d1b2a,#1b263b);box-shadow:0 2px 10px rgba(0,0,0,.4);
+}
+main{display:block;padding:8px 0 0;overflow:visible;}
+.container{width:80%;max-width:640px;min-width:280px;margin:0 auto;}
 
-  /* 頂部工具列 */
-  header{height:52px;background:#fff;border-bottom:1px solid #d1d5db;display:flex;align-items:center;justify-content:space-between;padding:0 14px;}
-  .status{display:flex;gap:10px;align-items:center;}
-  .badge{padding:2px 10px;border:1px solid #9ca3af;border-radius:999px;color:#374151;background:#f9fafb}
-  .badge.ok{border-color:#059669;color:#065f46;background:#ecfdf5}
-  .badge.err{border-color:#dc2626;color:#7f1d1d;background:#fef2f2}
-  .clock{font-variant-numeric:tabular-nums;color:#374151;}
+.panel{
+  width:100%;background:var(--panel);border-radius:20px;padding:20px;margin:0;
+  box-shadow:0 0 25px rgba(0,0,0,.4),inset 0 0 15px rgba(255,255,255,.06);backdrop-filter:blur(8px);
+}
+.input{display:flex;justify-content:center;margin:7px 0;}
+.in{
+  width:200px;height:44px;border-radius:10px;border:1px solid #334155;background:#0f172a;
+  color:var(--text);text-align:center;font-size:18px;letter-spacing:.2em;text-transform:uppercase;
+}
+.in:focus{outline:2px solid var(--accent);}
+.mmdd{
+  text-align:center;background:var(--glass);border:1px solid #1f2937;padding:6px 14px;
+  border-radius:999px;font-weight:700;margin:3px auto;width:max-content;
+}
+.group{margin-top:16px;text-align:center;}
+.gtitle{font-size:12px;color:var(--sub);margin-bottom:1px;}
+.btnrow{display:grid;gap:10px;}
+.btnrow.two{grid-template-columns:repeat(2,minmax(0,1fr));}
+.btnrow.three{grid-template-columns:repeat(3,minmax(0,1fr));}
 
-  /* 包裹寬度：非百分比分欄，容器寬可隨視窗變化 */
-  .wrap{width:min(var(--wrap), 960px);margin:12px auto;display:flex;flex-direction:column;gap:12px;}
 
-  /* 面板：行政灰，線條分隔，無陰影 */
-  .panel{background:#fff;border:1px solid #d1d5db;border-radius:8px;}
-  .panel-head{padding:10px 12px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;}
-  .panel-title{font-weight:600;color:#111827;}
-  .panel-body{padding:0 0 10px 0;}
+.btn{
+  height:44px;
+  border-radius:12px;
+  border:1px solid #334155; background:linear-gradient(180deg,#1e293b,#0f172a);
+  color:var(--text);
+  font-weight:600;
+  letter-spacing:.05em;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.btn:hover{ background:linear-gradient(180deg,#334155,#1e293b);
+  transform:translateY(-1px);
+}
+.btn.sel{
+  outline:2px solid var(--accent);
+  box-shadow:0 0 10px rgba(34,211,238,.4);
+}
+.btn.red{color:#ef4444;}
+.btn.black{color:#e5e7eb;}
 
-  /* 表格面板 */
-  .tbl-wrap{max-height:calc(100vh - 220px);overflow-y:auto;overflow-x:hidden;} /* 僅縱向需要時捲動，禁止橫向 */
-  table{width:100%;border-collapse:collapse;table-layout:fixed;}
-  thead th{position:sticky;top:0;background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:8px 6px;color:#374151;}
-  tbody td{border-bottom:1px solid #f3f4f6;padding:8px 6px;text-align:center;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  tbody tr:hover{background:#f9fafb;cursor:pointer;}
+.btn.primary{ background:linear-gradient(180deg,#0ea5e9,#0369a1);
+  border:1px solid #0891b2;
+  border-radius:14px;
+  padding:10px 32px; /* ↑↓小、←→寬 */
+  color:#fff;
+  font-weight:700;
+  letter-spacing:.08em;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);
+  transition:all .2s ease;
+}
+.btn.primary:hover{ background:linear-gradient(180deg,#38bdf8,#0ea5e9);
+  transform:translateY(-1px);
+  box-shadow:0 6px 14px rgba(0,0,0,.45);
+}
+.btn.primary:active{
+  transform:translateY(1px);
+  box-shadow:0 2px 6px rgba(0,0,0,.5) inset;
+  filter:brightness(.95);
+}
 
-  /* 固定欄寬（非%） */
-  th.col-id,   td.col-id   { width:8ch; }
-  th.col-name, td.col-name { width:5em; }   /* 名字最多約5個全形字 */
-  th.col-tier, td.col-tier { width:5ch; }
-  th.col-date, td.col-date { width:10ch; }
+.draftB .ok { color: #22c55e; }
+.draftB .ng { color: #ef4444; }
+.draftB .on { color: #ffd700; }
+/* 草稿B（主體下方，無外框，置中） */
+.draftB{
+  width:100%;max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8);
+  border:none;border-radius:12px;padding:8px 6px;text-align:center;box-shadow:none;
+}
+.line{padding:6px 8px;border-bottom:1px dashed #334155;font-size:13px;}
+.line:last-child{border-bottom:0;}
 
-  /* 名字欄截斷 */
-  .truncate5{display:inline-block;max-width:5em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* 底部狀態列 */
+.footerbar{ height:var(--footer-h);position:fixed;left:0;bottom:0;width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:6px 12px;background:rgba(17,24,39,.7);border-top:1px solid #1f2937;backdrop-filter:blur(8px);
+  font-size:12px;color:var(--sub);
+}
+.sitem{display:flex;align-items:center;gap:6px;}
+.dot{width:10px;height:10px;border-radius:50%;background:#475569;}
+.dot.ok{background:#22c55e;} .dot.bad{background:#ef4444;}
+.clock{font-variant-numeric:tabular-nums;color:var(--accent);}
+.ver{color:#60a5fa;font-weight:700;}
 
-  /* 表單面板：2×3（兩行三格） */
-  .form-body{padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
-  .row{display:flex;gap:8px;align-items:end;}
-  .cell{display:flex;flex-direction:column;gap:4px;min-width:0;max-width:100%;}
-  label{font-size:.92em;color:#4b5563;}
-  /* 固定輸入寬（非%） */
-  .cell.id    { flex:0 0 10ch; }
-  .cell.name  { flex:1 1 auto; }
-  .cell.blank { flex:1 1 auto; }
-  .cell.tier  { flex:0 0 6ch; }
-  .cell.limit { flex:0 0 8ch; }
-  .cell.submit{ flex:0 0 auto; display:flex; justify-content:flex-end; }
-  /* 控件 */
-  .ctl{width:100%;padding:9px 10px;font-size:1em;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#111827;}
-  .btn{padding:9px 14px;font-size:1em;border-radius:8px;border:1px solid #9ca3af;background:#f3f4f6;color:#111827;cursor:pointer;}
-  .btn.primary{border-color:#2563eb;background:#2563eb;color:#fff;}
-  .btn:active{transform:translateY(1px);}
-
-  /* 遮罩 */
-  #mask{position:fixed;inset:0;background:rgba(31,41,55,.15);display:none;align-items:center;justify-content:center;z-index:999;}
-  .spinner{width:42px;height:42px;border:4px solid #e5e7eb;border-top:4px solid #374151;border-radius:50%;animation:spin 1s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+/* 上傳中 */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;}
+.spinner{width:50px;height:50px;border-radius:50%;border:4px solid rgba(255,255,255,.3);border-top-color:var(--accent);animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
-<header>
-  <div class="status">
-    <span>GAS 狀態：</span><span id="gasBadge" class="badge">--</span>
+<header>D2大夜班跨加報名系統</header>
+
+<main>
+  <div class="container">
+    <section class="panel">
+      <div class="input">
+        <input id="code" class="in" placeholder="輸入5碼" maxlength="5" autocomplete="one-time-code" inputmode="latin">
+      </div>
+      <div id="mmdd" class="mmdd">報　名：　 --/-- 跨加</div>
+
+      <div class="group">
+        <div class="gtitle">　</div>
+        <div class="btnrow two">
+          <button class="btn red" data-a="假日">♦假日</button>
+          <button class="btn black" data-a="平日">♣平日</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="gtitle">　</div>
+        <div class="btnrow three">
+          <button class="btn" data-b="A">日班 | A</button>
+          <button class="btn" data-b="N">取　消</button>
+          <button class="btn" data-b="B">小夜 | B</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="gtitle">　</div>
+        <button id="sendBtn" class="btn primary" disabled>送出</button>
+      </div>
+    </section>
+
+    <!-- 草稿B緊貼主體 -->
+    <div class="draftB" id="draftBoxB">
+      <div id="draftB"></div>
+    </div>
   </div>
-  <div id="clock" class="clock">--:--:--</div>
-</header>
-
-<main class="wrap">
-  <!-- 表格面板 -->
-  <section class="panel">
-    <div class="panel-head">
-      <div class="panel-title">資料庫列表</div>
-      <button id="btnReload" class="btn">更新</button>
-    </div>
-    <div class="panel-body">
-      <div class="tbl-wrap" id="tblWrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="col-id">ID</th>
-              <th class="col-name">名字</th>
-              <th class="col-tier">級距</th>
-              <th class="col-date">日期</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- 表單面板 -->
-  <section class="panel">
-    <div class="panel-head">
-      <div class="panel-title">新增 / 更新</div>
-      <div style="opacity:.6;font-size:.9em;">單筆上傳，累積 10 筆自動刷新</div>
-    </div>
-    <div class="panel-body form-body">
-      <!-- 第1行：ID | 名字 | 空白 -->
-      <div class="row">
-        <div class="cell id">
-          <label for="id">ID（5 碼英數大寫）</label>
-          <input id="id" class="ctl" maxlength="5" autocomplete="off" />
-        </div>
-        <div class="cell name">
-          <label for="name">名字</label>
-          <input id="name" class="ctl" autocomplete="off" />
-        </div>
-        <div class="cell blank"></div>
-      </div>
-      <!-- 第2行：級距 | limit | 上傳 -->
-      <div class="row">
-        <div class="cell tier">
-          <label for="tier">級距（0–5，預設 3）</label>
-          <select id="tier" class="ctl">
-            <option>0</option><option>1</option><option>2</option>
-            <option selected>3</option><option>4</option><option>5</option>
-          </select>
-        </div>
-        <div class="cell limit">
-          <label for="limit">limit（天數；可空）</label>
-          <input id="limit" class="ctl" inputmode="numeric" />
-        </div>
-        <div class="cell submit">
-          <button id="btnUpload" class="btn primary">上傳</button>
-        </div>
-      </div>
-    </div>
-  </section>
 </main>
 
-<!-- 遮罩 -->
-<div id="mask"><div class="spinner"></div></div>
+<!-- 底部狀態列：左=三燈 | 中=版本 | 右=時鐘 -->
+<div class="footerbar">
+  <div style="display:flex;gap:12px;align-items:center;">
+    <div class="sitem"><span class="dot" id="dotGas"></span>GAS</div>
+    <div class="sitem"><span class="dot" id="dotSs"></span>試算表</div>
+    <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
+  </div>
+  <div class="ver">v1.0</div>
+  <div class="clock" id="clock">--/-- --:--:--</div>
+</div>
+
+<div class="overlay" id="overlay"><div class="spinner"></div></div>
 
 <script>
-/* 固定端點 */
 const API_URL='https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
+const TZ='Asia/Taipei';
+let selA='平日', selB='N';
 
-/* DOM */
-const rows = document.getElementById('rows');
-const mask = document.getElementById('mask');
-const gasBadge = document.getElementById('gasBadge');
-const clockEl = document.getElementById('clock');
-
-const idE = document.getElementById('id');
-const nameE = document.getElementById('name');
-const tierE = document.getElementById('tier');
-const limitE = document.getElementById('limit');
-
-const rowById = Object.create(null);
-let uploadCount = 0;
-
-/* 時鐘（台北） */
-let nowTPE = new Date();
-function z(n){return String(n).padStart(2,'0');}
-function fmtYMD(d){ return d.getUTCFullYear()+'-'+z(d.getUTCMonth()+1)+'-'+z(d.getUTCDate()); }
-function fmtYMDHMS(d){ return fmtYMD(d)+' '+z(d.getUTCHours())+':'+z(d.getUTCMinutes())+':'+z(d.getUTCSeconds()); }
-function getNowTPE(){
-  const f=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-  const o=Object.fromEntries(f.formatToParts(new Date()).map(p=>[p.type,p.value]));
-  return new Date(Date.UTC(+o.year,+o.month-1,+o.day,+o.hour,+o.minute,+o.second));
-}
-function tick(){ nowTPE=getNowTPE(); clockEl.textContent=fmtYMDHMS(nowTPE); }
-setInterval(tick,1000); tick();
-
-/* Excel/試算表序號工具 */
-const EPOCH=Date.UTC(1899,11,30);
-function serialToYmd(n){ if(typeof n!=='number' || !isFinite(n)) return ''; const ms=n*86400000+EPOCH; const dt=new Date(ms); return fmtYMD(new Date(Date.UTC(dt.getUTCFullYear(),dt.getUTCMonth(),dt.getUTCDate()))); }
-function baseSerial(d){ return Math.floor((Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-EPOCH)/86400000); }
-function viewLimit(raw){ if(raw===0 || raw==='0') return '永久'; return (typeof raw==='number') ? serialToYmd(raw) : (raw || ''); }
-
-/* 遮罩 */
-function showMask(){mask.style.display='flex';}
-function hideMask(){mask.style.display='none';}
-
-/* GAS ping */
-function ping(){
-  fetch(API_URL+'?ping=1',{cache:'no-store'})
-    .then(r=>{ gasBadge.textContent=r.ok?'OK':'ERR'; gasBadge.className='badge '+(r.ok?'ok':'err'); })
-    .catch(()=>{ gasBadge.textContent='ERR'; gasBadge.className='badge err';});
-}
-ping(); setInterval(ping,45000);
-
-/* 渲染 */
-function render(values){
-  rows.innerHTML='';
-  for(const v of (values||[])){
-    const id=v[0], name=v[1], tier=v[2], raw=v[3];
-    const ymd=viewLimit(raw);
-    const safeName=String(name||'');
-    const tr=document.createElement('tr');
-    tr.innerHTML = `
-      <td class="col-id"   title="${id}">${id}</td>
-      <td class="col-name" title="${safeName}"><span class="truncate5">${safeName}</span></td>
-      <td class="col-tier" title="${tier}">${tier}</td>
-      <td class="col-date" title="${ymd}">${ymd}</td>`;
-    tr.onclick=()=>fill(id,name,tier);
-    rows.appendChild(tr);
-    rowById[id]=tr;
-  }
+/* ===== 時鐘（台北時間）===== */
+let CUR_SER = null;
+let MD_STR  = '';
+let tNow = null;
+function startClock(){
+  const el = document.getElementById('clock');
+  const tick = ()=>{
+    tNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
+    const mm = String(tNow.getUTCMonth() + 1).padStart(2,'0');
+    const dd = String(tNow.getUTCDate()).padStart(2,'0');
+    const hh = String(tNow.getUTCHours()).padStart(2,'0');
+    const mi = String(tNow.getUTCMinutes()).padStart(2,'0');
+    const ss = String(tNow.getUTCSeconds()).padStart(2,'0');
+    el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
+  };
+  tick();
+  baseYMD();
+  setInterval(tick, 1000);
+  setInterval(baseYMD, 5*60*1000);
 }
 
-/* 點列帶入 */
-function fill(id,name,tier){
-  idE.value=id||''; nameE.value=name||''; tierE.value=String(tier??3); limitE.value='';
-  document.querySelector('.panel:last-of-type').scrollIntoView({behavior:'smooth', block:'nearest'});
+/* ===== 日期邏輯 ===== */
+function baseYMD(){
+  if (!tNow) return;
+  const tn = tNow.getUTCHours() * 60 + tNow.getUTCMinutes();
+  const t = new Date(tNow);
+  if (tn >= 65) t.setUTCDate(t.getUTCDate() + 1);
+  CUR_SER = Math.floor(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate())/86400000) + 25569;
+  const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
+  const dd = String(t.getUTCDate()).padStart(2,'0');
+  MD_STR  = `${mm}/${dd}`;
+  const el = document.getElementById('mmdd');
+  if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
 }
 
-/* 讀取 */
-function reload(){
-  showMask();
-  const p=new URLSearchParams(); p.append('action','list_recent2');
-  fetch(API_URL,{method:'POST',body:p})
-    .then(r=>r.json())
-    .then(d=>{ if(d.status==='ok') render(d.values||[]); })
-    .catch(console.error)
-    .finally(hideMask);
+/* ===== 草稿A ===== */
+const DRAFTA_KEY='d2_draft_a_v1';
+function saveA(id){localStorage.setItem(DRAFTA_KEY,id);}
+function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
+
+/* ===== 草稿B ===== */
+const DRAFTB_KEY='d2_draft_b_v1';
+function loadB(){try{return JSON.parse(localStorage.getItem(DRAFTB_KEY)||'[]');}catch(_){return[];}}
+function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,10)));} // 最新在上只保留10
+
+function tsMin(){
+  const d = new Date(Date.now() + 8*60*60*1000);
+  const mm = String(d.getUTCMonth()+1).padStart(2,'0');
+  const dd = String(d.getUTCDate()).padStart(2,'0');
+  const hh = String(d.getUTCHours()).padStart(2,'0');
+  const mi = String(d.getUTCMinutes()).padStart(2,'0');
+  return `${mm}/${dd} ${hh}:${mi}`;
 }
 
-/* 附加或替換至表尾（樂觀更新） */
-function appendOrReplaceBottom(p){
-  const old=rowById[p.id]; if(old) old.remove();
-  const tr=document.createElement('tr');
-  tr.innerHTML = `
-    <td class="col-id"   title="${p.id}">${p.id}</td>
-    <td class="col-name" title="${p.name}"><span class="truncate5">${p.name}</span></td>
-    <td class="col-tier" title="${p.tier}">${p.tier}</td>
-    <td class="col-date" title="${p.ymd||''}">${p.ymd||''}</td>`;
-  tr.onclick=()=>fill(p.id,p.name,p.tier);
-  rows.appendChild(tr);
-  rowById[p.id]=tr;
+function addB(item){
+  const arr = loadB();
+  arr.unshift(item);
+  saveB(arr.slice(0,10));
+  renderB();
 }
 
-/* limit>0 才換算；空或0 → 傳空字串 */
-function computeLimitSerial(limitStr){
-  if (limitStr==='' || Number(limitStr)===0) return {serial:'', ymd:''};
-  const mins=nowTPE.getUTCHours()*60 + nowTPE.getUTCMinutes();
-  const base=new Date(nowTPE);
-  if(mins<500) base.setUTCDate(base.getUTCDate()-1);
-  const serial=baseSerial(base) + Number(limitStr);
-  return {serial:String(serial), ymd:serialToYmd(serial)};
+function renderB(){
+  const box  = document.getElementById('draftBoxB');
+  const list = document.getElementById('draftB');
+  const arr  = loadB();
+  if(!arr.length){ box.style.display='none'; list.innerHTML=''; return; }
+  box.style.display='block';
+  list.innerHTML = arr.map(x =>
+    `<div class="line ${x.flag}">
+       ${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.status}
+     </div>`
+  ).join('');
 }
 
-/* 上傳 */
-function upload(){
-  const id=(idE.value||'').trim().toUpperCase();
-  const name=(nameE.value||'').trim();
-  const tier=parseInt(tierE.value,10);
-  const limit=(limitE.value||'').trim();
-
-  if(!/^[A-Z0-9]{5}$/.test(id)) return alert('ID 需為 5 碼英數大寫');
-  if(!name) return alert('名字不得為空');
-  if(Number.isNaN(tier)||tier<0||tier>5) return alert('級距需 0–5');
-  if(limit!=='' && !/^[0-9]+$/.test(limit)) return alert('limit 僅允許純數字');
-
-  const {serial, ymd}=computeLimitSerial(limit);
-
-  showMask();
-  const form=new URLSearchParams();
-  form.append('action','upsert');
-  form.append('id',id);
-  form.append('name',name);
-  form.append('tier',String(tier));
-  form.append('limit_date',serial); // '' 或 數字字串
-
-  fetch(API_URL,{method:'POST',body:form})
-    .then(r=>r.json())
-    .then(res=>{
-      if(res.status==='ok'){
-        appendOrReplaceBottom({id,name,tier,ymd});
-        if(++uploadCount>=10){ uploadCount=0; reload(); }
-        idE.value=''; nameE.value=''; tierE.value='3'; limitE.value='';
-      }else{
-        alert(res.msg||'上傳失敗');
-      }
-    })
-    .catch(e=>{ console.error(e); alert('上傳錯誤'); })
-    .finally(hideMask);
+/* ===== 狀態燈（GET） ===== */
+async function probeStatus(){
+  const gas=document.getElementById('dotGas'),ss=document.getElementById('dotSs'),sh=document.getElementById('dotSh');
+  const set=(el,c)=>{el.classList.remove('ok','bad');el.classList.add(c);};
+  try{
+    const r=await fetch(API_URL+'?target=1',{method:'GET',cache:'no-store'});
+    set(gas,r.ok?'ok':'bad');
+    const j=await r.json().catch(()=>null);
+    if(j&&j.fileExists)set(ss,'ok');
+    if(j&&j.sheetExists)set(sh,'ok');
+  }catch(_){set(gas,'bad');}
 }
 
-/* 聚焦滾入可視區，避免鍵盤遮住 */
-document.addEventListener('focusin', e=>{
-  if(e.target.classList && e.target.classList.contains('ctl')){
-    e.target.scrollIntoView({behavior:'smooth', block:'center'});
-  }
-}, true);
+/* ===== 傳送 ===== */
+function showOverlay(on){document.getElementById('overlay').style.display=on?'flex':'none';}
+function submitData(p){
+  const params=new URLSearchParams();
+  params.append('action','submit');params.append('key',p.key);
+  params.append('date',p.date);params.append('shift',p.shift);
+  params.append('id',p.id);params.append('dN',p.dN);
+  return fetch(API_URL,{method:'POST',body:params,cache:'no-store'})
+    .then(r=>r.text()).then(t=>{try{return JSON.parse(t);}catch(_){return{status:'parse_failed',raw:t};}});
+}
 
-/* 輸入規則 */
-idE.oninput=()=>{ idE.value=idE.value.toUpperCase().replace(/[^A-Z0-9]/g,''); };
-limitE.oninput=()=>{ limitE.value=limitE.value.replace(/[^\d]/g,''); };
+async function send(){
+  const id = document.getElementById('code').value.trim().toUpperCase();
+  if(!/^[A-Z0-9]{5}$/.test(id)){
+  document.getElementById('code').focus();
+  return;
+}
 
-/* 綁定 */
-document.getElementById('btnReload').onclick=reload;
-document.getElementById('btnUpload').onclick=upload;
+  const payload = { id, date: CUR_SER, key: `${CUR_SER}|${id}`, shift: selB, dN: selA };
 
-/* 初始讀取 */
-reload();
+  showOverlay(true);
+  let ok = false, res;
+  try { res = await submitData(payload); ok = res && res.status === 'ok'; }
+  catch(_) { ok = false; }
+  showOverlay(false);
+
+  const status = ok ? 'ok' : 'ng';
+  const bIsN = String(selB).toUpperCase() === 'N';
+  const flag = ok ? (bIsN ? 'on' : 'ok') : 'ng';
+  const aDisp  = bIsN ? `${MD_STR} - 取消` : `${MD_STR} - ${selA}`;
+  addB({ ts: tsMin(), id, a: aDisp, b: selB, status, flag });
+
+  toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
+}
+
+/* ===== 輸入與選項 ===== */
+function bindInput(){
+  const el=document.getElementById('code');
+  el.value=loadA();
+  el.addEventListener('input',()=>{let x=el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5);el.value=x.toUpperCase();if(el.value.length===5)saveA(el.value);});
+  el.addEventListener('focus',()=>{if(el.value)el.value='';});
+}
+function setSel(btns,val,attr){
+  btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
+}
+function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
+
+/* ===== 啟動 ===== */
+addEventListener('DOMContentLoaded',()=>{
+  setSel(document.querySelectorAll('[data-a]'),selA,'a');
+  setSel(document.querySelectorAll('[data-b]'),selB,'b');
+  document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{selA=b.dataset.a;setSel(document.querySelectorAll('[data-a]'),selA,'a');enableSend();}));
+  document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{selB=b.dataset.b;setSel(document.querySelectorAll('[data-b]'),selB,'b');enableSend();}));
+  bindInput();enableSend();startClock();probeStatus();renderB();
+  document.getElementById('sendBtn').addEventListener('click',send);
+});
 </script>
 </body>
 </html>
