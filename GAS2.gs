@@ -16,9 +16,10 @@ function sweepExpiredAndNotify() {
       const limitSerial = _toSerialInt(limit, epoch); // ← 加這行：統一轉序號
       if (limitSerial && newTn > limitSerial) {
         const row = i + 2;
-        sh.getRange(row, 4).setValue(2);
-        sh.getRange(row, 5).setValue('');
-        sh.getRange(row, 6).setValue(nowStr);
+        sh.getRange(row, 3).setValue(2);
+        sh.getRange(row, 4).setValue('');
+        sh.getRange(row, 5).setValue(nowStr);
+        sh.getRange(row, 6).setValue('sys');
         notify.push(`ID:${id} 限制日:${serialToYmd(limitSerial)}`);
       }
     }
