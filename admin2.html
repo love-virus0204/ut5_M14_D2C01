@@ -48,10 +48,16 @@
   .field { display:flex; gap:6px; flex:0 0 auto; }
   .field label { font-size:.92em; color:#64748b; }
   .ctl { padding:10px 12px; font-size:1em; border:1px solid #cbd5e1; border-radius:10px; background:#fff; color:#0f172a; }
-  .w-limit { width: 6ch; }
-  .w-id    { width: 8ch; }
-  .w-name { flex: 1 1 0; min-width:0; }
-  .w-tier  { width: 6ch; }
+
+
+.input-table { width:100%; border-collapse:separate; border-spacing:8px; }
+.input-table td { vertical-align:bottom; }
+.col-limit { width:5ch; }
+.col-id    { width:8ch; }
+.col-name  { width:auto; }
+.col-tier  { width:6ch; }
+.ctl { width:100%; box-sizing:border-box; }
+
   .btn { padding:10px 16px; font-size:1em; border:1px solid #cbd5e1; background:#fff; color:#0f172a; border-radius:10px; cursor:pointer; transition:transform .02s ease, box-shadow .2s; }
   .btn:hover{ box-shadow:0 2px 8px rgba(0,0,0,.08); }
   .btn:active{ transform:translateY(1px); }
