@@ -269,7 +269,8 @@
       <td class="col-date" title="${p.ymd||'永久'}">${p.ymd||'永久'}</td>`;
     rows.prepend(tr);
     rowById[p.id]=tr;
-    tr.onclick=()=>fill( p.id, p.name, p.tier);
+    const id = p.id, name = p.name, tier = p.tier, ymd = p.ymd;
+    tr.onclick = () => fillForm(id, name, tier, ymd);
   }
 
   // ====== 點列帶入（limit 清空，由使用者輸入數字） ======
