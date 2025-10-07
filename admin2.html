@@ -14,8 +14,7 @@
 { .page{min-height:100dvh;} }
 
   /* 工具列（左 GAS 狀態 / 右 台北時間） */
-  .toolbar { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between;
-             padding:10px 14px; border-bottom:1px solid #e5e7eb; background:#fff; }
+  .toolbar { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #e5e7eb; background:#fff; }
   .badge { padding:2px 10px; border-radius:999px; font-size:.95em; border:1px solid #cfd8dc; color:#64748b; }
   .badge.ok { border-color:#10b981; color:#047857; }
   .badge.err { border-color:#ef4444; color:#b91c1c; }
@@ -123,8 +122,8 @@
         <table>
           <thead>
             <tr>
-              <th class="col-id">ID</th>
-              <th class="col-name">名字</th>
+              <th class="col-id">工號</th>
+              <th class="col-name">姓名</th>
               <th class="col-tier">級</th>
               <th class="col-limit">日期</th>
             </tr>
@@ -182,9 +181,8 @@
   const limitEl = document.getElementById('limit');
 
   const rowById = Object.create(null);
-  let uploadCount = 0;
   pingGas();
-  setInterval(pingGas, 45000);
+  let uploadCount = 0;
 
   // ====== 時鐘（台北時區） ======
   let nowTPE = new Date();
@@ -353,6 +351,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
   // 初始載入
 window.addEventListener('load', () => {
   setTimeout(reloadData, 1000); });
+  setInterval(pingGas, 45000);
 </script>
 </body>
 </html>
