@@ -41,8 +41,60 @@
   }
 
   /* 下：輸入區固定（卡片風） */
-  .bottom { flex:0 0 auto; border-top:1px solid #e5e7eb; background:#fff; }
-  .form-wrap { width:var(--card-w); margin:12px auto; background:#fff; border:1px solid #e5e7eb; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.06); padding:12px; }
+/* 下方輸入區固定樣式 */
+.bottom {
+  flex: 0 0 auto;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+/* 外框卡片風 */
+.form-wrap {
+  width: 100%;
+  max-width: 90vw;
+  margin: 12px auto;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* 輸入表格本體 */
+.input-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 8px; /* 欄間距 */
+}
+
+.input-table td {
+  vertical-align: bottom;
+}
+
+/* 各欄位寬度（固定寬 + 自動寬） */
+.f-limit { width: 5ch; }
+.f-id    { width: 8ch; }
+.f-name  { width: auto; }
+.f-tier  { width: 6ch; }
+
+/* 控制輸入框統一風格 */
+.input-table .ctl {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font-size: 1em;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: #0f172a;
+  outline: none;
+  transition: border-color .15s ease;
+}
+
+.input-table .ctl:focus {
+  border-color: #10b981;
+}
 
 
 
