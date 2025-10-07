@@ -241,7 +241,7 @@ function _upsert(sheet, p){
   const hitRow = _findRowByKey(sheet, String(p.id), 1);
 
   if (hitRow > 0){
-    sheet.getRange(hitRow, 1, 1, 5).setValues([row]);
+    sheet.getRange(hitRow, 1, 1, 6).setValues([row]);
     sheet.getRange(hitRow, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
