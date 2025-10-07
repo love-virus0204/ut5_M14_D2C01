@@ -3,65 +3,54 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>資料庫管理頁 final</title>
+<title>資料庫管理頁 final-noscroll</title>
 <style>
-  :root { --min-font:16px; --card-w:90vw; --gap:12px; }
+  :root { --min-font:16px; --page-w:90vw; }
   html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:var(--min-font);background:#f5f6f8;line-height:1.4;}
   *{box-sizing:border-box;}
   .page{height:100%;display:flex;flex-direction:column;}
 
-  /* 工具列：左 GAS 狀態 / 右 台北時間 */
-  .toolbar{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #e5e7eb;}
+  /* 工具列 */
+  .toolbar{height:48px;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#fff;border-bottom:1px solid #e5e7eb;}
   .badge{padding:2px 10px;border-radius:999px;border:1px solid #cfd8dc;color:#64748b;}
   .badge.ok{border-color:#10b981;color:#047857;}
   .badge.err{border-color:#ef4444;color:#b91c1c;}
   .clock{font-variant-numeric:tabular-nums;color:#334155;}
 
-  /* 上：渲染卡片（90% 寬置中，允許橫向捲動） */
-  .top{flex:1 1 auto;min-height:0;display:flex;justify-content:center;padding:14px 0;}
-  .card{width:var(--card-w);background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.06);display:flex;flex-direction:column;min-height:0;}
-  .card-head{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb;}
-  .card-body{flex:1 1 auto;min-height:0;overflow:auto;}
-  table{border-collapse:collapse;table-layout:fixed;min-width:600px;width:100%;}
+  /* 上：渲染卡片（禁止橫向捲動） */
+  .top{padding:8px 0;flex:1 1 auto;min-height:0;display:flex;justify-content:center;}
+  .card{width:min(var(--page-w),960px);background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.05);display:flex;flex-direction:column;min-height:0;}
+  .card-head{height:44px;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid #e5e7eb;}
+  .card-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;max-height:calc(100vh - 192px);} /* 48 toolbar + 約100 下方 + 邊距 */
+  table{border-collapse:collapse;width:100%;table-layout:fixed;}
   thead th{position:sticky;top:0;background:#fff;z-index:1;}
-  th,td{border-bottom:1px solid #f1f5f9;padding:10px 8px;text-align:center;color:#334155;}
+  th,td{border-bottom:1px solid #f1f5f9;padding:8px 6px;text-align:center;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   tr:hover{background:#f8fafc;cursor:pointer;}
-  /* 欄寬與置中 */
-  th.col-id,td.col-id{width:7ch;}
-  th.col-name,td.col-name{width:12em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  th.col-tier,td.col-tier{width:5ch;white-space:nowrap;}
-  th.col-limit,td.col-limit{width:10ch;}
 
-  /* 下：輸入卡片（固定 2×3） */
-  .bottom{flex:0 0 auto;border-top:1px solid #e5e7eb;background:#fff;}
-  .form-wrap{width:var(--card-w);margin:12px auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.06);padding:12px;}
-  .grid23{
-    display:grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas:
-      "id name blank"
-      "tier limit submit";
-    gap: var(--gap);
-    align-items:end;
-  }
-  .field{display:flex;flex-direction:column;gap:6px;}
-  .field label{font-size:.92em;color:#64748b;}
-  .cell-id{grid-area:id;}
-  .cell-name{grid-area:name;}
-  .cell-blank{grid-area:blank;}
-  .cell-tier{grid-area:tier;}
-  .cell-limit{grid-area:limit;}
-  .cell-submit{grid-area:submit;display:flex;align-items:end;justify-content:flex-end;}
-  .ctl{padding:10px 12px;font-size:1em;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;}
-  .btn{padding:10px 16px;font-size:1em;border:1px solid #cbd5e1;border-radius:10px;background:#fff;cursor:pointer;transition:transform .02s ease, box-shadow .2s;}
-  .btn.primary{background:#10b981;color:#fff;border-color:#10b981;}
-  .btn.secondary{background:#f8fafc;}
-  .btn:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);}
-  .btn:active{transform:translateY(1px);}
+  /* 用 colgroup 以百分比分配，總和=100%，不會橫向超出 */
+  colgroup col.col-id{width:12%;}
+  colgroup col.col-name{width:46%;}
+  colgroup col.col-tier{width:12%;}
+  colgroup col.col-limit{width:30%;}
+
+  /* 下：輸入卡片（貼底，兩行三格，禁橫捲） */
+  .bottom{position:sticky;bottom:0;z-index:5;background:#fff;border-top:1px solid #e5e7eb;}
+  .form-wrap{width:min(var(--page-w),960px);margin:0 auto;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 -2px 8px rgba(0,0,0,.05);}
+  .row{display:flex;gap:8px;align-items:end;margin-top:6px;}
+  .cell{display:flex;flex-direction:column;gap:4px;min-width:0;max-width:100%;}
+  .cell.id   {flex:0 0 10ch;}
+  .cell.tier {flex:0 0 6ch;}
+  .cell.limit{flex:0 0 8ch;}
+  .cell.name {flex:1 1 auto;}
+  .cell.blank{flex:1 1 auto;}
+  .cell.submit{flex:0 0 auto;display:flex;justify-content:flex-end;}
+  label{font-size:.9em;color:#64748b;line-height:1.2;}
+  .ctl{width:100%;padding:9px 10px;font-size:1em;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;max-width:100%;}
+  .btn{padding:9px 14px;font-size:1em;border:1px solid #10b981;border-radius:10px;background:#10b981;color:#fff;white-space:nowrap;max-width:100%;}
 
   /* 遮罩 */
   #mask{position:fixed;inset:0;background:rgba(2,6,23,.15);display:none;align-items:center;justify-content:center;z-index:999;}
-  .loader{width:44px;height:44px;border:4px solid #e2e8f0;border-top:4px solid #0f172a;border-radius:50%;animation:spin 1s linear infinite;}
+  .loader{width:40px;height:40px;border:4px solid #e2e8f0;border-top:4px solid #0f172a;border-radius:50%;animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
@@ -77,17 +66,15 @@
     <div class="card">
       <div class="card-head">
         <strong>資料庫列表</strong>
-        <button id="btnReload" class="btn secondary">更新</button>
+        <button id="btnReload" class="btn" style="background:#f8fafc;color:#0f172a;border-color:#cbd5e1;">更新</button>
       </div>
-      <div class="card-body">
+      <div class="card-body" id="cardBody">
         <table>
+          <colgroup>
+            <col class="col-id"><col class="col-name"><col class="col-tier"><col class="col-limit">
+          </colgroup>
           <thead>
-            <tr>
-              <th class="col-id">ID</th>
-              <th class="col-name">名字</th>
-              <th class="col-tier">級距</th>
-              <th class="col-limit">日期</th>
-            </tr>
+            <tr><th>ID</th><th>名字</th><th>級距</th><th>日期</th></tr>
           </thead>
           <tbody id="rows"></tbody>
         </table>
@@ -95,36 +82,38 @@
     </div>
   </section>
 
-  <!-- 2×3 輸入網格 -->
+  <!-- 下方輸入：兩行三格 -->
   <section class="bottom">
     <div class="form-wrap">
-      <form class="grid23" onsubmit="return false;">
-        <!-- 第1行：ID | 名字 | 空白 -->
-        <div class="field cell-id">
+      <!-- 第1行：ID | 名字 | 空白 -->
+      <div class="row">
+        <div class="cell id">
           <label for="id">ID（5碼英數大寫）</label>
           <input id="id" class="ctl" maxlength="5" autocomplete="off" />
         </div>
-        <div class="field cell-name">
+        <div class="cell name">
           <label for="name">名字</label>
           <input id="name" class="ctl" autocomplete="off" />
         </div>
-        <div class="field cell-blank"><label>&nbsp;</label><div>&nbsp;</div></div>
-        <!-- 第2行：級距 | limit | 上傳 -->
-        <div class="field cell-tier">
+        <div class="cell blank"></div>
+      </div>
+      <!-- 第2行：級距 | limit | 上傳 -->
+      <div class="row">
+        <div class="cell tier">
           <label for="tier">級距（0–5，預設3）</label>
           <select id="tier" class="ctl">
             <option>0</option><option>1</option><option>2</option>
             <option selected>3</option><option>4</option><option>5</option>
           </select>
         </div>
-        <div class="field cell-limit">
+        <div class="cell limit">
           <label for="limit">limit（天數；可空）</label>
-          <input id="limit" class="ctl" type="number" inputmode="numeric" min="0" step="1" />
+          <input id="limit" class="ctl" inputmode="numeric" />
         </div>
-        <div class="field cell-submit">
-          <button id="btnUpload" class="btn primary">上傳</button>
+        <div class="cell submit">
+          <button id="btnUpload" class="btn">上傳</button>
         </div>
-      </form>
+      </div>
     </div>
   </section>
 </div>
@@ -134,79 +123,69 @@
 
 <script>
 /* 設定 */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
-
+const GAS_URL='請填入你的GAS部署網址';
 const rows=document.getElementById('rows');
 const gas=document.getElementById('gasStatus');
 const clock=document.getElementById('clock');
 const mask=document.getElementById('mask');
+const cardBody=document.getElementById('cardBody');
 const idE=document.getElementById('id');
 const nameE=document.getElementById('name');
 const tierE=document.getElementById('tier');
 const limitE=document.getElementById('limit');
-
 const rowById=Object.create(null);
 let uploadCount=0;
 
-/* 台北時鐘（唯一時間來源） */
+/* 台北時鐘 */
 let nowTPE=new Date();
 function tick(){ nowTPE=getNowTPE(); clock.textContent=formatYMDHMS(nowTPE); }
 setInterval(tick,1000); tick();
 function getNowTPE(){
-  const fmt=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-  const o=Object.fromEntries(fmt.formatToParts(new Date()).map(p=>[p.type,p.value]));
+  const f=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  const o=Object.fromEntries(f.formatToParts(new Date()).map(p=>[p.type,p.value]));
   return new Date(Date.UTC(+o.year,+o.month-1,+o.day,+o.hour,+o.minute,+o.second));
 }
 function z(n){return String(n).padStart(2,'0');}
 function formatYMD(d){ return d.getUTCFullYear()+'-'+z(d.getUTCMonth()+1)+'-'+z(d.getUTCDate()); }
 function formatYMDHMS(d){ return formatYMD(d)+' '+z(d.getUTCHours())+':'+z(d.getUTCMinutes())+':'+z(d.getUTCSeconds()); }
 
-/* Excel/試算表序號工具 */
+/* 試算表序號 */
 const EPOCH=Date.UTC(1899,11,30);
-function serialToYmd(n){
-  if(typeof n!=='number' || !isFinite(n)) return '';
-  const ms=n*86400000+EPOCH;
-  const dt=new Date(ms);
-  return formatYMD(new Date(Date.UTC(dt.getUTCFullYear(),dt.getUTCMonth(),dt.getUTCDate())));
-}
+function serialToYmd(n){ if(typeof n!=='number'||!isFinite(n)) return ''; const ms=n*86400000+EPOCH; const dt=new Date(ms); return formatYMD(new Date(Date.UTC(dt.getUTCFullYear(),dt.getUTCMonth(),dt.getUTCDate()))); }
 function baseSerial(d){ return Math.floor((Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-EPOCH)/86400000); }
+function viewLimit(raw){ if(raw===0||raw==='0') return '永久'; return (typeof raw==='number')?serialToYmd(raw):(raw||''); }
 
 /* 遮罩 */
 function showMask(){mask.style.display='flex';}
 function hideMask(){mask.style.display='none';}
 
-/* GAS 健康檢查（GET） */
-function ping(){
-  fetch(GAS_URL+'?ping=1',{cache:'no-store'})
-    .then(r=>{ gas.textContent=r.ok?'OK':'ERR'; gas.className=r.ok?'badge ok':'badge err'; })
-    .catch(()=>{ gas.textContent='ERR'; gas.className='badge err'; });
-}
+/* ping */
+function ping(){ fetch(GAS_URL+'?ping=1',{cache:'no-store'}).then(r=>{ gas.textContent=r.ok?'OK':'ERR'; gas.className=r.ok?'badge ok':'badge err'; }).catch(()=>{ gas.textContent='ERR'; gas.className='badge err'; }); }
 ping(); setInterval(ping,45000);
 
-/* 渲染：0=>永久；數字=>yyyy-mm-dd；其他/空=>空字串 */
+/* 渲染（僅縱向可捲） */
 function render(values){
   rows.innerHTML='';
+  const has=Array.isArray(values)&&values.length>0;
+  cardBody.style.overflowY = has ? 'auto':'hidden';
   for(const v of values){
     const id=v[0], name=v[1], tier=v[2], raw=v[3];
-    const ymd=(raw===0||raw==='0') ? '永久' : (typeof raw==='number' ? serialToYmd(raw) : (raw||''));
+    const ymd=viewLimit(raw);
     const tr=document.createElement('tr');
-    tr.innerHTML = `
-      <td class="col-id" title="${id}">${id}</td>
-      <td class="col-name" title="${name}">${name}</td>
-      <td class="col-tier" title="${tier}">${tier}</td>
-      <td class="col-limit" title="${ymd}">${ymd}</td>`;
+    tr.innerHTML=`
+      <td title="${id}">${id}</td>
+      <td title="${name}">${name}</td>
+      <td title="${tier}">${tier}</td>
+      <td title="${ymd}">${ymd}</td>`;
     tr.onclick=()=>fill(id,name,tier);
     rows.appendChild(tr);
     rowById[id]=tr;
   }
 }
 
-/* 點列帶入（limit 清空，由使用者輸入數字） */
+/* 點列帶入 */
 function fill(id,name,tier){
-  idE.value=id||'';
-  nameE.value=name||'';
-  tierE.value=String(tier??3);
-  limitE.value='';
+  idE.value=id||''; nameE.value=name||''; tierE.value=String(tier??3); limitE.value='';
   document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
@@ -221,48 +200,46 @@ function reload(){
     .finally(hideMask);
 }
 
-/* 表尾插入或替換舊列 */
+/* 附加或替換至表尾 */
 function appendOrReplaceBottom(p){
   const old=rowById[p.id]; if(old) old.remove();
   const tr=document.createElement('tr');
-  tr.innerHTML = `
-    <td class="col-id" title="${p.id}">${p.id}</td>
-    <td class="col-name" title="${p.name}">${p.name}</td>
-    <td class="col-tier" title="${p.tier}">${p.tier}</td>
-    <td class="col-limit" title="${p.ymd||''}">${p.ymd||''}</td>`;
+  tr.innerHTML=`
+    <td title="${p.id}">${p.id}</td>
+    <td title="${p.name}">${p.name}</td>
+    <td title="${p.tier}">${p.tier}</td>
+    <td title="${p.ymd||''}">${p.ymd||''}</td>`;
   tr.onclick=()=>fill(p.id,p.name,p.tier);
-  rows.appendChild(tr);
-  rowById[p.id]=tr;
+  rows.appendChild(tr); rowById[p.id]=tr;
 }
 
-/* 上傳：limit>0 才換算；空或 0 → 傳空字串 */
+/* limit>0 才換算；空或0 → 傳空字串 */
+function computeLimitSerial(limitStr){
+  if (limitStr==='' || Number(limitStr)===0) return {serial:'', ymd:''};
+  const mins=nowTPE.getUTCHours()*60+nowTPE.getUTCMinutes();
+  const base=new Date(nowTPE);
+  if(mins<500) base.setUTCDate(base.getUTCDate()-1);
+  const serial=baseSerial(base)+Number(limitStr);
+  return {serial:String(serial), ymd:serialToYmd(serial)};
+}
+
+/* 上傳 */
 function upload(){
   const id=(idE.value||'').trim().toUpperCase();
   const name=(nameE.value||'').trim();
   const tier=parseInt(tierE.value,10);
   const limit=(limitE.value||'').trim();
-
   if(!/^[A-Z0-9]{5}$/.test(id)) return alert('ID 需為 5 碼英數大寫');
   if(!name) return alert('名字不得為空');
   if(Number.isNaN(tier)||tier<0||tier>5) return alert('級距需 0–5');
   if(limit!=='' && !/^[0-9]+$/.test(limit)) return alert('limit 僅允許純數字');
 
-  let serial='', ymd='';
-  if(limit!=='' && Number(limit)>0){
-    const m=nowTPE.getUTCHours()*60 + nowTPE.getUTCMinutes();
-    const base=new Date(nowTPE);
-    if(m<500) base.setUTCDate(base.getUTCDate()-1);
-    serial = baseSerial(base) + Number(limit);
-    ymd = serialToYmd(serial);
-  }
+  const {serial, ymd}=computeLimitSerial(limit);
 
   showMask();
   const form=new URLSearchParams();
-  form.append('action','upsert');
-  form.append('id',id);
-  form.append('name',name);
-  form.append('tier',String(tier));
-  form.append('limit_date',String(serial));   // '' 或 數字字串
+  form.append('action','upsert'); form.append('id',id); form.append('name',name);
+  form.append('tier',String(tier)); form.append('limit_date',serial);
 
   fetch(GAS_URL,{method:'POST',body:form})
     .then(r=>r.json())
@@ -271,13 +248,18 @@ function upload(){
         appendOrReplaceBottom({id,name,tier,ymd});
         if(++uploadCount>=10){ uploadCount=0; reload(); }
         idE.value=''; nameE.value=''; tierE.value='3'; limitE.value='';
-      }else{
-        alert(res.msg||'上傳失敗');
-      }
+      }else{ alert(res.msg||'上傳失敗'); }
     })
     .catch(e=>{ console.error(e); alert('上傳錯誤'); })
     .finally(hideMask);
 }
+
+/* 聚焦滾入可視區，避免鍵盤遮住 */
+document.addEventListener('focusin', e=>{
+  if(e.target.classList && e.target.classList.contains('ctl')){
+    e.target.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}, true);
 
 /* 綁定 */
 document.getElementById('btnReload').onclick=reload;
