@@ -35,11 +35,10 @@
   tbody td{border-bottom:1px solid #f3f4f6;padding:8px 6px;text-align:center;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   tbody tr:hover{background:#f9fafb;cursor:pointer;}
 
-  /* 固定欄寬（非%） */
-  th.col-id,   td.col-id   { width:8ch; }
-  th.col-name, td.col-name { width:5em; }   /* 名字最多約5個全形字 */
+  th.col-id,   td.col-id   { width:5ch; }
+  th.col-name, td.col-name { width:5em; }
   th.col-tier, td.col-tier { width:5ch; }
-  th.col-date, td.col-date { width:10ch; }
+  th.col-date, td.col-date { width:11ch; }
 
   /* 名字欄截斷 */
   .truncate5{display:inline-block;max-width:5em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -52,7 +51,7 @@
   /* 固定輸入寬（非%） */
   .cell.id    { flex:0 0 10ch; }
   .cell.name  { flex:1 1 auto; }
-  .cell.blank { flex:1 1 03ch; }
+  .cell.blank { flex:1 1 06ch; }
   .cell.tier  { flex:0 0 6ch; }
   .cell.limit { flex:0 0 8ch; }
   .cell.submit{ flex:0 0 auto; display:flex; justify-content:flex-end; }
@@ -110,7 +109,7 @@
       <!-- 第1行：ID | 名字 | 空白 -->
       <div class="row">
         <div class="cell id">
-          <label for="id">ID（5 碼英數大寫）</label>
+          <label for="id">ID</label>
           <input id="id" class="ctl" maxlength="5" autocomplete="off" />
         </div>
         <div class="cell name">
@@ -122,14 +121,14 @@
       <!-- 第2行：級距 | limit | 上傳 -->
       <div class="row">
         <div class="cell tier">
-          <label for="tier">級距（0–5，預設 3）</label>
+          <label for="tier">級距（0–5）</label>
           <select id="tier" class="ctl">
             <option>0</option><option>1</option><option>2</option>
             <option selected>3</option><option>4</option><option>5</option>
           </select>
         </div>
         <div class="cell limit">
-          <label for="limit">limit（天數；可空）</label>
+          <label for="limit">(天數）</label>
           <input id="limit" class="ctl" inputmode="numeric" />
         </div>
         <div class="cell submit">
