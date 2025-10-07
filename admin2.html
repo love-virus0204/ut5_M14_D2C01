@@ -282,8 +282,9 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
   }
 
   // ====== 讀取 ======
-  function reloadData(){
+  async function reloadData(){
     showMask();
+    await new Promise(r => setTimeout(r, 1000));
     const params=new URLSearchParams();
     params.append('action','list_recent2');
     fetch(GAS_URL,{method:'POST',body:params})
@@ -350,8 +351,8 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
   limitEl.addEventListener('input', ()=>{ limitEl.value=limitEl.value.replace(/[^\d]/g,''); });
 
   // 初始載入
-window.addEventListener('load', () => {
-  setTimeout(reloadData, 1000); });
+  window.addEventListener('load',
+reloadData);
 </script>
 </body>
 </html>
