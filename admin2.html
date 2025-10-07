@@ -237,26 +237,24 @@
   pingGas();
   setInterval(pingGas, 45000);
 
-  // ====== 渲染（0 → 永久；數字 → yyyy-mm-dd；其他/空 → 空） ======
-  function renderTable(values){
-    rows.innerHTML='';
-    for(const v of values){
-      const id=v[0], name=v[1], tier=v[2], rawLimit=v[3];
-      const ymd = (rawLimit===0 || rawLimit==='0')
-                  ? '永久'
-                  : (typeof rawLimit==='number' ? serialToYmd(rawLimit) : (rawLimit||''));
-      const tr=document.createElement('tr');
-      tr.dataset.id=id;
-      tr.innerHTML = `
-        <td class="col-id" title="${id}">${id}</td>
-        <td class="col-name" title="${name}">${name}</td>
-        <td class="col-tier" title="${tier}">${tier}</td>
-        <td class="col-limit" title="${ymd}">${ymd}</td>`;
-      tr.onclick=()=>fillForm(id,name,tier,ymd);
-      rows.prepend(tr);
-      rowById[id]=tr;
-    }
+  // 渲染數據
+function render(values){
+  rows.innerHTML='';
+  for(const v of (values||[])){
+    const id=v[0], name=v[1], tier=v[2], raw=v[3];
+    const ymd=viewLimit(raw);
+    const safeName=String(name||'');
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td class="col-id"   title="${id}">${id}</td>
+      <td class="col-name" title="${safeName}"><span class="truncate5">${safeName}</span></td>
+      <td class="col-tier" title="${tier}">${tier}</td>
+      <td class="col-date" title="${ymd}">${ymd}</td>`;
+    tr.onclick=()=>fill(id,name,tier);
+    rows.appendChild(tr);
+    rowById[id]=tr;
   }
+}
 
 /* 附加或替換至表頭（樂觀更新） */
 function appendOrReplaceBottom(p){
