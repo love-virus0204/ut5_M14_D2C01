@@ -258,20 +258,20 @@
     }
   }
 
-  function appendOrReplaceBottom(p){
-    const old=rowById[p.id];
-    if(old) old.remove();
-    const tr=document.createElement('tr');
-    tr.dataset.id=p.id;
-    tr.innerHTML=`
-      <td class="col-id" title="${p.id}">${p.id}</td>
-      <td class="col-name" title="${p.name}">${p.name}</td>
-      <td class="col-tier" title="${p.tier}">${p.tier}</td>
-      <td class="col-limit" title="${p.ymd||''}">${p.ymd||''}</td>`;
-    tr.onclick=()=>fillForm(p.id,p.name,p.tier,p.ymd||'');
-    rows.appendChild(tr);
-    rowById[p.id]=tr;
-  }
+/* 附加或替換至表頭（樂觀更新） */
+function appendOrReplaceBottom(p){
+  const old=rowById[p.id]; if(old) old.remove();
+  const tr=document.createElement('tr');
+  tr.innerHTML = `
+    <td class="col-id"   title="${p.id}">${p.id}</td>
+    <td class="col-name" title="${p.name}"><span class="truncate5">${p.name}</span></td>
+    <td class="col-tier" title="${p.tier}">${p.tier}</td>
+    <td class="col-date" title="${p.ymd||''}">${p.ymd||''}</td>`;
+  tr.onclick=()=>fill(p.id,p.name,p.tier);
+  rows.prepend(tr);
+  rowById[p.id]=tr;
+}
+
 
   // ====== 點列帶入（limit 清空，由使用者輸入數字） ======
   function fillForm(id,name,tier,_ymd){
