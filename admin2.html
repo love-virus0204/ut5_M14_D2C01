@@ -318,7 +318,8 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       const baseSerial = baseSerialFromTPE(base);
       limitSerial = baseSerial + Number(p.limit);
       ymdShow = serialToYmd(limitSerial);
-    } // 空或 0 → 維持空值
+      p.tier = 0
+    }
 
     showMask();
     const form=new URLSearchParams();
