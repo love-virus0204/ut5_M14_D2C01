@@ -50,7 +50,7 @@
   label{font-size:.92em;color:#4b5563;}
   /* 固定輸入寬（非%） */
   .cell.limit { flex:0 0 3ch; }
-  .cell.id    { flex:0 0 8ch; }
+  .cell.id    { flex:0 0 9ch; }
   .cell.name  { flex:1 1 auto; }
   .cell.tier  { flex:0 0 4ch; }
   .cell.submit{ flex:0 0 auto; display:flex; justify-content:flex-end; }
@@ -227,7 +227,7 @@ function appendOrReplaceBottom(p){
     <td class="col-tier" title="${p.tier}">${p.tier}</td>
     <td class="col-date" title="${p.ymd||''}">${p.ymd||''}</td>`;
   tr.onclick=()=>fill(p.id,p.name,p.tier);
-  rows.appendChild(tr);
+  rows.prepend(tr);
   rowById[p.id]=tr;
 }
 
@@ -261,7 +261,7 @@ function upload(){
   form.append('id',id);
   form.append('name',name);
   form.append('tier',String(tier));
-  form.append('limit_date',serial); // '' 或 數字字串
+  form.append('limit_date',serial);
 
   fetch(API_URL,{method:'POST',body:form})
     .then(r=>r.json())
