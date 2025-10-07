@@ -184,7 +184,7 @@
   const rowById = Object.create(null);
   let uploadCount = 0;
 
-  // ====== 時鐘（台北時區，唯一時間來源） ======
+  // ====== 時鐘（台北時區） ======
   let nowTPE = new Date();
   function tickClock(){
     nowTPE = getNowInTPE();
