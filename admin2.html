@@ -184,7 +184,7 @@
   const rowById = Object.create(null);
   let uploadCount = 0;
 
-  // ====== 時鐘（台北時區，唯一時間來源） ======
+  // ====== 時鐘（台北時區） ======
   let nowTPE = new Date();
   function tickClock(){
     nowTPE = getNowInTPE();
@@ -313,12 +313,12 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
     let limitSerial=''; let ymdShow='';
     if(p.limit!=='' && Number(p.limit)>0){
       const mins = nowTPE.getUTCHours()*60 + nowTPE.getUTCMinutes();
-      const base = new Date(nowTPE);
-      if(mins<500) base.setUTCDate(base.getUTCDate()-1);
-      const baseSerial = baseSerialFromTPE(base);
-      limitSerial = baseSerial + Number(p.limit);
+      let base = baseSerialFromTPE(new Date(nowTPE));
+      if(mins<500) base = base - 1;
+      limitSerial = base + Number(p.limit);
       ymdShow = serialToYmd(limitSerial);
-    } //
+      p.tier = 0;
+    }
 
     showMask();
     const form=new URLSearchParams();
