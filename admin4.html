@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>資料庫管理頁 final</title>
+<style>
+  :root { --min-font:16px; --card-w:90vw; --gap:12px; }
+  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:var(--min-font);background:#f5f6f8;line-height:1.4;}
+  *{box-sizing:border-box;}
+  .page{height:100%;display:flex;flex-direction:column;}
+
+  .toolbar{height:48px;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#fff;border-bottom:1px solid #e5e7eb;}
+  .badge{padding:2px 10px;border-radius:999px;border:1px solid #cfd8dc;color:#64748b;}
+  .badge.ok{border-color:#10b981;color:#047857;}
+  .badge.err{border-color:#ef4444;color:#b91c1c;}
+  .clock{font-variant-numeric:tabular-nums;color:#334155;}
+
+  .top{padding:8px 0;flex:1 1 auto;min-height:0;display:flex;justify-content:center;}
+  .card{width:var(--card-w);background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.06);display:flex;flex-direction:column;min-height:0;}
+  .card-head{height:44px;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid #e5e7eb;}
+  .card-body{flex:1 1 auto;min-height:0;overflow:auto;max-height:calc(100vh - 240px);}
+  table{border-collapse:collapse;table-layout:fixed;min-width:600px;width:100%;}
+  thead th{position:sticky;top:0;background:#fff;z-index:1;}
+  th,td{border-bottom:1px solid #f1f5f9;padding:8px 6px;text-align:center;color:#334155;}
+  tr:hover{background:#f8fafc;cursor:pointer;}
+  th.col-id,td.col-id{width:8ch;}
+  th.col-name,td.col-name{width:12em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  th.col-tier,td.col-tier{width:5ch;white-space:nowrap;}
+  th.col-limit,td.col-limit{width:10ch;white-space:nowrap;}
+
+  .bottom{position:sticky;bottom:0;z-index:5;border-top:1px solid #e5e7eb;background:#fff;}
+  .form-wrap{width:var(--card-w);margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 -4px 14px rgba(0,0,0,.06);padding:12px;}
+  .grid23{
+    height:132px;
+    display:grid;
+    grid-template-columns: 10ch 16em 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "id name blank"
+      "tier limit submit";
+    column-gap:12px; row-gap:8px;
+    align-items:end;
+  }
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:.92em;color:#64748b;}
+  .cell-id{grid-area:id;} .cell-name{grid-area:name;} .cell-blank{grid-area:blank;}
+  .cell-tier{grid-area:tier;} .cell-limit{grid-area:limit;} .cell-submit{grid-area:submit;display:flex;align-items:end;justify-content:flex-end;}
+  .ctl{padding:10px 12px;font-size:1em;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;}
+  #id{width:10ch;} #name{width:16em;} #tier{width:6ch;} #limit{width:8ch;}
+  .btn{padding:10px 16px;font-size:1em;border:1px solid #cbd5e1;border-radius:10px;background:#fff;cursor:pointer;transition:transform .02s ease, box-shadow .2s;}
+  .btn.primary{background:#10b981;color:#fff;border-color:#10b981;min-width:7.5em;}
+  .btn.secondary{background:#f8fafc;}
+  .btn:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);} .btn:active{transform:translateY(1px);}
+
+  #mask{position:fixed;inset:0;background:rgba(2,6,23,.15);display:none;align-items:center;justify-content:center;z-index:999;}
+  .loader{width:44px;height:44px;border:4px solid #e2e8f0;border-top:4px solid #0f172a;border-radius:50%;animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="toolbar">
+    <span>GAS 狀態：<span id="gasStatus" class="badge">--</span></span>
+    <span id="clock" class="clock">--:--:--</span>
+  </div>
+
+  <section class="top">
+    <div class="card">
+      <div class="card-head">
+        <strong>資料庫列表</strong>
+        <button id="btnReload" class="btn secondary">更新</button>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th class="col-id">ID</th><th class="col-name">名字</th><th class="col-tier">級距</th><th class="col-limit">日期</th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="bottom">
+    <div class="form-wrap">
+      <form class="grid23" onsubmit="return false;">
+        <div class="field cell-id"><label for="id">ID（5碼英數大寫）</label><input id="id" class="ctl" maxlength="5" autocomplete="off" /></div>
+        <div class="field cell-name"><label for="name">名字</label><input id="name" class="ctl" autocomplete="off" /></div>
+        <div class="field cell-blank"><label>&nbsp;</label><div>&nbsp;</div></div>
+        <div class="field cell-tier"><label for="tier">級距（0–5，預設3）</label>
+          <select id="tier" class="ctl"><option>0</option><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
+        </div>
+        <div class="field cell-limit"><label for="limit">limit（天數；可空）</label><input id="limit" class="ctl" type="number" inputmode="numeric" min="0" step="1" /></div>
+        <div class="field cell-submit"><button id="btnUpload" class="btn primary">上傳</button></div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<div id="mask"><div class="loader"></div></div>
+
+<script>
+const GAS_URL='請填入你的GAS部署網址';
+const rows=document.getElementById('rows'),gas=document.getElementById('gasStatus'),clock=document.getElementById('clock'),mask=document.getElementById('mask');
+const idE=document.getElementById('id'),nameE=document.getElementById('name'),tierE=document.getElementById('tier'),limitE=document.getElementById('limit');
+const rowById=Object.create(null);let uploadCount=0;
+
+/* 台北時鐘 */
+let nowTPE=new Date();
+function tick(){ nowTPE=getNowTPE(); clock.textContent=formatYMDHMS(nowTPE); }
+setInterval(tick,1000); tick();
+function getNowTPE(){ const fmt=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}); const o=Object.fromEntries(fmt.formatToParts(new Date()).map(p=>[p.type,p.value])); return new Date(Date.UTC(+o.year,+o.month-1,+o.day,+o.hour,+o.minute,+o.second)); }
+function z(n){return String(n).padStart(2,'0');}
+function formatYMD(d){ return d.getUTCFullYear()+'-'+z(d.getUTCMonth()+1)+'-'+z(d.getUTCDate()); }
+function formatYMDHMS(d){ return formatYMD(d)+' '+z(d.getUTCHours())+':'+z(d.getUTCMinutes())+':'+z(d.getUTCSeconds()); }
+
+/* Trial serial */
+const EPOCH=Date.UTC(1899,11,30);
+function serialToYmd(n){ if(typeof n!=='number'||!isFinite(n)) return ''; const ms=n*86400000+EPOCH; const dt=new Date(ms); return formatYMD(new Date(Date.UTC(dt.getUTCFullYear(),dt.getUTCMonth(),dt.getUTCDate()))); }
+function baseSerial(d){ return Math.floor((Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-EPOCH)/86400000); }
+
+/* 遮罩 */
+function showMask(){mask.style.display='flex';} function hideMask(){mask.style.display='none';}
+
+/* ping */
+function ping(){ fetch(GAS_URL+'?ping=1',{cache:'no-store'}).then(r=>{ gas.textContent=r.ok?'OK':'ERR'; gas.className=r.ok?'badge ok':'badge err'; }).catch(()=>{ gas.textContent='ERR'; gas.className='badge err'; }); }
+ping(); setInterval(ping,45000);
+
+/* 顯示層轉換 */
+function viewLimit(raw){ if(raw===0||raw==='0') return '永久'; return (typeof raw==='number')?serialToYmd(raw):(raw||''); }
+
+/* 渲染 */
+function render(values){
+  rows.innerHTML='';
+  for(const v of values){
+    const id=v[0], name=v[1], tier=v[2], raw=v[3];
+    const ymd=viewLimit(raw);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="col-id" title="${id}">${id}</td><td class="col-name" title="${name}">${name}</td><td class="col-tier" title="${tier}">${tier}</td><td class="col-limit" title="${ymd}">${ymd}</td>`;
+    tr.onclick=()=>fill(id,name,tier);
+    rows.appendChild(tr);
+    rowById[id]=tr;
+  }
+}
+
+/* 點列帶入 */
+function fill(id,name,tier){
+  idE.value=id||''; nameE.value=name||''; tierE.value=String(tier??3); limitE.value='';
+  document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* 讀取 */
+function reload(){
+  showMask();
+  const p=new URLSearchParams(); p.append('action','list_recent2');
+  fetch(GAS_URL,{method:'POST',body:p}).then(r=>r.json()).then(d=>{ if(d.status==='ok') render(d.values||[]); }).catch(console.error).finally(hideMask);
+}
+
+/* 附加或替換至表尾 */
+function appendOrReplaceBottom(p){
+  const old=rowById[p.id]; if(old) old.remove();
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="col-id" title="${p.id}">${p.id}</td><td class="col-name" title="${p.name}">${p.name}</td><td class="col-tier" title="${p.tier}">${p.tier}</td><td class="col-limit" title="${p.ymd||''}">${p.ymd||''}</td>`;
+  tr.onclick=()=>fill(p.id,p.name,p.tier);
+  rows.appendChild(tr); rowById[p.id]=tr;
+}
+
+/* limit>0 才換算；空或0 → 傳空字串 */
+function computeLimitSerial(limitStr){
+  if (limitStr==="" || Number(limitStr)===0) return {serial:"", ymd:""};
+  const mins=nowTPE.getUTCHours()*60+nowTPE.getUTCMinutes();
+  const base=new Date(nowTPE);
+  if(mins<500) base.setUTCDate(base.getUTCDate()-1);
+  const serial=baseSerial(base)+Number(limitStr);
+  return {serial:String(serial), ymd:serialToYmd(serial)};
+}
+
+/* 上傳 */
+function upload(){
+  const id=(idE.value||'').trim().toUpperCase();
+  const name=(nameE.value||'').trim();
+  const tier=parseInt(tierE.value,10);
+  const limit=(limitE.value||'').trim();
+  if(!/^[A-Z0-9]{5}$/.test(id)) return alert('ID 需為 5 碼英數大寫');
+  if(!name) return alert('名字不得為空');
+  if(Number.isNaN(tier)||tier<0||tier>5) return alert('級距需 0–5');
+  if(limit!=='' && !/^[0-9]+$/.test(limit)) return alert('limit 僅允許純數字');
+  const {serial, ymd}=computeLimitSerial(limit);
+  showMask();
+  const form=new URLSearchParams();
+  form.append('action','upsert'); form.append('id',id); form.append('name',name); form.append('tier',String(tier)); form.append('limit_date',serial);
+  fetch(GAS_URL,{method:'POST',body:form}).then(r=>r.json()).then(res=>{
+    if(res.status==='ok'){
+      appendOrReplaceBottom({id,name,tier,ymd});
+      if(++uploadCount>=10){ uploadCount=0; reload(); }
+      idE.value=''; nameE.value=''; tierE.value='3'; limitE.value='';
+    } else alert(res.msg||'上傳失敗');
+  }).catch(e=>{ console.error(e); alert('上傳錯誤'); }).finally(hideMask);
+}
+
+/* 聚焦時滾到視窗中央，避免鍵盤遮住 */
+document.addEventListener('focusin', e=>{
+  if(e.target.classList && e.target.classList.contains('ctl')){
+    e.target.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}, true);
+
+/* 綁定 */
+document.getElementById('btnReload').onclick=reload;
+document.getElementById('btnUpload').onclick=upload;
+idE.oninput=()=>{ idE.value=idE.value.toUpperCase().replace(/[^A-Z0-9]/g,''); };
+limitE.oninput=()=>{ limitE.value=limitE.value.replace(/[^\d]/g,''); };
+window.onload=reload;
+</script>
+</body>
+</html>
