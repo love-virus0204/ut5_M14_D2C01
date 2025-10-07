@@ -21,7 +21,7 @@ function sweepExpiredAndNotify() {
         var mt = [
           id,     // 1
           name,   // 2
-          '2',    // 3
+          2,      // 3
           '',     // 4
           nowStr, // 5
           'sys'   // 6
