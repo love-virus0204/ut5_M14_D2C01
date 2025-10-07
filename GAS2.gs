@@ -7,7 +7,9 @@ function sweepExpiredAndNotify() {
     const values = sh.getRange(2, 1, lastRow - 1, 6).getValues();
     const epoch = Date.UTC(1899, 11, 30);
     const nowStr = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
+
     const newTn  = _toSerialInt(nowStr, epoch);
+    const ymd = serialToYmd(newTn, epoch)
 
     const notify = [];
 
@@ -26,12 +28,12 @@ function sweepExpiredAndNotify() {
         ];
         sh.getRange(row, 1, 1, 6).setValues([mt]);
 
-        // notify.push(`ID:${id} 限制日:${serialToYmd(limitSerial)}`);
+        notify.push(`ID:${id} 限制日:${serialToYmd(limitSerial, epoch)}`);
       }
     }
 
     if (notify.length) {
-      const title = nowStr + ' 解禁名單';
+      const title = ymd + ' 解禁名單';
       const body  = notify.join('\n');
       try {
         MailApp.sendEmail(MAIL_TO, title, body);
