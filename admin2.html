@@ -47,30 +47,29 @@
   background: #fff;
 }
 
-.form{
+.form {
   max-width: 90vw;
   margin: 0 auto;
   box-sizing: border-box;
+  padding: 0;
 }
 
-/* 輸入表格本體 */
 .input-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 6px; /* 欄間距 */
+  border-spacing: 6px;
+  margin: 0;
 }
 
 .input-table td {
-  vertical-align: bottom; padding: 0;
+  padding: 0;
+  vertical-align: bottom;
 }
 
-/* 各欄位寬度（固定寬 + 自動寬） */
 .f-limit { width: 6ch; }
 .f-id    { width: 9ch; }
 .f-name  { width: auto; }
 .f-tier  { width: 6ch; }
-
-/* 控制輸入框統一風格 */
 .input-table .ctl {
   width: 100%;
   box-sizing: border-box;
