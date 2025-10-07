@@ -32,10 +32,10 @@
   th, td { border-bottom:1px solid #f1f5f9; padding:10px 8px; text-align:center; color:#334155; }
   tr:hover { background:#f8fafc; cursor:pointer; }
   /* 欄寬（依實際數值預設） */
-  th.col-id,   td.col-id    { width:5ch; }
-  th.col-name, td.col-name  { width:10em;}
+  th.col-id,   td.col-id    { width:4ch; }
+  th.col-name, td.col-name  { width:10ch;}
   th.col-tier, td.col-tier  { width:6ch; }
-  th.col-limit td.col-limit { width:10ch;}
+  th.col-limit td.col-limit { width:11ch;}
   td.col-name {
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
@@ -45,15 +45,11 @@
   .form-wrap { width:var(--card-w); margin:12px auto; background:#fff; border:1px solid #e5e7eb; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.06); padding:12px; }
   .form { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
   .row { display:flex; flex-direction: row; flex-wrap:nowrap; align-items:flex-end; gap:4px; }
-
-/* 避免欄位撐滿一整行 
-.field { flex: 0 0 auto; } */
-
-  .field { display:flex; gap:6px; }
+  .field { display:flex; gap:6px; flex: 0 0 auto; }
   .field label { font-size:.92em; color:#64748b; }
   .ctl { padding:10px 12px; font-size:1em; border:1px solid #cbd5e1; border-radius:10px; background:#fff; color:#0f172a; }
   .w-id{ width: 9ch; }
-  .w-name{ width: 2en; }
+  .w-name{ width: 10ch; }
   .w-tier{ width: 6ch; }
   .w-limit{ width:8ch; }
   .btn { padding:10px 16px; font-size:1em; border:1px solid #cbd5e1; background:#fff; color:#0f172a; border-radius:10px; cursor:pointer; transition:transform .02s ease, box-shadow .2s; }
