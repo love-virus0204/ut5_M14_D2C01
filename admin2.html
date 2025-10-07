@@ -184,7 +184,7 @@
   const rowById = Object.create(null);
   let uploadCount = 0;
 
-  // ====== 時鐘（台北時區） ======
+  // ====== 時鐘（台北時區，唯一時間來源） ======
   let nowTPE = new Date();
   function tickClock(){
     nowTPE = getNowInTPE();
@@ -297,7 +297,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
     limitEl.value='';
   }
 
-  // ====== 上傳（僅 limit>0 計算） ======
+  // ====== 上傳（僅 limit>0 計算；空或 0 → 傳空字串） ======
   function uploadOne(){
     const p={
       id:(idEl.value||'').trim().toUpperCase(),
@@ -318,8 +318,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       const baseSerial = baseSerialFromTPE(base);
       limitSerial = baseSerial + Number(p.limit);
       ymdShow = serialToYmd(limitSerial);
-      p.tier = 0
-    }
+    } // 空或 0 → 維持空值
 
     showMask();
     const form=new URLSearchParams();
@@ -334,7 +333,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       .then(resp=>{
         if(resp.status==='ok'){
           appendOrReplaceBottom({id:p.id,name:p.name,tier:p.tier,ymd: ymdShow});
-          uploadCount++; if(uploadCount>=10){ uploadCount=0; setTimeout(reloadData, 1000); }
+          uploadCount++; if(uploadCount>=10){ uploadCount=0; reloadData(); }
           idEl.value=''; nameEl.value=''; tierEl.value='3'; limitEl.value='';
         }else{
           alert(resp.msg||'上傳失敗');
@@ -351,10 +350,8 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
   limitEl.addEventListener('input', ()=>{ limitEl.value=limitEl.value.replace(/[^\d]/g,''); });
 
   // 初始載入
-  window.addEventListener('load', () => {
+window.addEventListener('load', () => {
   setTimeout(reloadData, 1000); });
-  //window.addEventListener('load',
-reloadData);
 </script>
 </body>
 </html>
