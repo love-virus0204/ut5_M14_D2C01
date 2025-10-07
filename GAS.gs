@@ -66,7 +66,7 @@ function doPost(e){
       return _json({ status: "error", msg: "unknown_action" });
   }
 }
-/* 寫入1..6：命中 key 覆寫 1..6 */
+/* 寫入1..7：命中 key 覆寫 1..7 */
 function _submit(sheet, p){
   var submittedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
   var row = [
@@ -81,7 +81,7 @@ function _submit(sheet, p){
 
   var hitRow = _findRowByKey(sheet, String(p.key), 2);
   if (hitRow > 0){
-    sheet.getRange(hitRow, 1, 1, 7).setValues([row]); // 覆寫 1..6
+    sheet.getRange(hitRow, 1, 1, 7).setValues([row]); // 覆寫 1..7
     sheet.getRange(hitRow, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
@@ -170,6 +170,15 @@ function _findRowByKey(sheet, key, ct){
   }
   return 0;
 }
+
+/*** 日期序號轉換（yyyy-mm-dd）***/
+function serialToYmd(n, epoch){
+  if (!n || isNaN(n)) return '';
+  const ms = n * 86400000 + epoch;
+  const d  = new Date(ms);
+  return Utilities.formatDate(d, TZ, 'yyyy-MM-dd');
+}
+
 
 /*** 日期序號轉換（Excel 基準）***/
 function _toSerialInt(v, epoch){
