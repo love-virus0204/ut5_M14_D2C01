@@ -282,9 +282,8 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
   }
 
   // ====== 讀取 ======
-  async function reloadData(){
+  function reloadData(){
     showMask();
-    await new Promise(r => setTimeout(r, 1000));
     const params=new URLSearchParams();
     params.append('action','list_recent2');
     fetch(GAS_URL,{method:'POST',body:params})
@@ -298,7 +297,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
     limitEl.value='';
   }
 
-  // ====== 上傳（僅 limit>0 計算；空或 0 → 傳空字串） ======
+  // ====== 上傳（僅 limit>0 計算） ======
   function uploadOne(){
     const p={
       id:(idEl.value||'').trim().toUpperCase(),
@@ -334,7 +333,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       .then(resp=>{
         if(resp.status==='ok'){
           appendOrReplaceBottom({id:p.id,name:p.name,tier:p.tier,ymd: ymdShow});
-          uploadCount++; if(uploadCount>=10){ uploadCount=0; reloadData(); }
+          uploadCount++; if(uploadCount>=10){ uploadCount=0; setTimeout(reloadData, 1000); }
           idEl.value=''; nameEl.value=''; tierEl.value='3'; limitEl.value='';
         }else{
           alert(resp.msg||'上傳失敗');
@@ -351,7 +350,9 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
   limitEl.addEventListener('input', ()=>{ limitEl.value=limitEl.value.replace(/[^\d]/g,''); });
 
   // 初始載入
-  window.addEventListener('load',
+  window.addEventListener('load', () => {
+  setTimeout(reloadData, 1000); });
+  //window.addEventListener('load',
 reloadData);
 </script>
 </body>
