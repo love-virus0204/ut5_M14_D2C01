@@ -22,9 +22,9 @@ function sweepExpiredAndNotify() {
           '2',    // 3
           '',     // 4
           nowStr, // 5
-          'sys2'   // 6
+          'sys'   // 6
         ];
-        sh.getRange(row, 1, 1, 6).setValues(mt);
+        sh.getRange(row, 1, 1, 6).setValues([mt]);
 
         // notify.push(`ID:${id} 限制日:${serialToYmd(limitSerial)}`);
       }
