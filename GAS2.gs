@@ -29,7 +29,7 @@ function sweepExpiredAndNotify() {
         ];
         sh.getRange(row, 1, 1, 6).setValues([mt]);
 
-        notify.push(`ID:${id} 限制日:${serialToYmd(limitSerial, epoch)}`);
+        notify.push(`ID：${id}　｜　姓名：${name}　｜　限制日：${serialToYmd(limitSerial, epoch)}`);
       }
     }
 
