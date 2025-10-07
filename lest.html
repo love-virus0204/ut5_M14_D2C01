@@ -24,7 +24,7 @@ async function loadRaw(){
   const status = document.getElementById('status');
   const root = document.getElementById('root');
   try{
-    const res = await fetch(API_BASE, { method:"POST", body:new URLSearchParams({action:"list_recent"}) });
+    const res = await fetch(API_BASE, { method:"POST", body:new URLSearchParams({action:"list_recent2"}) });
     if (!res.ok) throw new Error("HTTP " + res.status + " " + res.statusText);
     const data = await res.json();
     if (data?.status !== "ok" || !Array.isArray(data.fields) || !Array.isArray(data.values)){
