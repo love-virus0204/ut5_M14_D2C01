@@ -215,7 +215,7 @@
         <td class="col-tier" title="${tier}">${tier}</td>
         <td class="col-limit" title="${ymd}">${ymd}</td>`;
       tr.onclick=()=>fillForm(id,name,tier,ymd);
-      rows.appendChild(tr);
+      rows.prepend(tr);
       rowById[id]=tr;
     }
   }
