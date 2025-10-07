@@ -24,7 +24,7 @@ function sweepExpiredAndNotify() {
           name,   // 2
           2,      // 3
           '',     // 4
-          nowStr, // 5
+          now,    // 5
           'sys'   // 6
         ];
         sh.getRange(row, 1, 1, 6).setValues([mt]);
@@ -34,7 +34,7 @@ function sweepExpiredAndNotify() {
     }
 
     if (notify.length) {
-      const title = ymd + ' 解禁名單';
+      const title = newTn + ' 解禁名單';
       const body  = notify.join('\n');
       try {
         MailApp.sendEmail(MAIL_TO, title, body);
