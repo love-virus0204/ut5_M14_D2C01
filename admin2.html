@@ -106,19 +106,29 @@
       <div class="card-foot"></div>
     </div>
   </section>
+<!-- 下方輸入區（獨立命名，不影響上方） -->
 <section class="bottom">
   <div class="form-wrap">
     <form class="form" onsubmit="return false;">
       <table class="input-table">
         <tr>
-          <td class="col-limit"><input id="limit" class="ctl w-limit" type="number" min="0" step="1"></td>
-          <td class="col-id"><input id="id" class="ctl w-id" type="text" maxlength="5"></td>
-          <td class="col-name"><input id="name" class="ctl w-name" type="text"></td>
-          <td class="col-tier">
-            <select id="tier" class="ctl w-tier">
-              <option value="0">0</option><option value="1">1</option>
-              <option value="2">2</option><option value="3" selected>3</option>
-              <option value="4">4</option><option value="5">5</option>
+          <td class="f-limit">
+            <input id="limit" class="ctl i-limit" type="number" min="0" step="1" placeholder="限制">
+          </td>
+          <td class="f-id">
+            <input id="id" class="ctl i-id" type="text" maxlength="5" placeholder="ID">
+          </td>
+          <td class="f-name">
+            <input id="name" class="ctl i-name" type="text" placeholder="名字">
+          </td>
+          <td class="f-tier">
+            <select id="tier" class="ctl i-tier">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </select>
           </td>
         </tr>
