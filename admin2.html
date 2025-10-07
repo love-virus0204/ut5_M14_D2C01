@@ -293,6 +293,10 @@
       .then(d=>{ if(d.status==='ok') renderTable(d.values||[]); })
       .catch(console.error)
       .finally(hideMask);
+    idEl.value='';
+    nameEl.value='';
+    tierEl.value=String(tier??3);
+    limitEl.value='';
   }
 
   // ====== 上傳（僅 limit>0 計算；空或 0 → 傳空字串） ======
