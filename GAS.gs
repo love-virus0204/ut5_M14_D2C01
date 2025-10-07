@@ -2,7 +2,7 @@
 function doGet(e){
   var p = (e && e.parameter) || {};
   var target = String(p.target || "");
-  var payload = { status:"ok", msg:"get_disabled" }; // 只要能回
+  var payload = { status:"ok", msg:"get_disabled" };
   if (!target) return _json(payload);
   var ss;
   try {
@@ -75,16 +75,17 @@ function _submit(sheet, p){
     p.date,        // 3
     p.id,          // 4
     p.shift,       // 5
-    p.dN           // 6
+    p.dN,          // 6
+    'user'         // 7
   ];
 
   var hitRow = _findRowByKey(sheet, String(p.key), 2);
   if (hitRow > 0){
-    sheet.getRange(hitRow, 1, 1, 6).setValues([row]); // 覆寫 1..6
+    sheet.getRange(hitRow, 1, 1, 7).setValues([row]); // 覆寫 1..6
     sheet.getRange(hitRow, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
-    sheet.appendRow([...row, "", ""]);
+    sheet.appendRow(row);
     var last = sheet.getLastRow();
     sheet.getRange(last, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
@@ -142,7 +143,7 @@ function _listRecent(sheet){
   values.sort((a,b)=> b[2] - a[2]);
 
   var fields = [
-"submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
+"submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","admin_id","row"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -170,11 +171,24 @@ function _findRowByKey(sheet, key, ct){
   return 0;
 }
 
-/*** 日期序號轉換（Excel 基準：1899-12-30） ***/
+/*** 日期序號轉換（Excel 基準）***/
 function _toSerialInt(v, epoch){
-  if (typeof v === "number") return Math.floor(v);
-  if (Object.prototype.toString.call(v) === "[object Date]"){
+  if (typeof v === 'number') return Math.floor(v);
+
+  if (Object.prototype.toString.call(v) === '[object Date]') {
     return Math.floor((v.getTime() - epoch) / 86400000);
+  }
+
+  if (typeof v === 'string') {
+    const t = v.trim();
+    if (t === '') return 0;
+    const n = Number(t);
+    if (!isNaN(n)) return Math.floor(n);
+
+    const d = new Date(t);
+    if (!isNaN(d)) {
+      return Math.floor((d.getTime() - epoch) / 86400000);
+    }
   }
   return 0;
 }
@@ -204,7 +218,7 @@ function _listRecent2(sheet) {
 
   values.sort(function(a,b){ return b[4] - a[4]; });
 
-  const fields = ["id", "name", "tier", "limit_date", "updatedAt", "row"];
+  const fields = ["id", "name", "tier", "limit_date", "updatedAt", "admin_id", "row"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -220,7 +234,8 @@ function _upsert(sheet, p){
     p.name,        // B name
     p.tier,        // C tier
     p.limit_date,  // D limit_date
-    updatedAt      // E updatedAt
+    updatedAt,     // E updatedAt
+    '18B16'        // F admin_id
   ];
 
   const hitRow = _findRowByKey(sheet, String(p.id), 1);
