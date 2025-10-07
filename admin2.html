@@ -267,16 +267,9 @@
       <td class="col-name" title="${p.name}"><span class="truncate5">${p.name}</span></td>
       <td class="col-tier" title="${p.tier}">${p.tier}</td>
       <td class="col-date" title="${p.ymd||'永久'}">${p.ymd||'永久'}</td>`;
-    tr.onclick=()=>fill( p.id, p.name, p.tier);
-
-console.log('綁定事件：', p);
-
-tr.onclick = () => {
-  console.log('點擊觸發：', p);
-  fill(p.id, p.name, p.tier);
-};
     rows.prepend(tr);
     rowById[p.id]=tr;
+    tr.onclick=()=>fill( p.id, p.name, p.tier);
   }
 
   // ====== 點列帶入（limit 清空，由使用者輸入數字） ======
