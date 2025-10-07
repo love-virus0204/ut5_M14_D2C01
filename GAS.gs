@@ -150,7 +150,7 @@ function _listRecent(sheet){
   });
 }
 
-/* 工具 */
+/* 工具 - on */
 function _sheet(sn) {
 var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 var sh = ss ? ss.getSheetByName(sn) : null;
@@ -179,27 +179,20 @@ function serialToYmd(n, epoch){
   return Utilities.formatDate(d, TZ, 'yyyy-MM-dd');
 }
 
-
-/*** 日期序號轉換（Excel 基準）***/
+/*** 日期序號轉換（Excel 基準：1899-12-30） ***/
 function _toSerialInt(v, epoch){
   if (typeof v === 'number') return Math.floor(v);
-
   if (Object.prototype.toString.call(v) === '[object Date]') {
-    return Math.floor((v.getTime() - epoch) / 86400000);
+    v = Utilities.formatDate(v, 'Asia/Taipei', 'yyyy/MM/dd');
   }
 
-  if (typeof v === 'string') {
-    const t = v.trim();
-    if (t === '') return 0;
-    const n = Number(t);
-    if (!isNaN(n)) return Math.floor(n);
-
-    const d = new Date(t);
-    if (!isNaN(d)) {
-      return Math.floor((d.getTime() - epoch) / 86400000);
-    }
-  }
-  return 0;
+  const s = String(v).trim();
+  if (s === '') return 0;
+  const y = parseInt(s.slice(0,4),10);
+  const m = parseInt(s.slice(5,7),10) - 1;
+  const d = parseInt(s.slice(8,10),10);
+  if (isNaN(y) || isNaN(m) || isNaN(d)) return 0;
+  return Math.floor((Date.UTC(y, m, d) - epoch) / 86400000);
 }
 
 function _json(obj){
@@ -207,6 +200,7 @@ function _json(obj){
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+/* 工具 - off */
 
 function _listRecent2(sheet) {
   var lastRow = sheet.getLastRow();
