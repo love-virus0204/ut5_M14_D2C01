@@ -6,7 +6,7 @@ function sweepExpiredAndNotify() {
 
     const values = sh.getRange(2, 1, lastRow - 1, 6).getValues();
     const epoch = Date.UTC(1899, 11, 30);
-    const nowStr = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
+    const nowStr = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd');
 
     const newTn  = _toSerialInt(nowStr, epoch);
     const ymd = serialToYmd(newTn, epoch)
