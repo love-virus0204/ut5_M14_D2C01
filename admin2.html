@@ -44,20 +44,16 @@
   .bottom { flex:0 0 auto; border-top:1px solid #e5e7eb; background:#fff; }
   .form-wrap { width:var(--card-w); margin:12px auto; background:#fff; border:1px solid #e5e7eb; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.06); padding:12px; }
   .form { display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end; }
-  .row { display:flex; flex-direction:row; align-items:flex-end; gap:8px; }
+  .row { display:flex; flex-direction:row; align-items:flex-end; gap:8px; flex-wrap: nowrap}
   .field { display:flex; gap:6px; flex: 1 1 auto; }
   .field label { font-size:.92em; color:#64748b; }
   .ctl { padding:10px 12px; font-size:1em; border:1px solid #cbd5e1; border-radius:10px; background:#fff; color:#0f172a; }
-  .w-limit{ width:4ch; }
-  .w-id{ width: 8ch; }
 
+.w-limit { width: 4ch; }
+.w-id    { width: 8ch; }
+.w-name  { flex: 1 1 auto; min-width: 0; box-sizing: border-box; }
+.w-tier  { width: 6ch; flex: 0 0 auto; box-sizing: border-box; }
 
-.w-name { 
-  width: calc(100% - (4ch + 8ch + 6ch + 3 * 8px));
-  box-sizing: border-box;
-}
-
-  .w-tier{ width: 6ch; }
   .btn { padding:10px 16px; font-size:1em; border:1px solid #cbd5e1; background:#fff; color:#0f172a; border-radius:10px; cursor:pointer; transition:transform .02s ease, box-shadow .2s; }
   .btn:hover{ box-shadow:0 2px 8px rgba(0,0,0,.08); }
   .btn:active{ transform:translateY(1px); }
