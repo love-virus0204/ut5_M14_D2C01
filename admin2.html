@@ -183,6 +183,8 @@
 
   const rowById = Object.create(null);
   let uploadCount = 0;
+  pingGas();
+  setInterval(pingGas, 45000);
 
   // ====== 時鐘（台北時區） ======
   let nowTPE = new Date();
@@ -236,8 +238,7 @@
       .then(r=>{ if(r.ok){ gasBadge.textContent='OK'; gasBadge.className='badge ok'; } else { gasBadge.textContent='ERR'; gasBadge.className='badge err'; } })
       .catch(_=>{ gasBadge.textContent='ERR'; gasBadge.className='badge err'; });
   }
-  pingGas();
-  setInterval(pingGas, 45000);
+
 
   // ==== 渲染（0 → 永久；yyyy-mm-dd ====
   function renderTable(values){
