@@ -350,7 +350,8 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
   limitEl.addEventListener('input', ()=>{ limitEl.value=limitEl.value.replace(/[^\d]/g,''); });
 
   // 初始載入
-  window.addEventListener('load', reloadData);
+window.addEventListener('load', () => {
+  setTimeout(reloadData, 1000); });
 </script>
 </body>
 </html>
