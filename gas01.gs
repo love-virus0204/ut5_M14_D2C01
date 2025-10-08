@@ -1,6 +1,5 @@
 function drawLucky(sh, dateSerial, rankedIds) {
   const now = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
-  const epoch = Date.UTC(1899,11,30);
 
   const last = sh.getLastRow();
   const start = Math.max(2, last - 159);
@@ -36,6 +35,22 @@ function drawLucky(sh, dateSerial, rankedIds) {
     updated++;
   }
   sh.getRange(start, 7, count, 3).setValues(sub);
+
+
+  const epoch = Date.UTC(1899,11,30);
+  values.forEach(function(row, i){
+    row[2] = _toSerialInt(row[2], epoch);
+    row.push = start + i);
+  });
+
+  values.sort((a,b)=> a[5].localeCompare(b[5]));
+  values.sort((a,b)=>{
+  return String(a[3]).localeCompare(String(b[3]), 'en', { numeric:true });
+});
+  values.sort((a,b)=> b[2] - a[2]);
+
+
+
 
   todayRows.sort((a, b) => a[I_BIG] - b[I_BIG]);
 
