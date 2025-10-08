@@ -19,9 +19,9 @@ function drawLucky(sh, dateSerial, rankedIds) {
     const serial = _toSerialInt(big[i][C_DATE], epoch);
     if (serial !== dateSerial) continue;
 
-    const id   = String(big[i][D_ID]||'').trim();
-    const eFlg = String(big[i][E_FLAG]||'').trim().toLowerCase();
-    const kind = String(big[i][F_KIND]||'').trim();
+    const id   = String(big[i][D_ID]);
+    const eFlg = String(big[i][E_FLAG]);
+    const kind = String(big[i][F_KIND]);
     const r    = rankMap[id];
 
     let val = '9999';
