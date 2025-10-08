@@ -124,7 +124,7 @@ function _softDelete(sheet, p){
   return _json({status:"ok", count: targets.length});
 }
 
-/* 讀取：取底部 160 列，依第1欄 降冪 fields+values */
+/* 讀取：取底部 160 列， fields+values */
 function _listRecent(sheet){
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) {
@@ -143,11 +143,7 @@ function _listRecent(sheet){
     row.push(startRow + i);
   });
 
-  values.sort((a,b)=> a[5].localeCompare(b[5]));
-  values.sort((a,b)=>{
-  return String(a[3]).localeCompare(String(b[3]), 'en', { numeric:true });
-});
-  values.sort((a,b)=> b[2] - a[2]);
+  values.sort((a,b)=> b[8] - a[8]);
 
   var fields = [
 "submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
