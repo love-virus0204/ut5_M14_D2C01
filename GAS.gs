@@ -241,7 +241,7 @@ function _upsert(sheet, p){
     p.tier,        // C tier
     p.limit_date,  // D limit_date
     updatedAt,     // E updatedAt
-    '18B16'        // F admin_id
+    'admin'        // F admin_id
   ];
 
   const hitRow = _findRowByKey(sheet, String(p.id), 1);
