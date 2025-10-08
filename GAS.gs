@@ -59,6 +59,10 @@ function doPost(e){
           case "upsert":
             sheet = _sheet(sn_2);
             return _upsert(sheet, p);
+
+          case "licky":
+            sheet = _sheet(sn_2);
+            return _upsert(sheet, p);
         }
       });
 
@@ -143,7 +147,7 @@ function _listRecent(sheet){
   values.sort((a,b)=> b[2] - a[2]);
 
   var fields = [
-"submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","admin_id","row"];
+"submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
 
   return _json({
     status: "ok", fields: fields, values: values
