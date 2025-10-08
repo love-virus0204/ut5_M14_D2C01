@@ -62,7 +62,12 @@ function doPost(e){
 
           case "licky":
             sheet = _sheet(sn_2);
-            return _upsert(sheet, p);
+            return _buildLuckyRanks(sh)
+            sheet = _sheet(sn_1);
+            return _drawLucky(sh, dateSerial, rankedIds) 
+
+
+
         }
       });
 
