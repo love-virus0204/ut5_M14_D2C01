@@ -1,4 +1,4 @@
-function drawLucky(sh, dateSerial, rankedIds) {
+function _drawLucky(sh, dateSerial, rankedIds) {
   const epoch = Date.UTC(1899,11,30);
   const now = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
 
@@ -56,7 +56,7 @@ function drawLucky(sh, dateSerial, rankedIds) {
 
 
 
-function buildLuckyRanks(sh){
+function _buildLuckyRanks(sh){
   const values = sh.getRange(2, 1, sh.getLastRow() - 1, 3).getValues();
   const pool = [];
   const weightMap = {};
