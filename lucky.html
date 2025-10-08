@@ -6,10 +6,12 @@
 <title>D2 名單檢視 / 抽籤</title>
 <style>
   :root{ --w:90vw; --hbar:60px; --gap:10px; --card:#0b1324; --line:#223; --txt:#cfe9ff; --mut:#8aa4bf; --ok:#10b981; --err:#ef4444; --btn:#1e90ff; }
-  html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 50% -200px,#0b1a33,#060d1b);color:var(--txt);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;}
-  .page{min-height:100%;display:flex;flex-direction:column;align-items:center;gap:var(--gap);}
-  /* 上區工具列 */
-  .bar{position:sticky;top:0;z-index:5;height:var(--hbar);display:flex;align-items:center;justify-content:space-between;width:var(--w);max-width:900px;background:rgba(7,15,30,.8);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;margin-top:10px;padding:0 10px;box-sizing:border-box}
+  *{ box-sizing:border-box }
+  html,body{height:100%;margin:0;overflow-x:hidden;background:radial-gradient(1200px 600px at 50% -200px,#0b1a33,#060d1b);color:var(--txt);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;}
+  .page{min-height:100%;display:flex;flex-direction:column;align-items:center;gap:var(--gap);width:100%}
+
+  /* 上區工具列（固定約 40px） */
+  .bar{position:sticky;top:0;z-index:5;height:var(--hbar);display:flex;align-items:center;justify-content:space-between;width:var(--w);max-width:900px;background:rgba(7,15,30,.8);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;margin-top:10px;padding:0 10px}
   .left,.mid,.right{display:flex;align-items:center;gap:10px}
   .badge{padding:3px 10px;border-radius:999px;font-size:.92em;border:1px solid var(--line);color:var(--mut)}
   .badge.ok{color:var(--ok);border-color:#1d3}
@@ -18,20 +20,22 @@
   .time{opacity:.9}
   .btn{padding:8px 12px;border-radius:10px;background:var(--btn);color:#fff;border:0;cursor:pointer}
   .btn:disabled{opacity:.6;cursor:not-allowed}
-  /* 下區 */
-  .wrap{width:var(--w);max-width:900px;display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+
+  /* 下區容器（可隨資料增高） */
+  .wrap{width:var(--w);max-width:900px;display:flex;flex-direction:column;gap:12px;margin:10px 0 16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
   .hdr{display:flex;align-items:center;justify-content:space-between;color:var(--mut);font-size:.95em;margin-bottom:6px}
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .panel{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:240px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:0}
+  .panel{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:240px;min-width:0}
   .panel h3{margin:0;padding:10px;border-bottom:1px solid var(--line);text-align:center}
-  .thead,.row{display:grid;grid-template-columns:6ch 10ch 1fr 6ch;gap:6px;padding:8px 10px;align-items:center}
+  .thead,.row{display:grid;grid-template-columns:6ch 10ch minmax(0,1fr) 6ch;gap:6px;padding:8px 10px;align-items:center}
   .thead{color:var(--mut);border-bottom:1px dashed var(--line)}
-  .body{overflow:auto}
+  .body{min-width:0}
   .row + .row{border-top:1px dotted #1a2538}
+  .row div:nth-child(3){overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0} /* 姓名欄截斷 */
   .empty{padding:16px;text-align:center;color:var(--mut)}
-  .foot{display:flex;justify-content:center;margin:8px 0}
   .small{font-size:.85em;color:var(--mut);text-align:center}
+
   /* 遮罩 */
   .mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:10}
   .mask.show{display:flex}
@@ -62,7 +66,7 @@
     <div class="card">
       <div class="hdr">
         <div>日期：<span id="hdrDate">--/--</span></div>
-        <div class="small">筆數：<span id="count">0</span></div>
+        <div class="small">筆數：<span id="count">0</span>（依後端排序顯示）</div>
       </div>
       <div class="cols">
         <div class="panel">
@@ -76,9 +80,6 @@
           <div id="listB" class="body"><div class="empty">此日期無資料</div></div>
         </div>
       </div>
-    </div>
-    <div class="foot">
-      <button id="refresh" class="btn" style="background:#334155">重新整理</button>
     </div>
     <div class="small">更新：<span id="updated">--/-- --:--</span></div>
   </div>
@@ -94,13 +95,13 @@ const fmtYMD=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'
 const fmtMD =new Intl.DateTimeFormat('en-US',{timeZone:tz,month:'2-digit',day:'2-digit'});
 const fmtHM =new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
 
+const $ = (q)=>document.querySelector(q);
 const el={ stat:$('#stat'), ymd:$('#ymd'), clock:$('#clock'), hdrDate:$('#hdrDate'),
            count:$('#count'), listA:$('#listA'), listB:$('#listB'), updated:$('#updated'),
-           mask:$('#mask'), toast:$('#toast'), draw:$('#draw'), reload:$('#reload'), refresh:$('#refresh') };
+           mask:$('#mask'), toast:$('#toast'), draw:$('#draw'), reload:$('#reload') };
 
 let lockedYMD='', lockedSerial=0;
 
-function $(q){return document.querySelector(q)}
 function showMask(msg,type){ el.toast.textContent=msg; el.toast.className='toast ' + (type||''); el.mask.classList.add('show'); }
 function hideMask(){ el.mask.classList.remove('show') }
 
@@ -112,17 +113,17 @@ function lockToday(){
   const d=nowTPE();
   lockedYMD=fmtYMD.format(d); // yyyy-mm-dd
   lockedSerial=toSerialInt(lockedYMD);
-  el.ymd.textContent=fmtMD.format(d).replace('/','/');
-  el.hdrDate.textContent=fmtMD.format(d);
+  const md=fmtMD.format(d);
+  el.ymd.textContent=md;
+  el.hdrDate.textContent=md;
 }
 function toSerialInt(ymd){
   const epoch=Date.UTC(1899,11,30);
   const d=new Date(ymd+'T00:00:00+08:00');
   return Math.floor((d-epoch)/86400000);
 }
-function tick(){
-  el.clock.textContent=fmtHM.format(nowTPE());
-}
+function tick(){ el.clock.textContent=fmtHM.format(nowTPE()); }
+
 async function ping(){
   try{
     const r=await fetch(API_URL+'?action=ping',{cache:'no-store'});
@@ -130,6 +131,7 @@ async function ping(){
     else{ el.stat.textContent='狀態: ERR'; el.stat.className='badge err'; }
   }catch(e){ el.stat.textContent='狀態: ERR'; el.stat.className='badge err'; }
 }
+
 async function readData(){
   showMask('讀取中…');
   try{
@@ -137,15 +139,17 @@ async function readData(){
     const r=await fetch(API_URL,{method:'POST',body:p});
     const j=await r.json();
     render(j);
-    el.updated.textContent=fmtMD.format(nowTPE())+' '+fmtHM.format(nowTPE()).slice(0,5);
+    const t=nowTPE();
+    el.updated.textContent=fmtMD.format(t)+' '+fmtHM.format(t).slice(0,5);
     hideMask();
   }catch(e){
-    showMask('讀取失敗', 'err');
+    showMask('讀取失敗','err');
     setTimeout(hideMask,1200);
   }
 }
+
 function render(j){
-  // 允許兩種回傳：fields+values 或直接 values 已對齊
+  // 允許 fields+values 或僅 values（已對齊）
   const F=(j.fields||[]);
   const idx=(name,def)=>{const k=F.indexOf(name);return k>=0?k:def}
   const iDate=idx('date',2), iId=idx('id',3), iName=idx('name',1), iShift=idx('shift',4), iDN=idx('dN',5);
@@ -154,22 +158,21 @@ function render(j){
 
   const A=[], B=[];
   rows.forEach((v,ix)=>{
-    const row={ seq:ix+1, id:String(v[iId]||''), name:String(v[iName]||''), dn:String(v[iDN]||''), shift:String(v[iShift]||'') };
-    if(row.shift==='A') A.push(row); else B.push(row);
+    const rec={ seq:ix+1, id:String(v[iId]||''), name:String(v[iName]||''), dn:String(v[iDN]||''), shift:String(v[iShift]||'') };
+    (rec.shift==='A'?A:B).push(rec);
   });
   el.count.textContent=String(rows.length);
-
-  fillList(el.listA, A);
-  fillList(el.listB, B);
+  fillList(el.listA,A);
+  fillList(el.listB,B);
 }
-function fillList(container, list){
+function fillList(container,list){
   container.innerHTML='';
   if(!list.length){ container.innerHTML='<div class="empty">此日期無資料</div>'; return }
   const frag=document.createDocumentFragment();
   list.forEach(r=>{
     const div=document.createElement('div');
     div.className='row';
-    div.innerHTML=`<div>${r.seq}</div><div>${r.id}</div><div>${r.name}</div><div>${r.dn}</div>`;
+    div.innerHTML=`<div>${r.seq}</div><div>${r.id}</div><div title="${r.name}">${r.name}</div><div>${r.dn}</div>`;
     frag.appendChild(div);
   });
   container.appendChild(frag);
@@ -178,28 +181,24 @@ function fillList(container, list){
 async function draw(){
   showMask('抽籤中…');
   try{
-    // 先假日，再平日（必要時可只送一次）
-    for(const dN of ['假日','平日']){
-      const p=new URLSearchParams();
-      p.append('action','lucky');
-      p.append('dateSerial',lockedSerial);
-      p.append('dN',dN);
-      const r=await fetch(API_URL,{method:'POST',body:p});
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      await r.json(); // 後端已處理即可
-    }
+    const p=new URLSearchParams();
+    p.append('action','lucky');
+    p.append('dateSerial',lockedSerial);
+    const r=await fetch(API_URL,{method:'POST',body:p});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    await r.json();
+
     el.toast.textContent='抽籤完成，10秒後刷新';
     el.toast.className='toast ok';
     setTimeout(()=>{ hideMask(); readData(); }, 10000);
   }catch(e){
-    showMask('抽籤失敗', 'err');
+    showMask('抽籤失敗','err');
     setTimeout(hideMask,1500);
   }
 }
 
 /* 事件 */
 el.reload.onclick=readData;
-el.refresh.onclick=readData;
 el.draw.onclick=draw;
 
 /* 啟動 */
@@ -207,7 +206,6 @@ lockToday();
 tick(); setInterval(tick,1000);
 ping(); setInterval(ping,45000);
 readData();
-
 /* 頁面被再次激活時，重算日期 */
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ lockToday(); }});
 </script>
