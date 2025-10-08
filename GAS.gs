@@ -62,10 +62,10 @@ function doPost(e){
 
           case "lucky": 
             sheet = _sheet(sn_2);
-            const rankedIds = _buildWeightedPool(sheet);
+            const rankedIds = _buildLuckyRanks(sheet);
             sheet = _sheet(sn_1);
             const dateSerial = Number(p.dateSerial);
-            return drawLucky(sheet, dateSerial, rankedIds);
+            return _drawLucky(sheet, dateSerial, rankedIds);
         }
       });
 
