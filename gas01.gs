@@ -31,18 +31,16 @@ function drawLucky(sh, dateSerial, rankedIds) {
     big[i][I_BIG] = val;
     sub[i][I_SUB] = val;
     sub[i][G_SUB] = 'lucky';
-    sub[i][H_SUB] = xxx;
+    sub[i][H_SUB] = now;
     updated++;
   }
   sh.getRange(start, 7, count, 3).setValues(sub);
 
-
   const epoch = Date.UTC(1899,11,30);
-  values.forEach(function(row, i){
+  big.forEach(function(row, i){
     row[2] = _toSerialInt(row[2], epoch);
     row.push(start + i);
   });
-
 
   big.sort((a,b)=> b[8] - a[8]);
 
