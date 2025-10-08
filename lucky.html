@@ -36,6 +36,27 @@
   .empty{padding:16px;text-align:center;color:var(--mut)}
   .small{font-size:.85em;color:var(--mut);text-align:center}
 
+
+/* 讓每個欄位在格子內置中，姓名欄例外 */
+.thead, .row { justify-items: center; }   /* grid 內容置中 */
+.thead div, .row div { text-align: center; }
+
+/* 姓名欄：左對齊且可截斷，不撐寬 */
+.row div:nth-child(3),
+.thead div:nth-child(3){
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* 統一左右內距，避免視覺偏移 */
+.thead, .row { padding: 8px 12px; }
+
+/* 防止任何容器把內容擠向右側 */
+.wrap, .card, .cols, .panel, .thead, .row, .body { min-width: 0; }
+
   /* 遮罩 */
   .mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:10}
   .mask.show{display:flex}
