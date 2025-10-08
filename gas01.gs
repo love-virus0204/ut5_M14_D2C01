@@ -40,26 +40,17 @@ function drawLucky(sh, dateSerial, rankedIds) {
   const epoch = Date.UTC(1899,11,30);
   values.forEach(function(row, i){
     row[2] = _toSerialInt(row[2], epoch);
-    row.push = start + i);
+    row.push(start + i);
   });
 
-  values.sort((a,b)=> a[5].localeCompare(b[5]));
-  values.sort((a,b)=>{
-  return String(a[3]).localeCompare(String(b[3]), 'en', { numeric:true });
-});
-  values.sort((a,b)=> b[2] - a[2]);
 
-
-
-
-  todayRows.sort((a, b) => a[I_BIG] - b[I_BIG]);
-
+  big.sort((a,b)=> b[8] - a[8]);
 
   var fields = [
 "submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
 
   return _json({
-    status: "ok", fields: fields, values: values });
+    status: "ok", fields: fields, values: big });
 
 
   function pad3(n){ return ('000'+n).slice(-3); }
