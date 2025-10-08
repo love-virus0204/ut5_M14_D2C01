@@ -49,6 +49,7 @@ function doPost(e){
 
     case "submit":
     case "upsert":
+    case "lucky":
     case "soft_delete":
       return withLock(60000, () => {
         switch (action) {
