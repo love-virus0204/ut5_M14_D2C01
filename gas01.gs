@@ -35,7 +35,7 @@ function drawLucky(sh, dateSerial, rankedIds) {
     sub[i][H_SUB] = xxx;
     updated++;
   }
-  sh.getRange(start, 7, count, 3).setValues(sub);
+  sh.getRange(start, 7, count, 3).setValues(big);
 
   todayRows.sort((a, b) => a[I_BIG] - b[I_BIG]);
 
