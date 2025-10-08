@@ -129,11 +129,11 @@ function render(groups){
     // 左 A
     const cardA = document.createElement('div');
     cardA.className = 'card';
-    cardA.innerHTML = `<h3>A 班</h3><div class="table"><table><thead><tr><th>ID</th><th>dN</th></tr></thead><tbody id="tbA_${g.dateSerial}"></tbody></table></div>`;
+    cardA.innerHTML = `<h3>A 班</h3><div class="table"><table><thead><tr><th>ID</th><th>假別</th></tr></thead><tbody id="tbA_${g.dateSerial}"></tbody></table></div>`;
     // 右 B
     const cardB = document.createElement('div');
     cardB.className = 'card';
-    cardB.innerHTML = `<h3>B 班</h3><div class="table"><table><thead><tr><th>ID</th><th>dN</th></tr></thead><tbody id="tbB_${g.dateSerial}"></tbody></table></div>`;
+    cardB.innerHTML = `<h3>B 班</h3><div class="table"><table><thead><tr><th>ID</th><th>假別</th></tr></thead><tbody id="tbB_${g.dateSerial}"></tbody></table></div>`;
 
     grid.appendChild(cardA); grid.appendChild(cardB);
     sec.appendChild(hd); sec.appendChild(grid);
