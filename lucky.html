@@ -10,7 +10,7 @@
   html,body{height:100%;margin:0;overflow-x:hidden;background:radial-gradient(1200px 600px at 50% -200px,#0b1a33,#060d1b);color:var(--txt);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;}
   .page{min-height:100%;display:flex;flex-direction:column;align-items:center;gap:var(--gap);width:100%}
 
-  /* 上區工具列（固定約 40px） */
+  /* 上區 */
   .bar{position:sticky;top:0;z-index:5;height:var(--hbar);display:flex;align-items:center;justify-content:space-between;width:var(--w);max-width:900px;background:rgba(7,15,30,.8);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;margin-top:10px;padding:0 10px}
   .left,.mid,.right{display:flex;align-items:center;gap:10px}
   .badge{padding:3px 10px;border-radius:999px;font-size:.92em;border:1px solid var(--line);color:var(--mut)}
@@ -21,41 +21,26 @@
   .btn{padding:8px 12px;border-radius:10px;background:var(--btn);color:#fff;border:0;cursor:pointer}
   .btn:disabled{opacity:.6;cursor:not-allowed}
 
-  /* 下區容器（可隨資料增高） */
+  /* 下區 */
   .wrap{width:var(--w);max-width:900px;display:flex;flex-direction:column;gap:12px;margin:10px 0 16px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
   .hdr{display:flex;align-items:center;justify-content:space-between;color:var(--mut);font-size:.95em;margin-bottom:6px}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:0}
   .panel{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:240px;min-width:0}
   .panel h3{margin:0;padding:10px;border-bottom:1px solid var(--line);text-align:center}
-  .thead,.row{display:grid;grid-template-columns:6ch 10ch minmax(0,1fr) 6ch;gap:6px;padding:8px 10px;align-items:center}
+  .thead,.row{
+    display:grid;
+    grid-template-columns:6ch 10ch minmax(0,1fr) 6ch; /* #, ID, 姓名, 假別 */
+    gap:6px; padding:8px 12px; align-items:center;
+    justify-items:center;
+  }
   .thead{color:var(--mut);border-bottom:1px dashed var(--line)}
-  .body{min-width:0}
   .row + .row{border-top:1px dotted #1a2538}
-  .row div:nth-child(3){overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0} /* 姓名欄截斷 */
+  .row div:nth-child(3), .thead div:nth-child(3){ /* 姓名欄 */
+    text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;
+  }
   .empty{padding:16px;text-align:center;color:var(--mut)}
   .small{font-size:.85em;color:var(--mut);text-align:center}
-
-
-/* 讓每個欄位在格子內置中，姓名欄例外 */
-.thead, .row { justify-items: center; }   /* grid 內容置中 */
-.thead div, .row div { text-align: center; }
-
-/* 姓名欄：左對齊且可截斷，不撐寬 */
-.row div:nth-child(3),
-.thead div:nth-child(3){
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
-}
-
-/* 統一左右內距，避免視覺偏移 */
-.thead, .row { padding: 8px 12px; }
-
-/* 防止任何容器把內容擠向右側 */
-.wrap, .card, .cols, .panel, .thead, .row, .body { min-width: 0; }
 
   /* 遮罩 */
   .mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:10}
@@ -170,7 +155,6 @@ async function readData(){
 }
 
 function render(j){
-  // 允許 fields+values 或僅 values（已對齊）
   const F=(j.fields||[]);
   const idx=(name,def)=>{const k=F.indexOf(name);return k>=0?k:def}
   const iDate=idx('date',2), iId=idx('id',3), iName=idx('name',1), iShift=idx('shift',4), iDN=idx('dN',5);
@@ -207,10 +191,12 @@ async function draw(){
     p.append('dateSerial',lockedSerial);
     const r=await fetch(API_URL,{method:'POST',body:p});
     if(!r.ok) throw new Error('HTTP '+r.status);
-    await r.json();
-
-    el.toast.textContent='抽籤完成，10秒後刷新';
+    const j=await r.json();
+    const msg = j.msg || '抽籤完成';
+    el.toast.textContent=msg+'，10秒後刷新';
     el.toast.className='toast ok';
+
+    setTimeout(()=>{ el.toast.textContent='讀取中…'; el.toast.className='toast'; }, 1000);
     setTimeout(()=>{ hideMask(); readData(); }, 10000);
   }catch(e){
     showMask('抽籤失敗','err');
