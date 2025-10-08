@@ -35,11 +35,17 @@ function drawLucky(sh, dateSerial, rankedIds) {
     sub[i][H_SUB] = xxx;
     updated++;
   }
-  sh.getRange(start, 7, count, 3).setValues(big);
+  sh.getRange(start, 7, count, 3).setValues(sub);
 
   todayRows.sort((a, b) => a[I_BIG] - b[I_BIG]);
 
-  return _json({status:"ok", start, count, updated, sorted: todayRows});
+
+  var fields = [
+"submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
+
+  return _json({
+    status: "ok", fields: fields, values: values });
+
 
   function pad3(n){ return ('000'+n).slice(-3); }
 }
