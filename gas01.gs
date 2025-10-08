@@ -1,12 +1,13 @@
-function drawLucky(dateSerial, rankedIds, xxx) {
-  const sh = _sheet(sn_signup);
+function drawLucky(sh, dateSerial, rankedIds) {
+  const now = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
+  const epoch = Date.UTC(1899,11,30);
+
   const last = sh.getLastRow();
   const start = Math.max(2, last - 159);
   const count = last - start + 1;
 
   const big = sh.getRange(start, 1, count, 9).getValues();
   const sub = sh.getRange(start, 7, count, 3).getValues();
-  const epoch = Date.UTC(1899,11,30);
 
   const rankMap = Object.create(null);
   for (let i=0;i<rankedIds.length;i++) rankMap[ rankedIds[i] ] = i+1;
@@ -40,7 +41,6 @@ function drawLucky(dateSerial, rankedIds, xxx) {
 
   return _json({status:"ok", start, count, updated, sorted: todayRows});
 
-  // 簡化補零
   function pad3(n){ return ('000'+n).slice(-3); }
 }
 
