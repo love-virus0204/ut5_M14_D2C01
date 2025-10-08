@@ -60,14 +60,12 @@ function doPost(e){
             sheet = _sheet(sn_2);
             return _upsert(sheet, p);
 
-          case "licky":
+          case "lucky": 
             sheet = _sheet(sn_2);
-            return _buildLuckyRanks(sh)
+            const rankedIds = _buildWeightedPool(sheet);
             sheet = _sheet(sn_1);
-            return _drawLucky(sh, dateSerial, rankedIds) 
-
-
-
+            const dateSerial = Number(p.dateSerial);
+            return drawLucky(sheet, dateSerial, rankedIds);
         }
       });
 
