@@ -1,7 +1,8 @@
 function drawLucky(sh, dateSerial, rankedIds) {
+  const epoch = Date.UTC(1899,11,30);
   const now = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
 
-  const last = sh.getLastRow();
+  const last  = sh.getLastRow();
   const start = Math.max(2, last - 159);
   const count = last - start + 1;
 
@@ -22,6 +23,7 @@ function drawLucky(sh, dateSerial, rankedIds) {
     const eFlg = String(big[i][E_FLAG]||'').trim().toLowerCase();
     const kind = String(big[i][F_KIND]||'').trim();
     const r    = rankMap[id];
+
     let val = '9999';
     if (eFlg !== 'n' && r > 0) {
       const prefix = (kind === '假日') ? '1' : '2';
@@ -34,25 +36,23 @@ function drawLucky(sh, dateSerial, rankedIds) {
     sub[i][H_SUB] = now;
     updated++;
   }
+
   sh.getRange(start, 7, count, 3).setValues(sub);
 
-  const epoch = Date.UTC(1899,11,30);
-  big.forEach(function(row, i){
+  big.forEach((row, i) => {
     row[2] = _toSerialInt(row[2], epoch);
     row.push(start + i);
   });
 
-  big.sort((a,b)=> b[8] - a[8]);
+  big.sort((a,b)=> a[8] - b[8]);
 
-  var fields = [
-"submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
+  const fields = ["submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
 
-  return _json({
-    status: "ok", fields: fields, values: big });
-
+  return _json({ status:"ok", fields, values: big });
 
   function pad3(n){ return ('000'+n).slice(-3); }
 }
+
 
 
 
