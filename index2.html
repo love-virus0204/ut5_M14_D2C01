@@ -38,7 +38,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   -webkit-appearance: none;
   -moz-appearance: none;
 }
-.mmdd.sel{
+.mmddsel{
   appearance:none;
   -webkit-appearance:none;
   -moz-appearance:none;
@@ -59,8 +59,8 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   padding-right:26px;
   cursor:pointer;
 } 
-/* .mmdd.sel:focus{outline:2px solid var(--accent)} */
-.mmdd.sel:hover,.mmdd.sel:focus { outline:none; 
+/* .mmddsel:focus{outline:2px solid var(--accent)} */
+.mmddsel:hover,.mmddsel:focus { outline:none; 
   border:2px solid #00fff7;
   box-shadow:0 0 8px #00fff7; }
 .group{margin-top:16px;text-align:center;}
@@ -132,7 +132,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
       <div class="input">
         <input id="code" class="in" placeholder="輸入＀５碼＀ＩＤ" maxlength="5" autocomplete="one-time-code" inputmode="latin">
       </div>
-      <div id="mmdd" class="mmdd">報　名　<select id="selDate" class="mmdd sel"></select>　跨加</div>
+      <div id="mmdd" class="mmdd">報　名　<select id="selDate" class="mmddsel"></select>　跨加</div>
       <div class="group">
         <div class="gtitle">　</div>
         <div class="btnrow two">
