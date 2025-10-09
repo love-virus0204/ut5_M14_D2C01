@@ -3,7 +3,7 @@ function _drawLucky(sh, dateSerial, rankedIds) {
   const now = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
 
   const last  = sh.getLastRow();
-  const start = Math.max(2, last - 159);
+  const start = Math.max(2, last - 519);
   const count = last - start + 1;
 
   const big = sh.getRange(start, 1, count, 9).getValues();
