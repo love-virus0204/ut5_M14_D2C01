@@ -176,38 +176,52 @@ const TZ='Asia/Taipei';
 let selA='平日', selB='N';
 
 /* ===== 時鐘（台北時間）===== */
-let CUR_SER = null;
-let MD_STR  = '';
-let tNow = null;
-function startClock(){
-  const el = document.getElementById('clock');
-  const tick = ()=>{
-    tNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
-    const mm = String(tNow.getUTCMonth() + 1).padStart(2,'0');
-    const dd = String(tNow.getUTCDate()).padStart(2,'0');
-    const hh = String(tNow.getUTCHours()).padStart(2,'0');
-    const mi = String(tNow.getUTCMinutes()).padStart(2,'0');
-    const ss = String(tNow.getUTCSeconds()).padStart(2,'0');
-    el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
-  };
-  tick();
-  baseYMD();
-  setInterval(tick, 1000);
-  setInterval(baseYMD, 5*60*1000);
+function nowCorrected(){
+  const p=new Intl.DateTimeFormat('zh-TW',{
+    timeZone:'Asia/Taipei',hour12:false,
+    year:'numeric',month:'2-digit',day:'2-digit',
+    hour:'2-digit',minute:'2-digit',second:'2-digit'
+  }).formatToParts(new Date());
+  const g=t=>Number(p.find(x=>x.type===t).value);
+  return new Date(g('year'),g('month')-1,g('day'),g('hour'),g('minute'),g('second'));
 }
 
-/* ===== 日期邏輯 ===== */
-function baseYMD(){
-  if (!tNow) return;
-  const tn = tNow.getUTCHours() * 60 + tNow.getUTCMinutes();
-  const t = new Date(tNow);
-  if (tn >= 65) t.setUTCDate(t.getUTCDate() + 1);
-  CUR_SER = Math.floor(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate())/86400000) + 25569;
-  const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
-  const dd = String(t.getUTCDate()).padStart(2,'0');
-  MD_STR  = `${mm}/${dd}`;
-  const el = document.getElementById('mmdd');
-  if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
+function serialFromDate(d){
+  const epoch = Date.UTC(1899,11,30);
+  return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - epoch)/86400000);
+}
+function mmdd(d){ const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); return `${m}/${day}`; }
+
+function buildDaySelect(){
+  const sel = document.getElementById('daySel');
+  if(!sel) return;
+
+  const now = nowCorrected();
+  const mins = now.getHours()*60 + now.getMinutes();
+  const base = new Date(now);
+  if(mins >= 360) base.setDate(base.getDate()+1);
+  const opts = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(base);
+    d.setDate(base.getDate()+i);
+    const val = serialFromDate(d);
+    const text = mmdd(d);
+    opts.push(`<option value="${val}">${text}</option>`);
+  }
+  sel.innerHTML = opts.join('');
+  sel.selectedIndex = 0;
+
+  // 若頁面有全域狀態，更新它們（可選）
+  const firstVal = Number(sel.value);
+  if (typeof window.CUR_SER !== 'undefined') window.CUR_SER = firstVal;
+  if (typeof window.MD_STR  !== 'undefined') window.MD_STR  = sel.options[sel.selectedIndex].text;
+
+  // 變更時同步更新（供送出與顯示使用）
+  sel.addEventListener('change', ()=>{
+    const v = Number(sel.value);
+    if (typeof window.CUR_SER !== 'undefined') window.CUR_SER = v;
+    if (typeof window.MD_STR  !== 'undefined') window.MD_STR  = sel.options[sel.selectedIndex].text;
+  });
 }
 
 /* ===== 草稿A ===== */
@@ -218,7 +232,7 @@ function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 /* ===== 草稿B ===== */
 const DRAFTB_KEY='d2_draft_b_v1';
 function loadB(){try{return JSON.parse(localStorage.getItem(DRAFTB_KEY)||'[]');}catch(_){return[];}}
-function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,10)));} // 最新在上只保留10
+function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,15)));} //保留最新筆數
 
 function tsMin(){
   const d = new Date(Date.now() + 8*60*60*1000);
@@ -232,7 +246,7 @@ function tsMin(){
 function addB(item){
   const arr = loadB();
   arr.unshift(item);
-  saveB(arr.slice(0,10));
+  saveB(arr.slice(0,15));
   renderB();
 }
 
@@ -318,6 +332,9 @@ addEventListener('DOMContentLoaded',()=>{
   bindInput();enableSend();startClock();probeStatus();renderB();
   document.getElementById('sendBtn').addEventListener('click',send);
 });
+
+/* 初始化 */
+document.addEventListener('DOMContentLoaded', buildDaySelect);
 </script>
 </body>
 </html>
