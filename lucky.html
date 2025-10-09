@@ -168,6 +168,7 @@ function renderResponse(j){
   let seqA=1;
   A.forEach(r => frag.appendChild(line(seqA++, r.id, r.name, r.dN)));
   frag.appendChild(sep());
+  frag.appendChild(sep());
   frag.appendChild(group('Ｂ'));
   if (B.length===0) frag.appendChild(empty());
   let seqB=1;
