@@ -125,7 +125,7 @@ function _softDelete(sheet, p){
   return _json({status:"ok", count: targets.length});
 }
 
-/* 讀取：取底部 420 列， fields+values */
+/* 讀取：取底部 520 列， fields+values */
 function _listRecent(sheet){
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) {
@@ -133,7 +133,7 @@ function _listRecent(sheet){
   }
 
   var lastCol  = sheet.getLastColumn();
-  var startRow = Math.max(2, lastRow - 420 + 1);
+  var startRow = Math.max(2,lastRow - 519);
   var rows     = lastRow - startRow + 1;
 
   var values = sheet.getRange(startRow, 1, rows, lastCol).getValues();
