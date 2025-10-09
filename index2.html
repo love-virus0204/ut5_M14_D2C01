@@ -201,7 +201,6 @@ function fillDateSelect(){
     sel.appendChild(opt);
   }
   sel.selectedIndex=0;
-  enforceCutoffFromClock();
 }
 
 function startClock(){
@@ -345,13 +344,15 @@ addEventListener('DOMContentLoaded',()=>{
   setSel(document.querySelectorAll('[data-b]'),selB,'b');
   document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{selA=b.dataset.a;setSel(document.querySelectorAll('[data-a]'),selA,'a');enableSend();}));
   document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{selB=b.dataset.b;setSel(document.querySelectorAll('[data-b]'),selB,'b');enableSend();}));
-  bindInput();enableSend();probeStatus();renderB();
-fillDateSelect();
-startClock();
-  document.getElementById('sendBtn').addEventListener('click',send);
+  startClock();
+  bindInput();
+  enableSend();
+  probeStatus();
+  renderB();
+  fillDateSelect();
+  enforceCutoffFromClock();
+  setInterval(enforceCutoffFromClock, 5 * 60 * 1000); document.getElementById('sendBtn').addEventListener('click',send);
 });
-
-setInterval(enforceCutoffFromClock, 5 * 60 * 1000);
 </script>
 </body>
 </html>
