@@ -36,6 +36,17 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .dot{width:10px;height:10px;border-radius:50%;background:#64748b}
 .dot.ok{background:#10b981}
 .dot.err{background:#ef4444}
+
+.row.A {
+  color: #38bdf8;
+  background: #38bdf820;}
+.row.A .cell {
+  color: #bae6fd;}
+.row.B {
+  color: #f87171;
+  background: #f8717120;}
+.row.B .cell {
+  color: #fecaca;}
 </style>
 </head>
 <body>
@@ -158,30 +169,29 @@ function renderResponse(j){
   const rowsEl = document.getElementById('rows');
   rowsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
-  frag.appendChild(group('Ａ'));
+  frag.appendChild(group('Ａ','a'));
   if (A.length===0) frag.appendChild(empty());
   let seqA=1;
-  A.forEach(r => frag.appendChild(line(seqA++, r.id, r.name, r.dN)));
+  A.forEach(r => frag.appendChild(line(seqA++, r.id, r.name, r.dN,'a')));
   frag.appendChild(sep());
-  frag.appendChild(sep());
-  frag.appendChild(group('Ｂ'));
+  frag.appendChild(group('Ｂ','b'));
   if (B.length===0) frag.appendChild(empty());
   let seqB=1;
-  B.forEach(r => frag.appendChild(line(seqB++, r.id, r.name, r.dN)));
+  B.forEach(r => frag.appendChild(line(seqB++, r.id, r.name, r.dN,'b')));
 
   rowsEl.appendChild(frag);
   function cell(t){ const d=document.createElement('div'); d.textContent=t; return d; }
-  /* function group(t){ const g=document.createElement('div'); g.className='group'; g.textContent=t; return g; } */
-function group(t){
+function group(t,cls){
   const g = document.createElement('div');
-  g.className = 'row';
+  g.className = 'row ' + cls.toUpperCase();
   g.append(cell(t),cell('ＩＤ'),cell('姓　名'),cell('假別'));
   return g;
 }
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
   function empty(){ const r=document.createElement('div'); r.className='row'; r.append(cell('—'),cell('—'),cell('無資料'),cell('—')); return r; }
-  function line(n,id,name,dn){
-    const r=document.createElement('div'); r.className='row';
+  function line(n,id,name,dn,cls){
+    const r=document.createElement('div'); 
+    r.className = 'row ' + cls.toUpperCase();
     const nameCell=cell(name); nameCell.title=name;
     r.append(cell(n), cell(id), nameCell, cell(dn||'')); return r;
   }
