@@ -110,7 +110,7 @@ function parseLuckyData(data){
   if(!data||data.status!=='ok')return[];
   const F=Object.fromEntries(data.fields.map((k,i)=>[k,i]));
   return data.values.map(a=>({
-    date:a[F.date],id:a[F.id],shift:a[F.shift],dN:a[F.dN],key:a[F.key]
+    date:a[F.date],id:a[F.id],shift:a[F.shift],dN:a[F.dN],name:a[F.name]
   }));
 }
 function renderResponse(j){
