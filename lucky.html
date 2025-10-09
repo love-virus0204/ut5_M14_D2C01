@@ -36,8 +36,8 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .group.A {
   color: #38bdf8;
   background: #38bdf820;}
-.row.A  {
-  color: :#7dd3fc;}
+.row.A {
+  color: #7dd3fc;}
 .group.B {
   color: #f87171;
   background: #f8717120;}
@@ -180,7 +180,7 @@ function renderResponse(j){
 function group(t,cls){
   const g = document.createElement('div');
   g.className = 'group ' + cls.toUpperCase();
-  g.append(cell(t),cell('ＩＤ'),cell('姓　名'),cell('假別'));
+  g.append(cell(t),cell('Ｉ Ｄ'),cell('姓　名'),cell('假　別'));
   return g;
 }
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
