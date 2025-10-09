@@ -282,30 +282,67 @@ function submitData(p){
     .then(r=>r.text()).then(t=>{try{return JSON.parse(t);}catch(_){return{status:'parse_failed',raw:t};}});
 }
 
+
+/* ===== 送出動作 ===== */
 async function send(){
-  const id = document.getElementById('code').value.trim().toUpperCase();
-  if(!/^[A-Z0-9]{5}$/.test(id)){ /* 可選：focus */ document.getElementById('code').focus(); return; }
+  const idEl = document.getElementById('code');
+  const id = idEl.value.trim().toUpperCase();
 
-  const sel = document.getElementById('selDate');
-  const ser = Number(sel.value);                           // ← 送出用「日期序號」
-  const mdTxt = sel.options[sel.selectedIndex].text;       // ← 草稿B顯示用 mm/dd
-
-  const payload = { id, date: ser, key: `${ser}|${id}`, shift: selB, dN: selA };
-
-  showOverlay && showOverlay(true);
-  let ok=false, res;
-  try{ res=await submitData(payload); ok=!!(res && res.status==='ok'); }catch(_){ ok=false; }
-  showOverlay && showOverlay(false);
-
-  // 草稿B：mm/dd 取自下拉；其餘欄照你原本規格
-  if (typeof addB==='function') {
-    // 新版物件式
-    addB({ ts: tsMin? tsMin(): mdTxt, id, a: selA, b: selB, status: ok?'ok':'ng', flag: ok ? (String(selB).toUpperCase()==='N'?'on':'ok') : 'ng', md: mdTxt });
-  } else if (typeof logDraftB==='function') {
-    // 舊版二參數：擴充在文字中帶 mm/dd
-    logDraftB(ok, `${mdTxt} | ${id}`);
+  // 1️⃣ ID格式檢查
+  if(!/^[A-Z0-9]{5}$/.test(id)){
+    idEl.focus();
+    return;
   }
-  toast && toast(ok? `已送出（${selA}/${selB}）` : '失敗');
+
+  // 2️⃣ 日期選擇
+  const sel = document.getElementById('selDate');
+  const ser = Number(sel.value);                           // 送出用日期序號
+  const mdTxt = sel.options[sel.selectedIndex].text;       // 顯示用 mm/dd
+
+  // 3️⃣ 組合 payload
+  const payload = { 
+    id, 
+    date: ser, 
+    key: `${ser}|${id}`, 
+    shift: selB, 
+    dN: selA 
+  };
+
+  // 4️⃣ 顯示上傳中遮罩
+  showOverlay(true);
+
+  // 5️⃣ 傳送 POST
+  let ok = false, res;
+  try {
+    res = await submitData(payload);
+    ok = res && res.status === 'ok';
+  } catch(e) {
+    ok = false;
+  }
+
+  showOverlay(false);
+
+  // 6️⃣ 時間戳 (使用全域 tNow)
+  let ts = '--/-- --:--';
+  if (tNow instanceof Date){
+    const p = new Intl.DateTimeFormat('zh-Hant-TW',{
+      timeZone:'Asia/Taipei',
+      month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false
+    }).formatToParts(tNow).reduce((a,b)=>(a[b.type]=b.value,a),{});
+    ts = `${p.month}/${p.day} ${p.hour}:${p.minute}`;
+  }
+
+  // 7️⃣ 判斷邏輯
+  const status = ok ? 'ok' : 'ng';
+  const bIsN   = String(selB).toUpperCase() === 'N';
+  const flag   = ok ? (bIsN ? 'on' : 'ok') : 'ng';
+  const aDisp  = bIsN ? '取消' : `${mdTxt} - ${selA}`;
+
+  // 8️⃣ 寫入草稿B
+  addB({ ts, id, a: aDisp, b: selB, status, flag });
+
+  // 9️⃣ 提示訊息
+  toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
 
 /* ===== 輸入與選項 ===== */
