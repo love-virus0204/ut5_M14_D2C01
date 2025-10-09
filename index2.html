@@ -33,7 +33,23 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   color:var(--text);text-align:center;font-size:18px;letter-spacing:.2em;text-transform:uppercase;
 }
 .in:focus{outline:2px solid var(--accent);}
-.mmdd{
+
+.daySel{
+  min-width:110px;
+  height:32px;
+  padding:0 10px;
+  border:1px solid #38bdf8;
+  border-radius:8px;
+  background:#1e3a8a;
+  color:#fff;
+  font-weight:500;
+  appearance:auto;
+}
+.mmdd{ display:flex; align-items:center; gap:8px; }
+.mmdd label{ white-space:nowrap; }
+
+
+//.mmdd{
   text-align:center;background:var(--glass);border:1px solid #1f2937;padding:6px 14px;
   border-radius:999px;font-weight:700;margin:3px auto;width:max-content;
 }
@@ -334,7 +350,22 @@ addEventListener('DOMContentLoaded',()=>{
 });
 
 /* 初始化 */
-document.addEventListener('DOMContentLoaded', buildDaySelect);
+document.addEventListener('DOMContentLoaded', () => {
+  buildDaySelect();
+  setSel(document.querySelectorAll('[data-a]'), selA, 'a');
+  setSel(document.querySelectorAll('[data-b]'), selB, 'b');
+  document.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => { selA = b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA, 'a'); enableSend(); })
+  );
+  document.querySelectorAll('[data-b]').forEach(b => b.addEventListener('click', () => { selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB, 'b'); enableSend(); })
+  );
+
+  bindInput();
+  enableSend();
+  startClock();
+  probeStatus();
+  renderB();
+  document.getElementById('sendBtn').addEventListener('click', send);
+});
 </script>
 </body>
 </html>
