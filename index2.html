@@ -141,7 +141,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>試算表</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">v1.2</div>
+  <div class="ver">v1.3</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
@@ -153,7 +153,6 @@ const TZ='Asia/Taipei';
 let selA='平日', selB='N';
 
 /* ===== 時鐘（台北時間）===== */
-/* ===== 台北時區 now → 取整體時間元件 ===== */
 function tpeParts(){
   const p = new Intl.DateTimeFormat('zh-Hant-TW',{
     timeZone:'Asia/Taipei',
@@ -344,6 +343,8 @@ async function send(){
   // 9️⃣ 提示訊息
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
+
+
 
 /* ===== 輸入與選項 ===== */
 function bindInput(){
