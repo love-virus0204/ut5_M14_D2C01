@@ -58,31 +58,32 @@ const mdFromSerial=s=>{const t=new Date((s-25569)*86400000);return `${pad(t.getU
 /* ===== POST：URLSearchParams ===== */
 async function fetchList(payload){
   const body = new URLSearchParams(payload);
-  const r    = await fetch(API_URL,{method:'POST',body});
-  const txt  = await r.text();
-  // 兩種兼容：直接陣列 or {status,fields,values}
-  let j; try{ j = JSON.parse(txt) }catch(_){ return {rows:[]} }
-  if (Array.isArray(j)) return {rows:j};                 // 已是物件陣列
-  if (j && j.status==='ok' && Array.isArray(j.fields) && Array.isArray(j.values)){
-    const F = Object.fromEntries(j.fields.map((k,i)=>[k,i]));
-    const rows = j.values.map(a=>({
-      submittedAt:a[F.submittedAt],
-      key:a[F.key],
-      date:Number(a[F.date]),
-      id:a[F.id],
-      shift:a[F.shift],
-      dN:a[F.dN],
-      admin_id:a[F.admin_id],
-      deletedAt:a[F.deletedAt],
-      lucky:a[F.lucky],
-      row:a[F.row]
-    }));
-    return {rows};
-  }
-  return {rows:[]};
+
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    body: body
+  });
+  const j = await res.json();
+  if (!j || j.status !== 'ok' || !Array.isArray(j.fields) || !Array.isArray(j.values))
+    return { rows: [] };
+
+  const F = Object.fromEntries(j.fields.map((k, i) => [k, i]));
+  const rows = j.values.map(a => ({
+    submittedAt: a[F.submittedAt],
+    key:         a[F.key],
+    date:        Number(a[F.date]),
+    id:          a[F.id],
+    shift:       a[F.shift],
+    dN:          a[F.dN],
+    admin_id:    a[F.admin_id],
+    deletedAt:   a[F.deletedAt],
+    lucky:       a[F.lucky],
+    row:         a[F.row]
+  }));
+  return { rows };
 }
 
-/* ===== 依「資料（date 不同）」→ 各自拆 A/B → 配對列 ===== */
+/* ===== 依{資料}→ 拆 A/B → 配對 ===== */
 function splitDays(rows){
   const n = 7;
   const dates = [];
@@ -102,7 +103,7 @@ function splitDays(rows){
   });
 }
 
-/* ===== 渲染：每個日期一個 section，左右 A/B 卡片 ===== */
+/* ===== 渲染：每日 sectionA/B 卡片 ===== */
 function render(groups){
   const root = document.getElementById('sections');
   if (!groups || !groups.length){
@@ -127,12 +128,10 @@ function render(groups){
         </div>
       </div>`;
   }
-
   function card(h3, list){
     if (!list || !list.length){
-      return `<div class="card"><h3>${h3}</h3><div class="empty">此日期無資料</div></div>`;
+      return `<div class="card"><h3>${h3}</h3><div class="empty">本日無資料</div></div>`;
     }
-    // 用簡單表格，兩欄：ID / 假別
     const rows = list.map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.dN)}</td></tr>`).join('');
     return `
       <div class="card">
@@ -145,7 +144,6 @@ function render(groups){
         </div>
       </div>`;
   }
-
   function esc(s){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 }
 
