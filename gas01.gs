@@ -24,6 +24,8 @@ function _drawLucky(sh, dateSerial, rankedIds) {
     const kind = String(big[i][F_KIND]);
     const r    = rankMap[id];
 
+    sub[i][H_SUB] = now;
+    sub[i][G_SUB] = 'lucky';
     let val = '9999';
     if (eFlg !== 'n' && r > 0) {
       const prefix = (kind === '假日') ? '1' : '2';
@@ -32,8 +34,6 @@ function _drawLucky(sh, dateSerial, rankedIds) {
 
     big[i][I_BIG] = val;
     sub[i][I_SUB] = val;
-    sub[i][G_SUB] = 'lucky';
-    sub[i][H_SUB] = now;
     updated++;
   }
 
