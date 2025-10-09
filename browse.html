@@ -84,24 +84,20 @@ async function fetchList(payload){
 
 /* ===== 依「資料（date 不同）」→ 各自拆 A/B → 配對列 ===== */
 function splitDays(rows){
-  var n = 7
-  const alive = rows.filter(x => !x.deletedAt);
+  const n = 7;
   const dates = [];
-  for (const r of alive){
+  for (const r of rows){
     if (!dates.includes(r.date)){
       dates.push(r.date);
       if (dates.length === n) break;
     }
   }
-  return dates.map(dSer=>{
-    const subset = alive.filter(x => Number(x.date) === Number(dSer));
-    const A = subset
-    .filter(x => String(x.shift||'').toUpperCase()==='A')
-    .map(x => ({ id: x.id||'', dN: x.dN||'' }));
-    const B = subset
-    .filter(x => String(x.shift||'').toUpperCase()==='B')
-    .map(x => ({ id: x.id||'', dN: x.dN||'' }));
-    return { date: Number(dSer), A, B };
+
+  return dates.map(dSer => {
+    const subset = rows.filter(x => x.date === dSer);
+    const A = subset.filter(x => x.shift === 'A').map(x => ({ id: x.id, dN: x.dN }));
+    const B = subset.filter(x => x.shift === 'B').map(x => ({ id: x.id, dN: x.dN }));
+    return { date: dSer, A, B };
   });
 }
 
