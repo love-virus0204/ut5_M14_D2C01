@@ -132,7 +132,7 @@ const mask=document.getElementById('mask');
 function showMask(t){mask.textContent=t;mask.classList.add('show');}
 function hideMask(){mask.classList.remove('show');}
 
-/* ===== 資料解析與渲染 ===== */
+/* ===== 資料解析 ===== */
 function parseLuckyData(data){
   if(!data||data.status!=='ok')return[];
   const F=Object.fromEntries(data.fields.map((k,i)=>[k,i]));
@@ -140,6 +140,7 @@ function parseLuckyData(data){
   }));
 }
 
+/* ===== 資料渲染 ===== */
 function renderResponse(j){
   const list = parseLuckyData(j);
   const serial = currentSerial();
@@ -154,7 +155,6 @@ function renderResponse(j){
   const rowsEl = document.getElementById('rows');
   rowsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
-  frag.appendChild(group('A 班'));
   if (A.length===0) frag.appendChild(empty());
   let seqA=1;
   A.forEach(r => frag.appendChild(line(seqA++, r.id, r.name, r.dN)));
