@@ -21,7 +21,7 @@ function _drawLucky(sh, dateSerial, rankedIds) {
 
   for (let i=0;i<count;i++){
     const serial = _toSerialInt(big[i][C_DATE], epoch);
-    if (serial !== dateSerial) continue;
+    if (serial !== dateSerial) { big[i][G_BIG] = 'N'; continue; }
 
     const id   = String(big[i][D_ID]);
     const eFlg = String(big[i][E_FLAG]);
