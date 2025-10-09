@@ -37,11 +37,14 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 </head>
 <body>
   <div class="top">
-    <div class="status" id="gasStatus">檢查中…</div>
+    <div class="status" id="gasStatus">
+      <span class="dot" id="gasDot"></span>
+      <span id="gasText">n/a</span>
+    </div>
     <div class="clock" id="nowTime">--/-- --:--:--</div>
     <div class="btns">
-      <button class="btn" id="btnRead">讀數據</button>
-      <button class="btn" id="btnDraw">執行抽籤</button>
+      <button class="btn" id="btnRead">讀表</button>
+      <button class="btn" id="btnDraw">抽籤</button>
     </div>
   </div>
 
@@ -86,16 +89,25 @@ function currentSerial(){return Number(daySel.value);}
 function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--';}
 
 /* ===== 狀態顯示 ===== */
-const gasStatus=document.getElementById('gasStatus');
-async function pingGas(){
-  try{
-    const r=await fetch(API_URL+'?action=ping',{cache:'no-store'});
-    const j=await r.json();
-    gasStatus.textContent=(j.status==='ok')?'連線正常':'離線';
-  }catch(e){gasStatus.textContent='錯誤';}
-}
-pingGas();
-setInterval(pingGas,45000);
+const gasDot  = document.getElementById('gasDot');
+const gasText = document.getElementById('gasText');
+// 'n/a' | 'GAS' | 'GG'
+  function setGas(status){
+    gasDot.className = 'dot' + (status==='GAS' ? ' ok' : status==='GG' ? ' err' : '');
+    gasText.textContent = status;
+  }
+  setGas('n/a');
+  async function pingGas(){
+    try{
+      const r = await fetch(API_URL+' action=ping',{cache:'no-store'});
+      const j = await r.json();
+      setGas(j.status==='ok' ? 'GAS' : 'GG');
+      }catch(_){
+      setGas('GG');
+    }
+  }
+  pingGas();
+  setInterval(pingGas, 45000);
 
 /* ===== 即時時間顯示 ===== */
 function tick(){
