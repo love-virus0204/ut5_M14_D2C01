@@ -185,7 +185,7 @@ function renderResponse(j){
 function group(t,cls){
   const g = document.createElement('div');
   g.className = 'group ' + cls.toUpperCase();
-  g.append(cell(t),cell('工　　號'),cell('姓　名'),cell('假　別'),cell('　'));
+  g.append(cell(t),cell('工　　號'),cell('姓　　名'),cell('假　別'),cell('　'));
   return g;
 }
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
