@@ -25,10 +25,26 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 .mmdd{ text-align:center;background:var(--glass);border:1px solid #1f2937;padding:6px 14px;border-radius:999px;font-weight:700;margin:3px auto;width:max-content; }
 
 
-.mmdd.sel{
-  appearance:none;background:var(--glass);border:1px solid #1f2937;
-  padding:6px 14px;border-radius:999px;font-weight:700;margin:6px auto;
-  color:var(--text);text-align:center;min-width:160px;box-shadow:var(--shadow);
+..mmdd.sel{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  background:var(--glass);
+  border:1px solid #1f2937;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:700;
+  margin:6px auto;
+  color:var(--text);
+  text-align:center;
+  min-width:130px;
+  box-shadow:var(--shadow);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'><path fill='%23e5e7eb' d='M0 0l5 6 5-6z'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 8px center;
+  background-size:10px 6px;
+  padding-right:28px;
+  cursor:pointer;
 }
 .mmdd.sel:focus{outline:2px solid var(--accent)}
 
@@ -141,7 +157,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>試算表</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">v1.4.1</div>
+  <div class="ver">v1.4.2</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
