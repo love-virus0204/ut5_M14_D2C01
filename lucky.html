@@ -165,12 +165,12 @@ function renderResponse(j){
   const rowsEl = document.getElementById('rows');
   rowsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
-  frag.appendChild(group(' Ａ','a'));
+  frag.appendChild(group(' A','a'));
   if (A.length===0) frag.appendChild(empty());
   let seqA=1;
   A.forEach(r => frag.appendChild(line(seqA++, r.id, r.name, r.dN,'a')));
   frag.appendChild(sep());
-  frag.appendChild(group(' Ｂ','b'));
+  frag.appendChild(group(' B','b'));
   if (B.length===0) frag.appendChild(empty());
   let seqB=1;
   B.forEach(r => frag.appendChild(line(seqB++, r.id, r.name, r.dN,'b')));
@@ -180,7 +180,7 @@ function renderResponse(j){
 function group(t,cls){
   const g = document.createElement('div');
   g.className = 'group ' + cls.toUpperCase();
-  g.append(cell(t),cell('Ｉ Ｄ'),cell('姓　名'),cell('假　別'));
+  g.append(cell(t),cell(' I  D '),cell('姓　名'),cell('假　別'));
   return g;
 }
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
