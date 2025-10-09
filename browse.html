@@ -83,23 +83,29 @@ async function fetchList(payload){
 }
 
 /* ===== 依「兩大筆資料（date 不同）」→ 各自拆 A/B → 配對列 ===== */
-function splitTwoGroups(rows){
-  const alive = rows.filter(x=>!x.deletedAt);
-  // 取出最多兩個日期序號（依出現順序）
+function splitDays(rows){
+  var n = 7
+  const alive = rows.filter(x => !x.deletedAt);
   const dates = [];
-  for(const r of alive){ if(!dates.includes(r.date)){ dates.push(r.date); if(dates.length===7) break; } }
-  // 兩大筆（如果只有一個日期也可渲染）
+  for (const r of alive){
+    if (!dates.includes(r.date)){
+      dates.push(r.date);
+      if (dates.length === n) break;
+    }
+  }
   return dates.map(dSer=>{
-    const subset = alive.filter(x=>x.date===dSer);
-    const A = subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id??'', dN:x.dN??''}));
-    const B = subset.filter(x=>String(x.shift).toUpperCase()==='B').map(x=>({id:x.id??'', dN:x.dN??''}));
-    const max = Math.max(A.length,B.length);
-    const pairs = Array.from({length:max},(_,i)=>({a:A[i]||null, b:B[i]||null}));
-    return { dateSerial:dSer, pairs };
+    const subset = alive.filter(x => Number(x.date) === Number(dSer));
+    const A = subset
+    .filter(x => String(x.shift||'').toUpperCase()==='A')
+    .map(x => ({ id: x.id||'', dN: x.dN||'' }));
+    const B = subset
+    .filter(x => String(x.shift||'').toUpperCase()==='B')
+    .map(x => ({ id: x.id||'', dN: x.dN||'' }));
+    return { date: Number(dSer), A, B };
   });
 }
 
-/* ===== 渲染：每大筆一個 section；每列顯示「id,dN | id,dN」===== */
+/* ===== 渲染：每大筆一個 section；===== */
 function render(groups){
   const root = document.getElementById('sections');
   root.innerHTML = '';
@@ -126,11 +132,10 @@ function render(groups){
     const grid = document.createElement('div');
     grid.className = 'grid';
 
-    // 左 A
     const cardA = document.createElement('div');
     cardA.className = 'card';
     cardA.innerHTML = `<h3>A 班</h3><div class="table"><table><thead><tr><th>ID</th><th>假別</th></tr></thead><tbody id="tbA_${g.dateSerial}"></tbody></table></div>`;
-    // 右 B
+
     const cardB = document.createElement('div');
     cardB.className = 'card';
     cardB.innerHTML = `<h3>B 班</h3><div class="table"><table><thead><tr><th>ID</th><th>假別</th></tr></thead><tbody id="tbB_${g.dateSerial}"></tbody></table></div>`;
@@ -167,7 +172,7 @@ async function loadData(payload){
   let rows=[];
   try{ const {rows:r}=await fetchList(payload); rows=r.slice(0,520); }catch(_){ rows=[]; }
 
-  const groups = splitTwoGroups(rows);
+  const groups = splitDays(rows);
   render(groups);
 
   document.getElementById('loading').classList.add('hidden');
