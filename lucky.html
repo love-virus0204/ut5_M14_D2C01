@@ -137,16 +137,12 @@ async function pingGas(){
   }
 }
 
-  pingGas();
-  setInterval(pingGas, 45000);
-
 /* ===== 即時時間顯示 ===== */
 function tick(){
   const t=nowCorrected();
   const s=`${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
   document.getElementById('nowTime').textContent=s;
 }
-tick(); setInterval(tick,1000);
 
 /* ===== 遮罩控制 ===== */
 const mask=document.getElementById('mask');
@@ -241,6 +237,12 @@ async function draw(){
 /* ===== 綁定 ===== */
 document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
+
+/* ===== 初始化 ===== */
+  tick();
+    setInterval(tick,1000);
+  pingGas();
+    setInterval(pingGas, 45000);
 // document.addEventListener('DOMContentLoaded', reloadData);
 </script>
 </body>
