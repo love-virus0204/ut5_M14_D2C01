@@ -92,12 +92,13 @@ function splitDays(rows){
       if (dates.length === n) break;
     }
   }
-
   return dates.map(dSer => {
     const subset = rows.filter(x => x.date === dSer);
-    const A = subset.filter(x => x.shift === 'A').map(x => ({ id: x.id, dN: x.dN }));
-    const B = subset.filter(x => x.shift === 'B').map(x => ({ id: x.id, dN: x.dN }));
-    return { date: dSer, A, B };
+    return {
+      date: dSer,
+      A: subset.filter(x => x.shift === 'A').map(x => ({ id:x.id, dN:x.dN })),
+      B: subset.filter(x => x.shift === 'B').map(x => ({ id:x.id, dN:x.dN }))
+    };
   });
 }
 
