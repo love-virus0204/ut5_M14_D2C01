@@ -26,7 +26,7 @@ function _drawLucky(sh, dateSerial, rankedIds) {
     const id   = String(big[i][D_ID]);
     const eFlg = String(big[i][E_FLAG]);
     const kind = String(big[i][F_KIND]);
-    const [r, name] = rankMap[id];
+    const [r, name] = (rankMap[id] || [0, '']);
 
     big[i][G_BIG] = name;
     sub[i][G_SUB] = name;
