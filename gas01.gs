@@ -12,7 +12,7 @@ function _drawLucky(sh, dateSerial, rankedIds) {
   const rankMap = Object.create(null);
   for (let i=0;i<rankedIds.length;i++) rankMap[ rankedIds[i] ] = i+1;
 
-  const C_DATE=2, D_ID=3, E_FLAG=4, F_KIND=5, G_SUB=0, H_SUB=1, I_SUB=2, I_BIG=8;
+  const C_DATE=2, D_ID=3, E_FLAG=4, F_KIND=5, G_SUB=0, H_SUB=1, I_SUB=2, J_SUB=3, I_BIG=8;
   let updated=0;
 
   for (let i=0;i<count;i++){
@@ -24,8 +24,9 @@ function _drawLucky(sh, dateSerial, rankedIds) {
     const kind = String(big[i][F_KIND]);
     const r    = rankMap[id];
 
-    sub[i][H_SUB] = now;
-    sub[i][G_SUB] = 'lucky';
+    sub[i][G_SUB] = name;
+    sub[i][H_SUB] = 'lucky';
+    sub[i][I_SUB] = now;
     let val = '9999';
     if (eFlg !== 'n' && r > 0) {
       const prefix = (kind === '假日') ? '1' : '2';
@@ -33,11 +34,11 @@ function _drawLucky(sh, dateSerial, rankedIds) {
     }
 
     big[i][I_BIG] = val;
-    sub[i][I_SUB] = val;
+    sub[i][J_SUB] = val;
     updated++;
   }
 
-  sh.getRange(start, 7, count, 3).setValues(sub);
+  sh.getRange(start, 7, count, 4).setValues(sub);
 
   big.forEach((row, i) => {
     row[2] = _toSerialInt(row[2], epoch);
