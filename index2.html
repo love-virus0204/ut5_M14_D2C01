@@ -309,6 +309,31 @@ async function send(){
     return;
   }
 
+  // 6️⃣ 時間戳：直接從時鐘文字擷取 mm/dd HH:mm
+  let ts='--/-- --:--';
+  const clk=document.getElementById('clock');
+  if(clk && clk.textContent){
+    const m=clk.textContent.match(/^(\d{2}\/\d{2}) (\d{2}:\d{2})/);
+
+    const errT = 130;
+    const mins = (+m[3])*60 + (+m[4]);
+    if(mins > errT){
+      const h = Math.floor(errT / 60);
+      const m = errT % 60; 
+      const errT2 = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      const sel=document.getElementById('selDate');
+      const firstOpt=sel.options[0];
+      if(firstOpt){
+        firstOpt.disabled=true;
+        sel.selectedIndex=1;
+      }
+      showPopup(`時間超過 ${errT2} ，今日報名已截止。請選擇其他日期。`);
+      return;
+      }
+    }
+    if(m) ts=`${m[1]} ${m[2]}`;
+  }
+
   // 2️⃣ 日期選單
   const sel   = document.getElementById('selDate');
   const ser   = Number(sel.value);                           // 送出用序號
@@ -325,14 +350,6 @@ async function send(){
   try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
   catch(_){ ok=false; }
   showOverlay(false);
-
-  // 6️⃣ 時間戳：直接從時鐘文字擷取 mm/dd HH:mm
-  let ts='--/-- --:--';
-  const clk=document.getElementById('clock');
-  if(clk && clk.textContent){
-    const m=clk.textContent.match(/^(\d{2}\/\d{2}) (\d{2}:\d{2})/);
-    if(m) ts=`${m[1]} ${m[2]}`;
-  }
 
   // 7️⃣ 判斷邏輯
   const status = ok ? 'ok':'ng';
