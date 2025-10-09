@@ -155,11 +155,12 @@ function renderResponse(j){
   const rowsEl = document.getElementById('rows');
   rowsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
+  /* frag.appendChild(group('A 班')); */
   if (A.length===0) frag.appendChild(empty());
   let seqA=1;
   A.forEach(r => frag.appendChild(line(seqA++, r.id, r.name, r.dN)));
   frag.appendChild(sep());
-  frag.appendChild(group('B 班'));
+  /* frag.appendChild(group('B 班')); */
   if (B.length===0) frag.appendChild(empty());
   let seqB=1;
   B.forEach(r => frag.appendChild(line(seqB++, r.id, r.name, r.dN)));
@@ -174,6 +175,17 @@ function renderResponse(j){
     const nameCell=cell(name); nameCell.title=name;
     r.append(cell(n), cell(id), nameCell, cell(dn||'')); return r;
   }
+function header(label){
+  const h = document.createElement('div');
+  h.className = 'hdr';
+  h.innerHTML = `
+    <div>${label}</div>
+    <div>ID</div>
+    <div>姓名</div>
+    <div>假別</div>
+  `;
+  return h;
+}
 }
 
 /* ===== 通訊 ===== */
