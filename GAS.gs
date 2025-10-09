@@ -144,7 +144,7 @@ function _listRecent(sheet){
     row.push(startRow + i);
   });
 
-  values.sort((a,b)=> b[9] - a[9]);
+  values.sort((a,b)=> a[9] - b[9]);
 
   var fields = [
 "submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky","row"];
