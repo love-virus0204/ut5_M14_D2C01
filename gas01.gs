@@ -33,6 +33,7 @@ function _drawLucky(sh, dateSerial, rankedIds) {
     big[i][I_BIG] = val;
     sub[i][I_SUB] = val;
     sub[i][G_SUB] = 'lucky';
+    sub[i][G_SUB] = dateSerial;
     sub[i][H_SUB] = now;
     updated++;
   }
