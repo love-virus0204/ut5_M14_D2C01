@@ -165,7 +165,7 @@ async function loadData(payload){
   document.getElementById('box').classList.add('hidden');
 
   let rows=[];
-  try{ const {rows:r}=await fetchList(payload); rows=r.slice(0,160); }catch(_){ rows=[]; }
+  try{ const {rows:r}=await fetchList(payload); rows=r.slice(0,520); }catch(_){ rows=[]; }
 
   const groups = splitTwoGroups(rows);
   render(groups);
