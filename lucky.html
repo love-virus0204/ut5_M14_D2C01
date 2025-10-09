@@ -6,23 +6,20 @@
 <meta http-equiv="Cache-Control" content="no-store" />
 <title>D2 名單檢視 / 抽籤</title>
 <style>
-  :root{ --w:90vw; --hbar:40px; --gap:10px; --card:#0b1324; --line:#223; --txt:#cfe9ff; --mut:#8aa4bf; --ok:#10b981; --err:#ef4444; --btn:#1e90ff; }
-  *{ box-sizing:border-box }
-  html,body{height:100%;margin:0;overflow-x:hidden;background:radial-gradient(1200px 600px at 50% -200px,#0b1a33,#060d1b);color:var(--txt);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;}
+  :root{--w:90vw;--hbar:40px;--gap:10px;--card:#0b1324;--line:#223;--txt:#cfe9ff;--mut:#8aa4bf;--ok:#10b981;--err:#ef4444;--btn:#1e90ff}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;overflow-x:hidden;background:radial-gradient(1200px 600px at 50% -200px,#0b1a33,#060d1b);color:var(--txt);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
   .page{min-height:100%;display:flex;flex-direction:column;align-items:center;gap:var(--gap);width:100%}
 
-  /* 上區工具列（固定約 40px） */
+  /* 上區 */
   .bar{position:sticky;top:0;z-index:5;height:var(--hbar);display:flex;align-items:center;justify-content:space-between;width:var(--w);max-width:900px;background:rgba(7,15,30,.8);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;margin-top:10px;padding:0 10px}
   .left,.mid,.right{display:flex;align-items:center;gap:10px}
   .badge{padding:3px 10px;border-radius:999px;font-size:.92em;border:1px solid var(--line);color:var(--mut)}
-  .badge.ok{color:var(--ok);border-color:#1d3}
-  .badge.err{color:var(--err);border-color:#833}
-  .date{font-variant-numeric:tabular-nums}
-  .time{opacity:.9}
-  .btn{padding:8px 12px;border-radius:10px;background:var(--btn);color:#fff;border:0;cursor:pointer}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .badge.ok{color:var(--ok);border-color:#1d3}.badge.err{color:var(--err);border-color:#833}
+  .date{font-variant-numeric:tabular-nums}.time{opacity:.9}
+  .btn{padding:8px 12px;border-radius:10px;background:var(--btn);color:#fff;border:0;cursor:pointer}.btn:disabled{opacity:.6;cursor:not-allowed}
 
-  /* 下區：單欄清單（A → 分隔 → B） */
+  /* 下區 */
   .wrap{width:var(--w);max-width:900px;display:flex;flex-direction:column;gap:12px;margin:10px 0 16px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
   .hdr{display:flex;align-items:center;justify-content:space-between;color:var(--mut);font-size:.95em;margin-bottom:6px;min-width:0}
@@ -32,20 +29,15 @@
   .thead{color:var(--mut);border-bottom:1px dashed var(--line)}
   .row{border-bottom:1px dotted #1a2538}
   .thead div,.row div{justify-self:center;text-align:center;min-width:0}
-  .row div:nth-child(3), .thead div:nth-child(3){text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row div:nth-child(3),.thead div:nth-child(3){text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .group{grid-column:1/-1;margin:8px 0 4px;padding:6px 12px;border-left:3px solid #2a7bd1;background:rgba(255,255,255,.03);border-radius:8px;color:#b9d6ff;font-weight:600}
   .sep{height:8px;grid-column:1/-1}
   .empty{padding:16px;text-align:center;color:var(--mut)}
   .small{font-size:.85em;color:var(--mut);text-align:center}
-
-  /* 遮罩 */
   .mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:10}
   .mask.show{display:flex}
   .toast{min-width:220px;max-width:70vw;background:#0e182b;color:#e6f2ff;border:1px solid #245;border-radius:12px;padding:14px 16px;box-shadow:0 6px 22px rgba(0,0,0,.4);text-align:center}
-  .toast.ok{border-color:#1d3}
-  .toast.err{border-color:#833}
-
-  /* 直立手機壓縮欄寬與內距，防超出 */
+  .toast.ok{border-color:#1d3}.toast.err{border-color:#833}
   @media (max-width:420px){
     .thead,.row{padding:6px 8px}
     .grid{grid-template-columns:5ch 8ch minmax(0,1fr) 5ch}
@@ -55,19 +47,17 @@
 </head>
 <body>
 <div class="page">
-  <!-- 上區 -->
   <div class="bar">
     <div class="left"><span id="stat" class="badge">狀態: 檢查中</span></div>
     <div class="mid"><span id="ymd" class="date">--/--</span><span id="clock" class="time">--:--:--</span></div>
     <div class="right"><button id="reload" class="btn">讀數據</button><button id="draw" class="btn">執行抽籤</button></div>
   </div>
 
-  <!-- 下區 -->
   <div class="wrap">
     <div class="card">
       <div class="hdr">
         <div>日期：<span id="hdrDate">--/--</span></div>
-        <div class="small">筆數：<span id="count">0</span>（依後端排序顯示）</div>
+        <div class="small">筆數：<span id="count">0</span>（依後端排序顯示，僅 A/B）</div>
       </div>
       <div class="list">
         <div class="grid thead"><div>#</div><div>ID</div><div>姓名</div><div>假別</div></div>
@@ -78,38 +68,43 @@
   </div>
 </div>
 
-<!-- 遮罩 -->
 <div id="mask" class="mask"><div id="toast" class="toast">處理中…</div></div>
 
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
-const TZ='Asia/Taipei';
-const fmtYMD=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}); // yyyy-mm-dd
-const fmtMD =new Intl.DateTimeFormat('en-US',{timeZone:TZ,month:'2-digit',day:'2-digit'});               // mm/dd
-const fmtHM =new Intl.DateTimeFormat('en-US',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+
+/* —— 台北時間：以設備時間轉換 —— */
+function nowTPE(){
+  return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
+}
+const fmtYMD=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}); // yyyy-mm-dd
+const fmtMD =new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',month:'2-digit',day:'2-digit'});               // mm/dd
+const fmtHM =new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+
+/* 一次鎖定今日（台北） */
+const YMD_LOCK = fmtYMD.format( nowTPE() );
+const SERIAL_LOCK = ymdToSerial(YMD_LOCK);
 
 const $=(q)=>document.querySelector(q);
-const el={
-  stat:$('#stat'), ymd:$('#ymd'), clock:$('#clock'), hdrDate:$('#hdrDate'),
-  count:$('#count'), rows:$('#rows'), updated:$('#updated'),
-  mask:$('#mask'), toast:$('#toast'), btnDraw:$('#draw'), btnReload:$('#reload')
-};
+const el={stat:$('#stat'), ymd:$('#ymd'), clock:$('#clock'), hdrDate:$('#hdrDate'),
+          count:$('#count'), rows:$('#rows'), updated:$('#updated'),
+          mask:$('#mask'), toast:$('#toast'), btnDraw:$('#draw'), btnReload:$('#reload')};
 
-/* —— 一次性鎖定：頁面載入時計算，之後不變 —— */
-function nowTPE(){ const n=new Date(); return new Date(n.toLocaleString('en-US',{timeZone:TZ})); }
-const YMD_LOCK = fmtYMD.format( nowTPE() );              // e.g. 2025-10-09（台北）
-const SERIAL_LOCK = ymdToSerial(YMD_LOCK);               // 一次性日期序號
-/* 顯示固定 mm/dd */
-el.ymd.textContent = fmtMD.format( new Date(YMD_LOCK+'T00:00:00+08:00') );
+el.ymd.textContent = fmtMD.format(new Date(YMD_LOCK));
 el.hdrDate.textContent = el.ymd.textContent;
 
-/* 工具 */
-function ymdToSerial(ymd){ const epoch=Date.UTC(1899,11,30); const d=new Date(ymd+'T00:00:00+08:00'); return Math.floor((d-epoch)/86400000); }
+function ymdToSerial(ymd){
+  const epoch=Date.UTC(1899,11,30);
+  // 以 IANA 時區推導午夜，避免手寫 +08
+  const d = new Date(new Date(ymd).toLocaleString('en-US',{timeZone:'Asia/Taipei'}));
+  const mid = new Date(d.getFullYear(), d.getMonth(), d.getDate()); // 本地午夜（不涉時區）
+  return Math.floor((mid.getTime() - epoch)/86400000);
+}
+
 function showMask(msg,type){ el.toast.textContent=msg; el.toast.className='toast '+(type||''); el.mask.classList.add('show'); }
 function hideMask(){ el.mask.classList.remove('show'); }
 function tick(){ el.clock.textContent=fmtHM.format(nowTPE()); }
 
-/* 狀態輪詢 */
 async function ping(){
   try{
     const r=await fetch(API_URL+'?action=ping',{cache:'no-store'});
@@ -118,21 +113,25 @@ async function ping(){
   }catch{ el.stat.textContent='狀態: ERR'; el.stat.className='badge err'; }
 }
 
-/* 共用渲染（讀取或抽籤回傳皆可） */
+/* 共用渲染：只吃 A/B，忽略 N/U/其他 */
 function render(j){
   const F=(j.fields||[]);
   const idx=(name,def)=>{const k=F.indexOf(name);return k>=0?k:def}
   const iDate=idx('date',2), iId=idx('id',3), iName=idx('name',1), iShift=idx('shift',4), iDN=idx('dN',5);
 
   const all=(j.values||[]).filter(v=>Number(v[iDate])===SERIAL_LOCK);
+  const AB = all.filter(v=>{
+    const s=String(v[iShift]||'').trim().toUpperCase();
+    return s==='A' || s==='B';
+  });
 
   const A=[], B=[];
-  all.forEach(v=>{
-    const rec={id:String(v[iId]||''), name:String(v[iName]||''), dn:String(v[iDN]||''), shift:String(v[iShift]||'')};
+  AB.forEach(v=>{
+    const rec={id:String(v[iId]||''), name:String(v[iName]||''), dn:String(v[iDN]||''), shift:String(v[iShift]||'').toUpperCase()};
     (rec.shift==='A'?A:B).push(rec);
   });
 
-  el.count.textContent=String(all.length);
+  el.count.textContent=String(AB.length);
   const frag=document.createDocumentFragment(); let seq=1;
 
   frag.appendChild(groupRow('A 班'));
@@ -147,7 +146,7 @@ function render(j){
   el.rows.innerHTML=''; el.rows.appendChild(frag);
 
   const t=nowTPE();
-  el.updated.textContent=fmtMD.format(new Date(YMD_LOCK+'T00:00:00+08:00'))+' '+fmtHM.format(t).slice(0,5);
+  el.updated.textContent=fmtMD.format(new Date(YMD_LOCK))+' '+fmtHM.format(t).slice(0,5);
 
   function cell(text){ const d=document.createElement('div'); d.textContent=text; return d; }
   function groupRow(t){ const g=document.createElement('div'); g.className='group'; g.textContent=t; return g; }
@@ -165,26 +164,26 @@ async function readData(){
   showMask('讀取中…');
   try{
     const p=new URLSearchParams(); p.append('action','list_recent2');
-    const r=await fetch(API_URL,{method:'POST',body:p});
+    const r=await fetch(API_URL,{method:'POST',body:p,cache:'no-store'});
     const j=await r.json();
     render(j);
     hideMask();
   }catch{ showMask('讀取失敗','err'); setTimeout(hideMask,1200); }
 }
 
-/* 抽籤：成功後直接用回傳值渲染；送出固定使用 YMD_LOCK / SERIAL_LOCK */
+/* 抽籤：成功後直接用回傳值渲染；送出固定使用鎖定日期 */
 async function draw(){
   el.btnDraw.disabled=true; el.btnReload.disabled=true;
   showMask('抽籤中…');
   try{
     const p=new URLSearchParams();
     p.append('action','lucky');
-    p.append('dateSerial', SERIAL_LOCK);   // 一次性鎖定的序號
-    p.append('ymd', YMD_LOCK);             // 附上字串日期，後端可比對
+    p.append('dateSerial', SERIAL_LOCK);
+    p.append('ymd', YMD_LOCK);
     const r=await fetch(API_URL,{method:'POST',body:p,cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const j=await r.json();
-    render(j);                              // 直接用回傳渲染
+    render(j);
     el.toast.textContent=j.msg||'抽籤完成'; el.toast.className='toast ok';
     setTimeout(hideMask,1000);
   }catch{ showMask('抽籤失敗','err'); setTimeout(hideMask,1500); }
