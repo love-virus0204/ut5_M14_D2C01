@@ -21,7 +21,17 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 .input{display:flex;justify-content:center;margin:7px 0;}
 .in{ width:200px;height:44px;border-radius:10px;border:1px solid #334155;background:#0f172a; color:var(--text);text-align:center;font-size:18px;letter-spacing:.2em;text-transform:uppercase; }
 .in:focus{outline:2px solid var(--accent);}
+
 .mmdd{ text-align:center;background:var(--glass);border:1px solid #1f2937;padding:6px 14px;border-radius:999px;font-weight:700;margin:3px auto;width:max-content; }
+
+
+.mmdd.sel{
+  appearance:none;background:var(--glass);border:1px solid #1f2937;
+  padding:6px 14px;border-radius:999px;font-weight:700;margin:6px auto;
+  color:var(--text);text-align:center;min-width:160px;box-shadow:var(--shadow);
+}
+.mmdd.sel:focus{outline:2px solid var(--accent)}
+
 .group{margin-top:16px;text-align:center;}
 .gtitle{font-size:12px;color:var(--sub);margin-bottom:1px;}
 .btnrow{display:grid;gap:10px;}
@@ -143,24 +153,56 @@ const TZ='Asia/Taipei';
 let selA='平日', selB='N';
 
 /* ===== 時鐘（台北時間）===== */
+/* ===== 台北時區 now → 取整體時間元件 ===== */
+function tpeParts(){
+  const p = new Intl.DateTimeFormat('zh-Hant-TW',{
+    timeZone:'Asia/Taipei',
+    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false
+  }).formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{});
+  return { y:+p.year, m:+p.month, d:+p.day, h:+p.hour, mi:+p.minute, s:+p.second };
+}
+
+/* ===== 基準日：>200 分鐘(03:20) 視為次日 ===== */
+function baseYMD_fromTPE(){
+  let {y,m,d,h,mi}=tpeParts();
+  if (h*60+mi>200){ const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+1); y=t.getUTCFullYear(); m=t.getUTCMonth()+1; d=t.getUTCDate(); }
+  return {y,m,d};
+}
+
+/* ===== 轉 Excel/Sheets 日期序號（1899-12-30 基準）===== */
+function ymdToSerial(y,m,d){ return Math.floor(Date.UTC(y,m-1,d)/86400000)+25569; }
+
+/* ===== mm/dd 文字 ===== */
+function mdLabel(y,m,d){ const mm=String(m).padStart(2,'0'), dd=String(d).padStart(2,'0'); return `${mm}/${dd}`; }
+
+/* ===== 產生 7 天清單並灌入下拉 ===== */
+function fillDateSelect(){
+  const sel = document.getElementById('selDate'); if(!sel) return;
+  sel.innerHTML='';
+  let {y,m,d}=baseYMD_fromTPE();
+  for(let i=0;i<7;i++){
+    const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+i);
+    const yy=t.getUTCFullYear(), mm=t.getUTCMonth()+1, dd=t.getUTCDate();
+    const opt=document.createElement('option');
+    opt.value=String( ymdToSerial(yy,mm,dd) );   // 送出用序號
+    opt.textContent=mdLabel(yy,mm,dd);           // 顯示 mm/dd
+    sel.appendChild(opt);
+  }
+  sel.selectedIndex=0;
+}
+
 let CUR_SER = null;
 let MD_STR  = '';
 let tNow = null;
 function startClock(){
-  const el = document.getElementById('clock');
-  const tick = ()=>{
-    tNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
-    const mm = String(tNow.getUTCMonth() + 1).padStart(2,'0');
-    const dd = String(tNow.getUTCDate()).padStart(2,'0');
-    const hh = String(tNow.getUTCHours()).padStart(2,'0');
-    const mi = String(tNow.getUTCMinutes()).padStart(2,'0');
-    const ss = String(tNow.getUTCSeconds()).padStart(2,'0');
-    el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
+  const el=document.getElementById('clock');
+  const tick=()=>{
+    const p=tpeParts();
+    const mm=String(p.m).padStart(2,'0'), dd=String(p.d).padStart(2,'0');
+    const hh=String(p.h).padStart(2,'0'), mi=String(p.mi).padStart(2,'0'), ss=String(p.s).padStart(2,'0');
+    if(el) el.textContent=`${mm}/${dd} ${hh}:${mi}:${ss}`;
   };
-  tick();
-  baseYMD();
-  setInterval(tick, 1000);
-  setInterval(baseYMD, 5*60*1000);
+  tick(); setInterval(tick,1000);
 }
 
 /* ===== 日期邏輯 ===== */
@@ -242,26 +284,28 @@ function submitData(p){
 
 async function send(){
   const id = document.getElementById('code').value.trim().toUpperCase();
-  if(!/^[A-Z0-9]{5}$/.test(id)){
-  document.getElementById('code').focus();
-  return;
-}
+  if(!/^[A-Z0-9]{5}$/.test(id)){ /* 可選：focus */ document.getElementById('code').focus(); return; }
 
-  const payload = { id, date: CUR_SER, key: `${CUR_SER}|${id}`, shift: selB, dN: selA };
+  const sel = document.getElementById('selDate');
+  const ser = Number(sel.value);                           // ← 送出用「日期序號」
+  const mdTxt = sel.options[sel.selectedIndex].text;       // ← 草稿B顯示用 mm/dd
 
-  showOverlay(true);
-  let ok = false, res;
-  try { res = await submitData(payload); ok = res && res.status === 'ok'; }
-  catch(_) { ok = false; }
-  showOverlay(false);
+  const payload = { id, date: ser, key: `${ser}|${id}`, shift: selB, dN: selA };
 
-  const status = ok ? 'ok' : 'ng';
-  const bIsN = String(selB).toUpperCase() === 'N';
-  const flag = ok ? (bIsN ? 'on' : 'ok') : 'ng';
-  const aDisp  = bIsN ? `${MD_STR} - 取消` : `${MD_STR} - ${selA}`;
-  addB({ ts: tsMin(), id, a: aDisp, b: selB, status, flag });
+  showOverlay && showOverlay(true);
+  let ok=false, res;
+  try{ res=await submitData(payload); ok=!!(res && res.status==='ok'); }catch(_){ ok=false; }
+  showOverlay && showOverlay(false);
 
-  toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
+  // 草稿B：mm/dd 取自下拉；其餘欄照你原本規格
+  if (typeof addB==='function') {
+    // 新版物件式
+    addB({ ts: tsMin? tsMin(): mdTxt, id, a: selA, b: selB, status: ok?'ok':'ng', flag: ok ? (String(selB).toUpperCase()==='N'?'on':'ok') : 'ng', md: mdTxt });
+  } else if (typeof logDraftB==='function') {
+    // 舊版二參數：擴充在文字中帶 mm/dd
+    logDraftB(ok, `${mdTxt} | ${id}`);
+  }
+  toast && toast(ok? `已送出（${selA}/${selB}）` : '失敗');
 }
 
 /* ===== 輸入與選項 ===== */
@@ -282,7 +326,9 @@ addEventListener('DOMContentLoaded',()=>{
   setSel(document.querySelectorAll('[data-b]'),selB,'b');
   document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{selA=b.dataset.a;setSel(document.querySelectorAll('[data-a]'),selA,'a');enableSend();}));
   document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{selB=b.dataset.b;setSel(document.querySelectorAll('[data-b]'),selB,'b');enableSend();}));
-  bindInput();enableSend();startClock();probeStatus();renderB();
+  bindInput();enableSend();probeStatus();renderB();
+fillDateSelect();
+startClock();
   document.getElementById('sendBtn').addEventListener('click',send);
 });
 </script>
