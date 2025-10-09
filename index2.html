@@ -10,56 +10,23 @@
   --bg:#0b1220; --panel:#1a2333cc; --glass:#1f2937aa; --text:#e5e7eb; --sub:#94a3b8;
   --accent:#22d3ee;
 }
-html,body{ padding-bottom:var(--footer-h); margin:0;height:100%;background:radial-gradient(circle at top,#0b1725,#060b15 80%);
-  color:var(--text);font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
-  overflow-x:hidden;box-sizing:border-box;
-}
+html,body{ padding-bottom:var(--footer-h); margin:0;height:100%;background:radial-gradient(circle at top,#0b1725,#060b15 80%); color:var(--text);font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif; overflow-x:hidden;box-sizing:border-box; }
 *,*::before,*::after{box-sizing:inherit}
-
-header{
-  text-align:center;padding:16px 0;font-size:20px;font-weight:700;letter-spacing:.08em;
-  background:linear-gradient(90deg,#0d1b2a,#1b263b);box-shadow:0 2px 10px rgba(0,0,0,.4);
-}
+header{ text-align:center;padding:16px 0;font-size:20px;font-weight:700;letter-spacing:.08em; background:linear-gradient(90deg,#0d1b2a,#1b263b);box-shadow:0 2px 10px rgba(0,0,0,.4); }
 main{display:block;padding:8px 0 0;overflow:visible;}
 .container{width:80%;max-width:640px;min-width:280px;margin:0 auto;}
-
-.panel{
-  width:100%;background:var(--panel);border-radius:20px;padding:20px;margin:0;
+.panel{ width:100%;background:var(--panel);border-radius:20px;padding:20px;margin:0;
   box-shadow:0 0 25px rgba(0,0,0,.4),inset 0 0 15px rgba(255,255,255,.06);backdrop-filter:blur(8px);
 }
 .input{display:flex;justify-content:center;margin:7px 0;}
-.in{
-  width:200px;height:44px;border-radius:10px;border:1px solid #334155;background:#0f172a;
-  color:var(--text);text-align:center;font-size:18px;letter-spacing:.2em;text-transform:uppercase;
-}
+.in{ width:200px;height:44px;border-radius:10px;border:1px solid #334155;background:#0f172a; color:var(--text);text-align:center;font-size:18px;letter-spacing:.2em;text-transform:uppercase; }
 .in:focus{outline:2px solid var(--accent);}
-
-.daySel{
-  min-width:110px;
-  height:32px;
-  padding:0 10px;
-  border:1px solid #38bdf8;
-  border-radius:8px;
-  background:#1e3a8a;
-  color:#fff;
-  font-weight:500;
-  appearance:auto;
-}
-.mmdd{ display:flex; align-items:center; gap:8px; }
-.mmdd label{ white-space:nowrap; }
-
-
-/* .mmdd{
-  text-align:center;background:var(--glass);border:1px solid #1f2937;padding:6px 14px;
-  border-radius:999px;font-weight:700;margin:3px auto;width:max-content;
-} */
+.mmdd{ text-align:center;background:var(--glass);border:1px solid #1f2937;padding:6px 14px;border-radius:999px;font-weight:700;margin:3px auto;width:max-content; }
 .group{margin-top:16px;text-align:center;}
 .gtitle{font-size:12px;color:var(--sub);margin-bottom:1px;}
 .btnrow{display:grid;gap:10px;}
 .btnrow.two{grid-template-columns:repeat(2,minmax(0,1fr));}
 .btnrow.three{grid-template-columns:repeat(3,minmax(0,1fr));}
-
-
 .btn{
   height:44px;
   border-radius:12px;
@@ -68,59 +35,48 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   font-weight:600;
   letter-spacing:.05em;
   cursor:pointer;
-  transition:all .15s ease;
-}
+  transition:all .15s ease; }
 .btn:hover{ background:linear-gradient(180deg,#334155,#1e293b);
-  transform:translateY(-1px);
-}
+  transform:translateY(-1px); }
 .btn.sel{
   outline:2px solid var(--accent);
-  box-shadow:0 0 10px rgba(34,211,238,.4);
-}
+  box-shadow:0 0 10px rgba(34,211,238,.4);}
 .btn.red{color:#ef4444;}
 .btn.black{color:#e5e7eb;}
-
 .btn.primary{ background:linear-gradient(180deg,#0ea5e9,#0369a1);
   border:1px solid #0891b2;
   border-radius:14px;
-  padding:10px 32px; /* ↑↓小、←→寬 */
+  padding:10px 32px;
   color:#fff;
   font-weight:700;
   letter-spacing:.08em;
   box-shadow:0 4px 12px rgba(0,0,0,.4);
-  transition:all .2s ease;
-}
+  transition:all .2s ease; }
 .btn.primary:hover{ background:linear-gradient(180deg,#38bdf8,#0ea5e9);
   transform:translateY(-1px);
-  box-shadow:0 6px 14px rgba(0,0,0,.45);
-}
+  box-shadow:0 6px 14px rgba(0,0,0,.45); }
 .btn.primary:active{
   transform:translateY(1px);
-  box-shadow:0 2px 6px rgba(0,0,0,.5) inset;
-  filter:brightness(.95);
-}
+  box-shadow:0 2px 6px rgba(0,0,0,.5) inset; filter:brightness(.95); }
 
 .draftB .ok { color: #22c55e; }
 .draftB .ng { color: #ef4444; }
 .draftB .on { color: #ffd700; }
 /* 草稿B（主體下方，無外框，置中） */
 .draftB{
-  width:100%;max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8);
-  border:none;border-radius:12px;padding:8px 6px;text-align:center;box-shadow:none;
-}
+  width:100%;max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8); border:none;border-radius:12px;padding:8px 6px;text-align:center;box-shadow:none; }
 .line{padding:6px 8px;border-bottom:1px dashed #334155;font-size:13px;}
 .line:last-child{border-bottom:0;}
 
 /* 底部狀態列 */
 .footerbar{ height:var(--footer-h);position:fixed;left:0;bottom:0;width:100%;display:flex;justify-content:space-between;align-items:center;
   padding:6px 12px;background:rgba(17,24,39,.7);border-top:1px solid #1f2937;backdrop-filter:blur(8px);
-  font-size:12px;color:var(--sub);
-}
-.sitem{display:flex;align-items:center;gap:6px;}
+  font-size:12px;color:var(--sub); }
+.sitem{display:flex;align-items:center;gap:6px; }
 .dot{width:10px;height:10px;border-radius:50%;background:#475569;}
-.dot.ok{background:#22c55e;} .dot.bad{background:#ef4444;}
-.clock{font-variant-numeric:tabular-nums;color:var(--accent);}
-.ver{color:#60a5fa;font-weight:700;}
+.dot.ok{background:#22c55e;} .dot.bad{background:#ef4444; }
+.clock{font-variant-numeric:tabular-nums;color:var(--accent); }
+.ver{color:#60a5fa;font-weight:700; }
 
 /* 上傳中 */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;}
@@ -137,11 +93,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
       <div class="input">
         <input id="code" class="in" placeholder="輸入5碼" maxlength="5" autocomplete="one-time-code" inputmode="latin">
       </div>
-      <div id="mmdd" class="mmdd">
-        <label for="daySel">報　名：</label>
-        <select id="daySel" class="daySel"></select>
-        <span> 跨加</span>
-      </div>
+      <div id="mmdd" class="mmdd">報　名：　 --/-- 跨加</div>
 
       <div class="group">
         <div class="gtitle">　</div>
@@ -192,52 +144,38 @@ const TZ='Asia/Taipei';
 let selA='平日', selB='N';
 
 /* ===== 時鐘（台北時間）===== */
-function nowCorrected(){
-  const p=new Intl.DateTimeFormat('zh-TW',{
-    timeZone:'Asia/Taipei',hour12:false,
-    year:'numeric',month:'2-digit',day:'2-digit',
-    hour:'2-digit',minute:'2-digit',second:'2-digit'
-  }).formatToParts(new Date());
-  const g=t=>Number(p.find(x=>x.type===t).value);
-  return new Date(g('year'),g('month')-1,g('day'),g('hour'),g('minute'),g('second'));
+let CUR_SER = null;
+let MD_STR  = '';
+let tNow = null;
+function startClock(){
+  const el = document.getElementById('clock');
+  const tick = ()=>{
+    tNow = new Date(Date.now() + 8 * 60 * 60 * 1000);
+    const mm = String(tNow.getUTCMonth() + 1).padStart(2,'0');
+    const dd = String(tNow.getUTCDate()).padStart(2,'0');
+    const hh = String(tNow.getUTCHours()).padStart(2,'0');
+    const mi = String(tNow.getUTCMinutes()).padStart(2,'0');
+    const ss = String(tNow.getUTCSeconds()).padStart(2,'0');
+    el.textContent = `${mm}/${dd} ${hh}:${mi}:${ss}`;
+  };
+  tick();
+  baseYMD();
+  setInterval(tick, 1000);
+  setInterval(baseYMD, 5*60*1000);
 }
 
-function serialFromDate(d){
-  const epoch = Date.UTC(1899,11,30);
-  return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - epoch)/86400000);
-}
-function mmdd(d){ const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); return `${m}/${day}`; }
-
-function buildDaySelect(){
-  const sel = document.getElementById('daySel');
-  if(!sel) return;
-
-  const now = nowCorrected();
-  const mins = now.getHours()*60 + now.getMinutes();
-  const base = new Date(now);
-  if(mins >= 360) base.setDate(base.getDate()+1);
-  const opts = [];
-  for(let i=0;i<7;i++){
-    const d = new Date(base);
-    d.setDate(base.getDate()+i);
-    const val = serialFromDate(d);
-    const text = mmdd(d);
-    opts.push(`<option value="${val}">${text}</option>`);
-  }
-  sel.innerHTML = opts.join('');
-  sel.selectedIndex = 0;
-
-  // 若頁面有全域狀態，更新它們（可選）
-  const firstVal = Number(sel.value);
-  if (typeof window.CUR_SER !== 'undefined') window.CUR_SER = firstVal;
-  if (typeof window.MD_STR  !== 'undefined') window.MD_STR  = sel.options[sel.selectedIndex].text;
-
-  // 變更時同步更新（供送出與顯示使用）
-  sel.addEventListener('change', ()=>{
-    const v = Number(sel.value);
-    if (typeof window.CUR_SER !== 'undefined') window.CUR_SER = v;
-    if (typeof window.MD_STR  !== 'undefined') window.MD_STR  = sel.options[sel.selectedIndex].text;
-  });
+/* ===== 日期邏輯 ===== */
+function baseYMD(){
+  if (!tNow) return;
+  const tn = tNow.getUTCHours() * 60 + tNow.getUTCMinutes();
+  const t = new Date(tNow);
+  if (tn >= 65) t.setUTCDate(t.getUTCDate() + 1);
+  CUR_SER = Math.floor(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate())/86400000) + 25569;
+  const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
+  const dd = String(t.getUTCDate()).padStart(2,'0');
+  MD_STR  = `${mm}/${dd}`;
+  const el = document.getElementById('mmdd');
+  if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
 }
 
 /* ===== 草稿A ===== */
@@ -248,7 +186,7 @@ function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 /* ===== 草稿B ===== */
 const DRAFTB_KEY='d2_draft_b_v1';
 function loadB(){try{return JSON.parse(localStorage.getItem(DRAFTB_KEY)||'[]');}catch(_){return[];}}
-function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,15)));} //保留最新筆數
+function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,10)));} // 最新在上只保留10
 
 function tsMin(){
   const d = new Date(Date.now() + 8*60*60*1000);
@@ -262,7 +200,7 @@ function tsMin(){
 function addB(item){
   const arr = loadB();
   arr.unshift(item);
-  saveB(arr.slice(0,15));
+  saveB(arr.slice(0,10));
   renderB();
 }
 
@@ -339,22 +277,14 @@ function setSel(btns,val,attr){
 }
 function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
 
-/* 初始化 */
-document.addEventListener('DOMContentLoaded', () => {
-  buildDaySelect();
-  setSel(document.querySelectorAll('[data-a]'), selA, 'a');
-  setSel(document.querySelectorAll('[data-b]'), selB, 'b');
-  document.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => { selA = b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA, 'a'); enableSend(); })
-  );
-  document.querySelectorAll('[data-b]').forEach(b => b.addEventListener('click', () => { selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB, 'b'); enableSend(); })
-  );
-
-  bindInput();
-  enableSend();
-  startClock();
-  probeStatus();
-  renderB();
-  document.getElementById('sendBtn').addEventListener('click', send);
+/* ===== 啟動 ===== */
+addEventListener('DOMContentLoaded',()=>{
+  setSel(document.querySelectorAll('[data-a]'),selA,'a');
+  setSel(document.querySelectorAll('[data-b]'),selB,'b');
+  document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{selA=b.dataset.a;setSel(document.querySelectorAll('[data-a]'),selA,'a');enableSend();}));
+  document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{selB=b.dataset.b;setSel(document.querySelectorAll('[data-b]'),selB,'b');enableSend();}));
+  bindInput();enableSend();startClock();probeStatus();renderB();
+  document.getElementById('sendBtn').addEventListener('click',send);
 });
 </script>
 </body>
