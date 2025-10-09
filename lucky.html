@@ -37,12 +37,12 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .dot.ok{background:#10b981}
 .dot.err{background:#ef4444}
 
-.row.A {
+.group.A {
   color: #38bdf8;
   background: #38bdf820;}
 .row.A .cell {
   color: #bae6fd;}
-.row.B {
+.group.B {
   color: #f87171;
   background: #f8717120;}
 .row.B .cell {
@@ -183,7 +183,7 @@ function renderResponse(j){
   function cell(t){ const d=document.createElement('div'); d.textContent=t; return d; }
 function group(t,cls){
   const g = document.createElement('div');
-  g.className = 'row ' + cls.toUpperCase();
+  g.className = 'group ' + cls.toUpperCase();
   g.append(cell(t),cell('ＩＤ'),cell('姓　名'),cell('假別'));
   return g;
 }
