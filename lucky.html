@@ -46,6 +46,25 @@
 html,body,.wrap,.card,.cols,.panel,.body,.thead,.row{ max-width:100%; overflow-x:hidden }
 .thead div,.row div{ min-width:0 }  /* 允許格內縮 */
 
+/* 欄頭不超出面板寬度 */
+.panel h3,
+.thead { max-width:100%; overflow:hidden }
+.thead div{
+  min-width:0;           /* 允許縮 */
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;    /* 單行顯示 */
+}
+
+/* 小螢幕再縮字與欄寬 */
+@media (max-width:420px){
+  .panel h3{ font-size:1rem }
+  .thead{ font-size:.92rem }
+  .thead, .row{
+    grid-template-columns: 5ch 8ch minmax(0,1fr) 5ch; /* #,ID,姓名,假別 */
+    padding:6px 8px;
+  }
+}
 /* 小螢幕：縮小 #、ID、假別 欄，姓名保留 minmax(0,1fr) */
 @media (max-width:420px){
   .thead,.row{
