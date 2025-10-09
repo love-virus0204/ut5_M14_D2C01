@@ -49,10 +49,10 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 .mmdd label{ white-space:nowrap; }
 
 
-//.mmdd{
+/* .mmdd{
   text-align:center;background:var(--glass);border:1px solid #1f2937;padding:6px 14px;
   border-radius:999px;font-weight:700;margin:3px auto;width:max-content;
-}
+} */
 .group{margin-top:16px;text-align:center;}
 .gtitle{font-size:12px;color:var(--sub);margin-bottom:1px;}
 .btnrow{display:grid;gap:10px;}
@@ -338,16 +338,6 @@ function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
 function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
-
-/* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded',()=>{
-  setSel(document.querySelectorAll('[data-a]'),selA,'a');
-  setSel(document.querySelectorAll('[data-b]'),selB,'b');
-  document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{selA=b.dataset.a;setSel(document.querySelectorAll('[data-a]'),selA,'a');enableSend();}));
-  document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{selB=b.dataset.b;setSel(document.querySelectorAll('[data-b]'),selB,'b');enableSend();}));
-  bindInput();enableSend();startClock();probeStatus();renderB();
-  document.getElementById('sendBtn').addEventListener('click',send);
-});
 
 /* 初始化 */
 document.addEventListener('DOMContentLoaded', () => {
