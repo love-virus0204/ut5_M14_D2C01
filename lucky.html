@@ -22,13 +22,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .select-bar{display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
 .sel{appearance:none;padding:6px 10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:1em;}
 //.rows{display:flex;flex-direction:column;gap:2px;}
-.rows {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;          /* 列間距 */
-  width: 90%;        /* 整體寬度佔視窗 90% */
-  margin: 0 auto;    /* 左右置中 → 視覺內縮 */
-  box-sizing: border-box;
+.rows { display:flex; flex-direction: column; box-sizing: border-box; gap: 2px; width: 90%; margin: 0 auto;
 }
 .group{margin-top:8px;font-weight:bold;border-bottom:1px solid #334155;padding-bottom:4px;}
 .row{display:grid;grid-template-columns:4ch 12ch auto 12ch ;gap:6px;padding:4px 6px;border-bottom:1px solid #1e293b;}
