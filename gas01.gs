@@ -57,7 +57,7 @@ function _drawLucky(sh, dateSerial, rankedIds) {
   function pad3(n){ return ('000'+n).slice(-3); }
 }
 
-function buildLuckyRanks(sheet) {
+function _buildLuckyRanks(sheet) {
   const values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getValues();
   const weightMap = {};
   const pool = [];
