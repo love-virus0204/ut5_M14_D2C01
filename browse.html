@@ -27,7 +27,15 @@ th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
 .hidden{display:none}
 .btn{appearance:none;border:0;border-radius:10px;background:linear-gradient(180deg,#0ea5e9,#0369a1);padding:8px 18px;color:#fff;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:transform .12s}
 .btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(1px)}
-.footer{font-size:12px;color:var(--sub)}
+.updated{ font-size:12px; color:var(--sub)}
+
+.toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:12px;
+}
 </style>
 </head>
 <body>
@@ -41,12 +49,13 @@ th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
     <div id="sections"></div>
   </section>
 
-  <button class="btn" id="reload">重新整理</button>
-  <div class="footer">更新：<span id="ut">--/-- --:--</span></div>
-</div>
+  <div class="toolbar">
+    <button class="btn" id="reload">重新整理</button>
+    <div class="updated">更新：<span id="ut">--/-- --:--</span></div>
+  </div>
 
 <script>
-/* ===== 常數（沿用你現有 POST 模式）===== */
+/* ===== 常數 ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
 const TZ = 'Asia/Taipei';
 
