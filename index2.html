@@ -141,7 +141,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>試算表</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">v1.3</div>
+  <div class="ver">v1.4.1</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
@@ -281,66 +281,54 @@ function submitData(p){
     .then(r=>r.text()).then(t=>{try{return JSON.parse(t);}catch(_){return{status:'parse_failed',raw:t};}});
 }
 
-
 /* ===== 送出動作 ===== */
 async function send(){
   const idEl = document.getElementById('code');
   const id = idEl.value.trim().toUpperCase();
 
-  // 1️⃣ ID格式檢查
+  // 1️⃣ ID 檢查
   if(!/^[A-Z0-9]{5}$/.test(id)){
     idEl.focus();
     return;
   }
 
-  // 2️⃣ 日期選擇
-  const sel = document.getElementById('selDate');
-  const ser = Number(sel.value);                           // 送出用日期序號
-  const mdTxt = sel.options[sel.selectedIndex].text;       // 顯示用 mm/dd
+  // 2️⃣ 日期選單
+  const sel   = document.getElementById('selDate');
+  const ser   = Number(sel.value);                           // 送出用序號
+  const mdTxt = sel.options[sel.selectedIndex].text;         // 顯示 mm/dd
 
   // 3️⃣ 組合 payload
-  const payload = { 
-    id, 
-    date: ser, 
-    key: `${ser}|${id}`, 
-    shift: selB, 
-    dN: selA 
-  };
+  const payload = { id, date: ser, key: `${ser}|${id}`, shift: selB, dN: selA };
 
-  // 4️⃣ 顯示上傳中遮罩
+  // 4️⃣ 顯示上傳中
   showOverlay(true);
 
-  // 5️⃣ 傳送 POST
-  let ok = false, res;
-  try {
-    res = await submitData(payload);
-    ok = res && res.status === 'ok';
-  } catch(e) {
-    ok = false;
-  }
-
+  // 5️⃣ 傳送
+  let ok=false,res;
+  try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
+  catch(_){ ok=false; }
   showOverlay(false);
 
-  // 6️⃣ 時間戳 (使用全域 tNow)
-  let ts = '--/-- --:--';
-  if (tNow instanceof Date){
-    const p = new Intl.DateTimeFormat('zh-Hant-TW',{
-      timeZone:'Asia/Taipei',
-      month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false
-    }).formatToParts(tNow).reduce((a,b)=>(a[b.type]=b.value,a),{});
-    ts = `${p.month}/${p.day} ${p.hour}:${p.minute}`;
+  // 6️⃣ 時間戳：直接從時鐘文字擷取 mm/dd HH:mm
+  let ts='--/-- --:--';
+  const clk=document.getElementById('clock');
+  if(clk && clk.textContent){
+    const m=clk.textContent.match(/^(\d{2}\/\d{2}) (\d{2}:\d{2})/);
+    if(m) ts=`${m[1]} ${m[2]}`;
   }
 
   // 7️⃣ 判斷邏輯
-  const status = ok ? 'ok' : 'ng';
-  const bIsN   = String(selB).toUpperCase() === 'N';
-  const flag   = ok ? (bIsN ? 'on' : 'ok') : 'ng';
+  const status = ok ? 'ok':'ng';
+  const bIsN   = String(selB).toUpperCase()==='N';
+  const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
+
+  // 8️⃣ A 欄顯示：mm/dd - A選項 或 取消
   const aDisp  = bIsN ? `${mdTxt} - 取消` : `${mdTxt} - ${selA}`;
 
-  // 8️⃣ 寫入草稿B
+  // 9️⃣ 寫入草稿B
   addB({ ts, id, a: aDisp, b: selB, status, flag });
 
-  // 9️⃣ 提示訊息
+  // 🔟 提示
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
 
