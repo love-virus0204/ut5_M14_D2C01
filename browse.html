@@ -55,9 +55,9 @@ const pad=n=>String(n).padStart(2,'0');
 const nowTPE=()=>new Date(Date.now()+8*60*60*1000);
 const mdFromSerial=s=>{const t=new Date((s-25569)*86400000);return `${pad(t.getUTCMonth()+1)}/${pad(t.getUTCDate())}`};
 
-/* ===== 照樣板的 POST：只用 URLSearchParams，讓 payload 自行決定 ===== */
+/* ===== POST：URLSearchParams ===== */
 async function fetchList(payload){
-  const body = new URLSearchParams(payload);             // x-www-form-urlencoded
+  const body = new URLSearchParams(payload);
   const r    = await fetch(API_URL,{method:'POST',body});
   const txt  = await r.text();
   // 兩種兼容：直接陣列 or {status,fields,values}
@@ -102,7 +102,6 @@ function splitDays(rows){
   });
 }
 
-/* ===== 渲染：每大筆一個 section；===== */
 /* ===== 渲染：每個日期一個 section，左右 A/B 卡片 ===== */
 function render(groups){
   const root = document.getElementById('sections');
