@@ -166,7 +166,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 const API_URL='https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
 const TZ='Asia/Taipei';
   let selA='平日', selB='N';
-  const cuton =  200; // 換日時間
+  const cuton =  359; // 換日時間
   const cutoff = 130; // 超時時間
 
 /* ===== 時鐘（台北時間）===== */
@@ -204,9 +204,6 @@ function fillDateSelect(){
   enforceCutoffFromClock();
 }
 
-let CUR_SER = null;
-let MD_STR  = '';
-let tNow = null;
 function startClock(){
   const el=document.getElementById('clock');
   const tick=()=>{
@@ -247,15 +244,6 @@ function addB(item){
   arr.unshift(item);
   saveB(arr.slice(0,15));
   renderB();
-}
-
-function tsMin(){
-  const d = new Date(Date.now() + 8*60*60*1000);
-  const mm = String(d.getUTCMonth()+1).padStart(2,'0');
-  const dd = String(d.getUTCDate()).padStart(2,'0');
-  const hh = String(d.getUTCHours()).padStart(2,'0');
-  const mi = String(d.getUTCMinutes()).padStart(2,'0');
-  return `${mm}/${dd} ${hh}:${mi}`;
 }
 
 function renderB(){
@@ -328,15 +316,15 @@ async function send(){
 
 function enforceCutoffFromClock(){
   const clk = document.getElementById('clock');
-  const mt = clk.textContent.match(/^(\d{2})\/(\d{2}) (\d{2}):(\d{2})/);
-  if(!mt) return;
-  const mins = (+mt[3]) * 60 + (+mt[4]);
-  if (mins > cutoff) {
-    const sel = document.getElementById('selDate');
-    const first = sel.options[0];
-    sel.options[0].disabled = true;
-    if (sel.selectedIndex === 0) sel.selectedIndex = 1;
-  }
+  const mt  = clk.textContent.match(/^(\d{2})\/(\d{2}) (\d{2}):(\d{2})/);
+   if(!mt) return;
+   const mins = (+mt[3]) * 60 + (+mt[4]);
+   if (mins > cutoff) {
+     const sel   = document.getElementById('selDate');
+     const first = sel.options[0];
+     first.disabled = true;
+     if (sel.selectedIndex === 0 && sel.options.length > 1) sel.selectedIndex = 1;
+   }
 }
 
 /* ===== 輸入與選項 ===== */
