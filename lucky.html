@@ -125,11 +125,11 @@ function renderResponse(j){
   const frag=document.createDocumentFragment();
   frag.appendChild(group('A 班'));
   if(A.length===0) frag.appendChild(empty());
-  A.forEach(r=>frag.appendChild(line(seqA++,r.id,r.key,r.dN)));
+  A.forEach(r=>frag.appendChild(line(seqA++,r.id,r.name,r.dN)));
   frag.appendChild(sep());
   frag.appendChild(group('B 班'));
   if(B.length===0) frag.appendChild(empty());
-  B.forEach(r=>frag.appendChild(line(seqB++,r.id,r.key,r.dN)));
+  B.forEach(r=>frag.appendChild(line(seqB++,r.id,r.name,r.dN)));
   rowsEl.appendChild(frag);
 
   function cell(t){const d=document.createElement('div');d.textContent=t;return d;}
