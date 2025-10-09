@@ -10,10 +10,14 @@ function _drawLucky(sh, dateSerial, rankedIds) {
   const sub = sh.getRange(start, 7, count, 4).getValues();
 
   const rankMap = Object.create(null);
-  for (let i=0;i<rankedIds.length;i++) rankMap[ rankedIds[i] ] = i+1;
+  for (let i=0;i<rankedIds.length;i++){
+    const o = rankedIds[i];
+    rankMap[o.id] = [i+1, o.name];
+  }
 
-  const C_DATE=2, D_ID=3, E_FLAG=4, F_KIND=5, G_SUB=0, H_SUB=1, I_SUB=2, J_SUB=3, G_BIG=6, J_BIG=9;
-  let updated=0;
+ const C_DATE=2, D_ID=3, E_FLAG=4, F_KIND=5 ;
+ const G_SUB=0, H_SUB=1, I_SUB=2, J_SUB=3 ;
+ const G_BIG=6, J_BIG=9 ;
 
   for (let i=0;i<count;i++){
     const serial = _toSerialInt(big[i][C_DATE], epoch);
@@ -28,15 +32,14 @@ function _drawLucky(sh, dateSerial, rankedIds) {
     sub[i][G_SUB] = name;
     sub[i][H_SUB] = 'lucky';
     sub[i][I_SUB] = now;
+
     let val = '9999';
     if (eFlg !== 'n' && r > 0) {
       const prefix = (kind === '假日') ? '1' : '2';
       val = prefix + pad3(r);
     }
-
     big[i][J_BIG] = val;
     sub[i][J_SUB] = val;
-    updated++;
   }
 
   sh.getRange(start, 7, count, 4).setValues(sub);
@@ -46,10 +49,9 @@ function _drawLucky(sh, dateSerial, rankedIds) {
     row.push(start + i);
   });
 
-  big.sort((a,b)=> a[8] - b[8]);
+  big.sort((a,b)=> a[9] - b[9]);
 
-  const fields = ["submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
-
+  const fields = ["submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky","row"];
   return _json({ status:"ok", fields, values: big });
 
   function pad3(n){ return ('000'+n).slice(-3); }
