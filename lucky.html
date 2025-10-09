@@ -35,6 +35,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
   display:grid; gap: 6px; padding:4px 6px;
   grid-template-columns:4ch 10ch auto 4em 1em; }
 .group >:nth-child(4), .row >:nth-child(4) {text-align: center; }
+.row.selected {background-color: rgba(56,189,248,0.3); }
 .sep{height:8px;}
 .mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.85);color:#fff;font-size:1.2em;z-index:10;}
 .mask.show{display:flex;}
@@ -201,6 +202,14 @@ function group(t,cls){
     r.append(cell(n), cell(id), cell(name), cell(dn),cell('　')) ; return r;
   }
 }
+
+/* ===== 點擊高亮 ===== */
+document.addEventListener('click', e=>{
+  const row = e.target.closest('.row');
+  if (!row) return;
+  document.querySelectorAll('.row.selected').forEach(r=>r.classList.remove('selected'));
+  row.classList.add('selected');
+});
 
 /* ===== 通訊 ===== */
 async function reloadData(){
