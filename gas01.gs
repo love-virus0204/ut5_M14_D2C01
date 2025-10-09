@@ -6,8 +6,8 @@ function _drawLucky(sh, dateSerial, rankedIds) {
   const start = Math.max(2, last - 519);
   const count = last - start + 1;
 
-  const big = sh.getRange(start, 1, count, 9).getValues();
-  const sub = sh.getRange(start, 7, count, 3).getValues();
+  const big = sh.getRange(start, 1, count, 10).getValues();
+  const sub = sh.getRange(start, 7, count, 4).getValues();
 
   const rankMap = Object.create(null);
   for (let i=0;i<rankedIds.length;i++) rankMap[ rankedIds[i] ] = i+1;
