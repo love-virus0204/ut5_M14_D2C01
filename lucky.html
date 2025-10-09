@@ -83,10 +83,10 @@
 
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
-const tz='Asia/Taipei';
-const fmtYMD=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'});
-const fmtMD =new Intl.DateTimeFormat('en-US',{timeZone:tz,month:'2-digit',day:'2-digit'});
-const fmtHM =new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+const TZ='Asia/Taipei';
+const fmtYMD=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}); // yyyy-mm-dd
+const fmtMD =new Intl.DateTimeFormat('en-US',{timeZone:TZ,month:'2-digit',day:'2-digit'});               // mm/dd
+const fmtHM =new Intl.DateTimeFormat('en-US',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
 
 const $=(q)=>document.querySelector(q);
 const el={
@@ -95,28 +95,27 @@ const el={
   mask:$('#mask'), toast:$('#toast'), btnDraw:$('#draw'), btnReload:$('#reload')
 };
 
-let lockedSerial=0;
+/* —— 一次性鎖定：頁面載入時計算，之後不變 —— */
+function nowTPE(){ const n=new Date(); return new Date(n.toLocaleString('en-US',{timeZone:TZ})); }
+const YMD_LOCK = fmtYMD.format( nowTPE() );              // e.g. 2025-10-09（台北）
+const SERIAL_LOCK = ymdToSerial(YMD_LOCK);               // 一次性日期序號
+/* 顯示固定 mm/dd */
+el.ymd.textContent = fmtMD.format( new Date(YMD_LOCK+'T00:00:00+08:00') );
+el.hdrDate.textContent = el.ymd.textContent;
 
+/* 工具 */
+function ymdToSerial(ymd){ const epoch=Date.UTC(1899,11,30); const d=new Date(ymd+'T00:00:00+08:00'); return Math.floor((d-epoch)/86400000); }
 function showMask(msg,type){ el.toast.textContent=msg; el.toast.className='toast '+(type||''); el.mask.classList.add('show'); }
 function hideMask(){ el.mask.classList.remove('show'); }
-function nowTPE(){ const n=new Date(); return new Date(n.toLocaleString('en-US',{timeZone:tz})); }
-function toSerialInt(ymd){ const epoch=Date.UTC(1899,11,30); const d=new Date(ymd+'T00:00:00+08:00'); return Math.floor((d-epoch)/86400000); }
-
-function lockToday(){
-  const d=nowTPE();
-  const ymd=fmtYMD.format(d);              // yyyy-mm-dd（台北）
-  lockedSerial=toSerialInt(ymd);
-  const md=fmtMD.format(d);
-  el.ymd.textContent=md; el.hdrDate.textContent=md;
-}
 function tick(){ el.clock.textContent=fmtHM.format(nowTPE()); }
 
+/* 狀態輪詢 */
 async function ping(){
   try{
     const r=await fetch(API_URL+'?action=ping',{cache:'no-store'});
     if(r.ok){ el.stat.textContent='狀態: OK'; el.stat.className='badge ok'; }
     else{ throw 0; }
-  }catch(e){ el.stat.textContent='狀態: ERR'; el.stat.className='badge err'; }
+  }catch{ el.stat.textContent='狀態: ERR'; el.stat.className='badge err'; }
 }
 
 /* 共用渲染（讀取或抽籤回傳皆可） */
@@ -125,7 +124,7 @@ function render(j){
   const idx=(name,def)=>{const k=F.indexOf(name);return k>=0?k:def}
   const iDate=idx('date',2), iId=idx('id',3), iName=idx('name',1), iShift=idx('shift',4), iDN=idx('dN',5);
 
-  const all=(j.values||[]).filter(v=>Number(v[iDate])===lockedSerial);
+  const all=(j.values||[]).filter(v=>Number(v[iDate])===SERIAL_LOCK);
 
   const A=[], B=[];
   all.forEach(v=>{
@@ -147,7 +146,8 @@ function render(j){
 
   el.rows.innerHTML=''; el.rows.appendChild(frag);
 
-  const t=nowTPE(); el.updated.textContent=fmtMD.format(t)+' '+fmtHM.format(t).slice(0,5);
+  const t=nowTPE();
+  el.updated.textContent=fmtMD.format(new Date(YMD_LOCK+'T00:00:00+08:00'))+' '+fmtHM.format(t).slice(0,5);
 
   function cell(text){ const d=document.createElement('div'); d.textContent=text; return d; }
   function groupRow(t){ const g=document.createElement('div'); g.className='group'; g.textContent=t; return g; }
@@ -160,7 +160,7 @@ function render(j){
   }
 }
 
-/* 讀數據（僅手動或初始載入） */
+/* 讀數據（手動或初始載入） */
 async function readData(){
   showMask('讀取中…');
   try{
@@ -169,43 +169,35 @@ async function readData(){
     const j=await r.json();
     render(j);
     hideMask();
-  }catch(e){
-    showMask('讀取失敗','err'); setTimeout(hideMask,1200);
-  }
+  }catch{ showMask('讀取失敗','err'); setTimeout(hideMask,1200); }
 }
 
-/* 抽籤：成功後直接用回傳值渲染，不再呼叫讀取數據 */
+/* 抽籤：成功後直接用回傳值渲染；送出固定使用 YMD_LOCK / SERIAL_LOCK */
 async function draw(){
   el.btnDraw.disabled=true; el.btnReload.disabled=true;
-  lockToday(); // 送出前重算避免舊序號
   showMask('抽籤中…');
   try{
     const p=new URLSearchParams();
     p.append('action','lucky');
-    p.append('dateSerial',lockedSerial);
-    const r=await fetch(API_URL,{method:'POST',body:p});
+    p.append('dateSerial', SERIAL_LOCK);   // 一次性鎖定的序號
+    p.append('ymd', YMD_LOCK);             // 附上字串日期，後端可比對
+    const r=await fetch(API_URL,{method:'POST',body:p,cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const j=await r.json();
-    render(j);                                 // 直接使用回傳渲染
-    el.toast.textContent=j.msg||'抽籤完成';    // 動態訊息
-    el.toast.className='toast ok';
+    render(j);                              // 直接用回傳渲染
+    el.toast.textContent=j.msg||'抽籤完成'; el.toast.className='toast ok';
     setTimeout(hideMask,1000);
-  }catch(e){
-    showMask('抽籤失敗','err'); setTimeout(hideMask,1500);
-  }finally{
-    el.btnDraw.disabled=false; el.btnReload.disabled=false;
-  }
+  }catch{ showMask('抽籤失敗','err'); setTimeout(hideMask,1500); }
+  finally{ el.btnDraw.disabled=false; el.btnReload.disabled=false; }
 }
 
 /* 綁定與啟動 */
 el.btnReload.onclick=readData;
 el.btnDraw.onclick=draw;
 
-lockToday();
 tick(); setInterval(tick,1000);
 ping(); setInterval(ping,45000);
 readData();
-document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ lockToday(); }});
 </script>
 </body>
 </html>
