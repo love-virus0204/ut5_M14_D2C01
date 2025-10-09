@@ -34,7 +34,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .group, .row {
   display:grid; gap: 6px; padding:4px 6px;
   grid-template-columns:4ch 10ch auto 4em 1em; }
-.group >:nth-child(3), .row >:nth-child(3) {text-align: center; }
+.group >:nth-child(4), .row >:nth-child(4) {text-align: center; }
 .sep{height:8px;}
 .mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.85);color:#fff;font-size:1.2em;z-index:10;}
 .mask.show{display:flex;}
@@ -190,7 +190,7 @@ function renderResponse(j){
 function group(t,cls){
   const g = document.createElement('div');
   g.className = 'group ' + cls.toUpperCase();
-  g.append(cell(t),cell('工　號'),cell('姓　　名'),cell('假別'),cell('　'));
+  g.append(cell(t),cell('工　號'),cell('姓　　名'),cell('假　別'),cell('　'));
   return g;
 }
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
