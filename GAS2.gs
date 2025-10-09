@@ -1,5 +1,5 @@
 /** 解禁 + 寄信 + 清理 sh_1（sn_2 無資料即整體跳過）*/
-function sweepExpiredAndNotify(xSerial){
+function sweepExpiredAndNotify(){
   return withLock(60000, () => {
     const sh = _sheet(sn_2);
     const lastRow = sh.getLastRow();
