@@ -157,7 +157,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.4.8</div>
+  <div class="ver">版本：v1.4.9</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
@@ -313,7 +313,7 @@ async function send(){
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
 
-function enforceCutoffFromClock(){
+function checkCutoff(){
   const clk = document.getElementById('clock');
   const mt  = clk.textContent.match(/^(\d{2})\/(\d{2}) (\d{2}):(\d{2})/);
    if(!mt) return;
@@ -339,19 +339,23 @@ function setSel(btns,val,attr){
 function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
 
 /* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded',()=>{
-  setSel(document.querySelectorAll('[data-a]'),selA,'a');
-  setSel(document.querySelectorAll('[data-b]'),selB,'b');
-  document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{selA=b.dataset.a;setSel(document.querySelectorAll('[data-a]'),selA,'a');enableSend();}));
-  document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{selB=b.dataset.b;setSel(document.querySelectorAll('[data-b]'),selB,'b');enableSend();}));
+addEventListener('DOMContentLoaded', ()=>{
+  setSel(document.querySelectorAll('[data-a]'), selA, 'a');
+  setSel(document.querySelectorAll('[data-b]'), selB, 'b');
+  document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click', ()=>{
+    selA = b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA, 'a'); enableSend();
+  }));
+  document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click', ()=>{
+    selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB, 'b'); enableSend();
+  }));
   startClock();
   bindInput();
   enableSend();
   probeStatus();
   renderB();
   fillDateSelect();
-  enforceCutoffFromClock();
-  setInterval(enforceCutoffFromClock, 5 * 60 * 1000); document.getElementById('sendBtn').addEventListener('click',send);
+  checkCutoff();
+    setInterval(checkCutoff, 5*60*1000);   document.getElementById('sendBtn').addEventListener('click', send);
 });
 </script>
 </body>
