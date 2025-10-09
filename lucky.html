@@ -36,13 +36,13 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .group.A {
   color: #38bdf8;
   background: #38bdf820;}
-.row.A .cell {
-  color: #bae6fd;}
+.row.A  {
+  color: :#7dd3fc;}
 .group.B {
   color: #f87171;
   background: #f8717120;}
-.row.B .cell {
-  color: #fecaca;}
+.row.B {
+  color: #fdba74;}
 </style>
 </head>
 <body>
@@ -165,12 +165,12 @@ function renderResponse(j){
   const rowsEl = document.getElementById('rows');
   rowsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
-  frag.appendChild(group('Ａ','a'));
+  frag.appendChild(group(' Ａ','a'));
   if (A.length===0) frag.appendChild(empty());
   let seqA=1;
   A.forEach(r => frag.appendChild(line(seqA++, r.id, r.name, r.dN,'a')));
   frag.appendChild(sep());
-  frag.appendChild(group('Ｂ','b'));
+  frag.appendChild(group(' Ｂ','b'));
   if (B.length===0) frag.appendChild(empty());
   let seqB=1;
   B.forEach(r => frag.appendChild(line(seqB++, r.id, r.name, r.dN,'b')));
