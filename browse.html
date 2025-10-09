@@ -87,7 +87,7 @@ function splitTwoGroups(rows){
   const alive = rows.filter(x=>!x.deletedAt);
   // 取出最多兩個日期序號（依出現順序）
   const dates = [];
-  for(const r of alive){ if(!dates.includes(r.date)){ dates.push(r.date); if(dates.length===2) break; } }
+  for(const r of alive){ if(!dates.includes(r.date)){ dates.push(r.date); if(dates.length===7) break; } }
   // 兩大筆（如果只有一個日期也可渲染）
   return dates.map(dSer=>{
     const subset = alive.filter(x=>x.date===dSer);
