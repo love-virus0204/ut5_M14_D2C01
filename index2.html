@@ -44,7 +44,10 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   padding-right:26px;
   cursor:pointer;
 } 
-.mmdd.sel:focus{outline:2px solid var(--accent)}
+/* .mmdd.sel:focus{outline:2px solid var(--accent)} */
+.mmdd.sel:hover,.mmdd.sel:focus { outline:none; 
+  border:2px solid #00fff7;
+  box-shadow:0 0 8px #00fff7; }
 .group{margin-top:16px;text-align:center;}
 .gtitle{font-size:12px;color:var(--sub);margin-bottom:1px;}
 .btnrow{display:grid;gap:10px;}
