@@ -1,51 +1,68 @@
-<!DOCTYPE html><html lang="zh-TW"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-store" />
 <title>D2 名單檢視 / 抽籤</title>
 <style>
-:root{--w:90vw;--hbar:60px;--gap:10px;--card:#0b1324;--line:#223;--txt:#cfe9ff;--mut:#8aa4bf;--ok:#10b981;--err:#ef4444;--btn:#1e90ff}
-*{box-sizing:border-box} html,body{height:100%;margin:0;overflow-x:hidden;background:radial-gradient(1200px 600px at 50% -200px,#0b1a33,#060d1b);color:var(--txt);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
-.page{min-height:100%;display:flex;flex-direction:column;align-items:center;gap:var(--gap);width:100%}
-.bar{position:sticky;top:0;z-index:5;height:var(--hbar);display:flex;align-items:center;justify-content:space-between;width:var(--w);max-width:900px;background:rgba(7,15,30,.8);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;margin-top:10px;padding:0 10px}
-.left,.mid,.right{display:flex;align-items:center;gap:10px}
-.badge{padding:3px 10px;border-radius:999px;font-size:.92em;border:1px solid var(--line);color:var(--mut)}
-.badge.ok{color:var(--ok);border-color:#1d3}.badge.err{color:var(--err);border-color:#833}
-.date{font-variant-numeric:tabular-nums}.time{opacity:.9}
-.btn{padding:8px 12px;border-radius:10px;background:var(--btn);color:#fff;border:0;cursor:pointer}.btn:disabled{opacity:.6;cursor:not-allowed}
+  :root{ --w:90vw; --hbar:40px; --gap:10px; --card:#0b1324; --line:#223; --txt:#cfe9ff; --mut:#8aa4bf; --ok:#10b981; --err:#ef4444; --btn:#1e90ff; }
+  *{ box-sizing:border-box }
+  html,body{height:100%;margin:0;overflow-x:hidden;background:radial-gradient(1200px 600px at 50% -200px,#0b1a33,#060d1b);color:var(--txt);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;}
+  .page{min-height:100%;display:flex;flex-direction:column;align-items:center;gap:var(--gap);width:100%}
 
-.wrap{width:var(--w);max-width:900px;display:flex;flex-direction:column;gap:12px;margin:10px 0 16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
-.hdr{display:flex;align-items:center;justify-content:space-between;color:var(--mut);font-size:.95em;margin-bottom:6px}
-.list{min-width:0}
-.grid{display:grid;grid-template-columns:6ch 10ch minmax(0,1fr) 6ch;gap:6px}
-.thead,.row{align-items:center;padding:8px 12px}
-.thead{color:var(--mut);border-bottom:1px dashed var(--line)}
-.row{border-bottom:1px dotted #1a2538}
-.row div:nth-child(3){overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;text-align:left}
-.thead div,.row div{justify-self:center;text-align:center}
-.group{grid-column:1/-1;margin:8px 0 4px;padding:6px 12px;border-left:3px solid #2a7bd1;background:rgba(255,255,255,.03);border-radius:8px;color:#b9d6ff;font-weight:600}
-.sep{height:8px}
-.empty{padding:16px;text-align:center;color:var(--mut)}
-.small{font-size:.85em;color:var(--mut);text-align:center}
+  /* 上區工具列（固定約 40px） */
+  .bar{position:sticky;top:0;z-index:5;height:var(--hbar);display:flex;align-items:center;justify-content:space-between;width:var(--w);max-width:900px;background:rgba(7,15,30,.8);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;margin-top:10px;padding:0 10px}
+  .left,.mid,.right{display:flex;align-items:center;gap:10px}
+  .badge{padding:3px 10px;border-radius:999px;font-size:.92em;border:1px solid var(--line);color:var(--mut)}
+  .badge.ok{color:var(--ok);border-color:#1d3}
+  .badge.err{color:var(--err);border-color:#833}
+  .date{font-variant-numeric:tabular-nums}
+  .time{opacity:.9}
+  .btn{padding:8px 12px;border-radius:10px;background:var(--btn);color:#fff;border:0;cursor:pointer}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
 
-.mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:10}
-.mask.show{display:flex}
-.toast{min-width:220px;max-width:70vw;background:#0e182b;color:#e6f2ff;border:1px solid #245;border-radius:12px;padding:14px 16px;box-shadow:0 6px 22px rgba(0,0,0,.4);text-align:center}
-.toast.ok{border-color:#1d3}.toast.err{border-color:#833}
+  /* 下區：單欄清單（A → 分隔 → B） */
+  .wrap{width:var(--w);max-width:900px;display:flex;flex-direction:column;gap:12px;margin:10px 0 16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+  .hdr{display:flex;align-items:center;justify-content:space-between;color:var(--mut);font-size:.95em;margin-bottom:6px;min-width:0}
+  .list{min-width:0}
+  .grid{display:grid;grid-template-columns:6ch 10ch minmax(0,1fr) 6ch;gap:6px;min-width:0}
+  .thead,.row{align-items:center;padding:8px 12px}
+  .thead{color:var(--mut);border-bottom:1px dashed var(--line)}
+  .row{border-bottom:1px dotted #1a2538}
+  .thead div,.row div{justify-self:center;text-align:center;min-width:0}
+  .row div:nth-child(3), .thead div:nth-child(3){text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .group{grid-column:1/-1;margin:8px 0 4px;padding:6px 12px;border-left:3px solid #2a7bd1;background:rgba(255,255,255,.03);border-radius:8px;color:#b9d6ff;font-weight:600}
+  .sep{height:8px;grid-column:1/-1}
+  .empty{padding:16px;text-align:center;color:var(--mut)}
+  .small{font-size:.85em;color:var(--mut);text-align:center}
 
-@media (max-width:420px){
-  .thead,.row{padding:6px 8px}
-  .grid{grid-template-columns:5ch 8ch minmax(0,1fr) 5ch}
-  .group{font-size:1rem;padding:5px 10px}
-}
+  /* 遮罩 */
+  .mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:10}
+  .mask.show{display:flex}
+  .toast{min-width:220px;max-width:70vw;background:#0e182b;color:#e6f2ff;border:1px solid #245;border-radius:12px;padding:14px 16px;box-shadow:0 6px 22px rgba(0,0,0,.4);text-align:center}
+  .toast.ok{border-color:#1d3}
+  .toast.err{border-color:#833}
+
+  /* 直立手機壓縮欄寬與內距，防超出 */
+  @media (max-width:420px){
+    .thead,.row{padding:6px 8px}
+    .grid{grid-template-columns:5ch 8ch minmax(0,1fr) 5ch}
+    .group{font-size:1rem;padding:5px 10px}
+  }
 </style>
-</head><body>
+</head>
+<body>
 <div class="page">
+  <!-- 上區 -->
   <div class="bar">
     <div class="left"><span id="stat" class="badge">狀態: 檢查中</span></div>
     <div class="mid"><span id="ymd" class="date">--/--</span><span id="clock" class="time">--:--:--</span></div>
     <div class="right"><button id="reload" class="btn">讀數據</button><button id="draw" class="btn">執行抽籤</button></div>
   </div>
 
+  <!-- 下區 -->
   <div class="wrap">
     <div class="card">
       <div class="hdr">
@@ -61,6 +78,7 @@
   </div>
 </div>
 
+<!-- 遮罩 -->
 <div id="mask" class="mask"><div id="toast" class="toast">處理中…</div></div>
 
 <script>
@@ -70,44 +88,38 @@ const fmtYMD=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'
 const fmtMD =new Intl.DateTimeFormat('en-US',{timeZone:tz,month:'2-digit',day:'2-digit'});
 const fmtHM =new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
 
-const $=q=>document.querySelector(q);
-const el={stat:$('#stat'),ymd:$('#ymd'),clock:$('#clock'),hdrDate:$('#hdrDate'),count:$('#count'),
-          rows:$('#rows'),updated:$('#updated'),mask:$('#mask'),toast:$('#toast'),
-          btnDraw:$('#draw'),btnReload:$('#reload')};
+const $=(q)=>document.querySelector(q);
+const el={
+  stat:$('#stat'), ymd:$('#ymd'), clock:$('#clock'), hdrDate:$('#hdrDate'),
+  count:$('#count'), rows:$('#rows'), updated:$('#updated'),
+  mask:$('#mask'), toast:$('#toast'), btnDraw:$('#draw'), btnReload:$('#reload')
+};
 
 let lockedSerial=0;
 
-function showMask(msg,type){el.toast.textContent=msg;el.toast.className='toast '+(type||'');el.mask.classList.add('show')}
-function hideMask(){el.mask.classList.remove('show')}
+function showMask(msg,type){ el.toast.textContent=msg; el.toast.className='toast '+(type||''); el.mask.classList.add('show'); }
+function hideMask(){ el.mask.classList.remove('show'); }
+function nowTPE(){ const n=new Date(); return new Date(n.toLocaleString('en-US',{timeZone:tz})); }
+function toSerialInt(ymd){ const epoch=Date.UTC(1899,11,30); const d=new Date(ymd+'T00:00:00+08:00'); return Math.floor((d-epoch)/86400000); }
 
-function nowTPE(){const n=new Date();return new Date(n.toLocaleString('en-US',{timeZone:tz}))}
 function lockToday(){
-  const d=nowTPE(); const ymd=fmtYMD.format(d);
+  const d=nowTPE();
+  const ymd=fmtYMD.format(d);              // yyyy-mm-dd（台北）
   lockedSerial=toSerialInt(ymd);
   const md=fmtMD.format(d);
   el.ymd.textContent=md; el.hdrDate.textContent=md;
 }
-function tick(){el.clock.textContent=fmtHM.format(nowTPE())}
-function toSerialInt(ymd){const epoch=Date.UTC(1899,11,30);const d=new Date(ymd+'T00:00:00+08:00');return Math.floor((d-epoch)/86400000)}
+function tick(){ el.clock.textContent=fmtHM.format(nowTPE()); }
 
 async function ping(){
-  try{const r=await fetch(API_URL+'?action=ping',{cache:'no-store'});
-       if(r.ok){el.stat.textContent='狀態: OK';el.stat.className='badge ok'} else{throw 0}
-  }catch{el.stat.textContent='狀態: ERR';el.stat.className='badge err'}
-}
-
-async function readData(){
-  showMask('讀取中…');
   try{
-    const p=new URLSearchParams(); p.append('action','list_recent2');
-    const r=await fetch(API_URL,{method:'POST',body:p}); const j=await r.json();
-    render(j);
-    const t=nowTPE(); el.updated.textContent=fmtMD.format(t)+' '+fmtHM.format(t).slice(0,5);
-    hideMask();
-  }catch(e){showMask('讀取失敗','err');setTimeout(hideMask,1200)}
+    const r=await fetch(API_URL+'?action=ping',{cache:'no-store'});
+    if(r.ok){ el.stat.textContent='狀態: OK'; el.stat.className='badge ok'; }
+    else{ throw 0; }
+  }catch(e){ el.stat.textContent='狀態: ERR'; el.stat.className='badge err'; }
 }
 
-/* 共用渲染：輸入為後端回傳 JSON（抽籤/讀取皆可） */
+/* 共用渲染（讀取或抽籤回傳皆可） */
 function render(j){
   const F=(j.fields||[]);
   const idx=(name,def)=>{const k=F.indexOf(name);return k>=0?k:def}
@@ -115,22 +127,19 @@ function render(j){
 
   const all=(j.values||[]).filter(v=>Number(v[iDate])===lockedSerial);
 
-  // 先 A 後 B，序號連號
   const A=[], B=[];
   all.forEach(v=>{
-    const rec={id:String(v[iId]||''),name:String(v[iName]||''),dn:String(v[iDN]||''),shift:String(v[iShift]||'')};
+    const rec={id:String(v[iId]||''), name:String(v[iName]||''), dn:String(v[iDN]||''), shift:String(v[iShift]||'')};
     (rec.shift==='A'?A:B).push(rec);
   });
 
   el.count.textContent=String(all.length);
   const frag=document.createDocumentFragment(); let seq=1;
 
-  // A group
   frag.appendChild(groupRow('A 班'));
   if(A.length===0) frag.appendChild(emptyRow());
   A.forEach(r=>frag.appendChild(dataRow(seq++, r)));
 
-  // spacer + B group
   frag.appendChild(sepRow());
   frag.appendChild(groupRow('B 班'));
   if(B.length===0) frag.appendChild(emptyRow());
@@ -138,33 +147,65 @@ function render(j){
 
   el.rows.innerHTML=''; el.rows.appendChild(frag);
 
-  function cell(text){const d=document.createElement('div');d.textContent=text;return d}
-  function groupRow(t){const g=document.createElement('div');g.className='group';g.textContent=t;return g}
-  function sepRow(){const s=document.createElement('div');s.className='sep';s.style.gridColumn='1/-1';return s}
-  function emptyRow(){const r=document.createElement('div');r.className='row grid';r.append(cell('—'),cell('—'),cell('此日期無資料'),cell('—'));return r}
+  const t=nowTPE(); el.updated.textContent=fmtMD.format(t)+' '+fmtHM.format(t).slice(0,5);
+
+  function cell(text){ const d=document.createElement('div'); d.textContent=text; return d; }
+  function groupRow(t){ const g=document.createElement('div'); g.className='group'; g.textContent=t; return g; }
+  function sepRow(){ const s=document.createElement('div'); s.className='sep'; return s; }
+  function emptyRow(){ const r=document.createElement('div'); r.className='row grid'; r.append(cell('—'),cell('—'),cell('此日期無資料'),cell('—')); return r; }
   function dataRow(n,rec){
     const r=document.createElement('div'); r.className='row grid';
-    r.append(cell(n), cell(rec.id), (()=>{const d=cell(rec.name); d.title=rec.name; return d})(), cell(rec.dn||'')); return r;
+    const nameCell=cell(rec.name); nameCell.title=rec.name;
+    r.append(cell(n), cell(rec.id), nameCell, cell(rec.dn||'')); return r;
   }
 }
 
+/* 讀數據（僅手動或初始載入） */
+async function readData(){
+  showMask('讀取中…');
+  try{
+    const p=new URLSearchParams(); p.append('action','list_recent2');
+    const r=await fetch(API_URL,{method:'POST',body:p});
+    const j=await r.json();
+    render(j);
+    hideMask();
+  }catch(e){
+    showMask('讀取失敗','err'); setTimeout(hideMask,1200);
+  }
+}
+
+/* 抽籤：成功後直接用回傳值渲染，不再呼叫讀取數據 */
 async function draw(){
+  el.btnDraw.disabled=true; el.btnReload.disabled=true;
+  lockToday(); // 送出前重算避免舊序號
   showMask('抽籤中…');
   try{
-    const p=new URLSearchParams(); p.append('action','lucky'); p.append('dateSerial',lockedSerial);
-    const r=await fetch(API_URL,{method:'POST',body:p}); if(!r.ok) throw 0;
-    const j=await r.json(); // 後端已回傳完整資料集
-    render(j);              // 直接共用渲染
-    el.toast.textContent=(j.msg||'抽籤完成')+'，10秒後刷新'; el.toast.className='toast ok';
-    setTimeout(()=>{ el.toast.textContent='讀取中…'; el.toast.className='toast'; },1000);
-    setTimeout(()=>{ hideMask(); readData(); },10000);
-  }catch(e){showMask('抽籤失敗','err');setTimeout(hideMask,1500)}
+    const p=new URLSearchParams();
+    p.append('action','lucky');
+    p.append('dateSerial',lockedSerial);
+    const r=await fetch(API_URL,{method:'POST',body:p});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    render(j);                                 // 直接使用回傳渲染
+    el.toast.textContent=j.msg||'抽籤完成';    // 動態訊息
+    el.toast.className='toast ok';
+    setTimeout(hideMask,1000);
+  }catch(e){
+    showMask('抽籤失敗','err'); setTimeout(hideMask,1500);
+  }finally{
+    el.btnDraw.disabled=false; el.btnReload.disabled=false;
+  }
 }
 
 /* 綁定與啟動 */
-el.btnReload.onclick=readData; el.btnDraw.onclick=draw;
-lockToday(); tick(); setInterval(tick,1000); ping(); setInterval(ping,45000);
+el.btnReload.onclick=readData;
+el.btnDraw.onclick=draw;
+
+lockToday();
+tick(); setInterval(tick,1000);
+ping(); setInterval(ping,45000);
 readData();
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ lockToday(); }});
 </script>
-</body></html>
+</body>
+</html>
