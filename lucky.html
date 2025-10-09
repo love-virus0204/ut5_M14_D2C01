@@ -23,7 +23,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .select-bar{display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
 .sel{appearance:none;padding:6px 10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:1em;}
 .rows{display:flex;flex-direction:column;gap:2px;}
-//.group{margin-top:8px;font-weight:bold;border-bottom:1px solid #334155;padding-bottom:4px;}
+.group{margin-top:8px;font-weight:bold;border-bottom:1px solid #334155;padding-bottom:4px;}
 .row{display:grid;grid-template-columns:3ch 10ch 10ch auto;gap:6px;padding:4px 6px;border-bottom:1px solid #1e293b;}
 .sep{height:8px;}
 .mask{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.85);color:#fff;font-size:1.2em;z-index:10;}
@@ -34,18 +34,6 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .dot{width:10px;height:10px;border-radius:50%;background:#64748b}
 .dot.ok{background:#10b981}
 .dot.err{background:#ef4444}
-
-.hdr{
-  display:grid;
-  grid-template-columns:3ch 10ch 10ch auto; 
-  gap:6px;
-  padding:4px 6px;
-  margin-top:8px;
-  font-weight:600;
-  background:#1e293b;
-  color:#fff;
-  border-radius:6px;
-}
 
 </style>
 </head>
@@ -169,12 +157,12 @@ function renderResponse(j){
   const rowsEl = document.getElementById('rows');
   rowsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
-  /* frag.appendChild(group('A 班')); */
+  frag.appendChild(group('A 班'));
   if (A.length===0) frag.appendChild(empty());
   let seqA=1;
   A.forEach(r => frag.appendChild(line(seqA++, r.id, r.name, r.dN)));
   frag.appendChild(sep());
-  /* frag.appendChild(group('B 班')); */
+  frag.appendChild(group('B 班'));
   if (B.length===0) frag.appendChild(empty());
   let seqB=1;
   B.forEach(r => frag.appendChild(line(seqB++, r.id, r.name, r.dN)));
@@ -189,17 +177,6 @@ function renderResponse(j){
     const nameCell=cell(name); nameCell.title=name;
     r.append(cell(n), cell(id), nameCell, cell(dn||'')); return r;
   }
-function header(label){
-  const h = document.createElement('div');
-  h.className = 'hdr';
-  h.innerHTML = `
-    <div>${label}</div>
-    <div>ID</div>
-    <div>姓名</div>
-    <div>假別</div>
-  `;
-  return h;
-}
 }
 
 /* ===== 通訊 ===== */
