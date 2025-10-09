@@ -43,6 +43,9 @@ function doPost(e){
     case "list_recent":
       return _listRecent(sheet);
 
+    case "list_recent3":
+      return _listRecent3(sheet);
+
     case "list_recent2":
       sheet = _sheet(sn_2);
       return _listRecent2(sheet);
@@ -100,7 +103,6 @@ function _submit(sheet, p){
   }
 }
 
-
 function _softDelete(sheet, p){
   var admin_id = String(p.admin_id || "");
   if (!admin_id) 
@@ -146,6 +148,34 @@ function _listRecent(sheet){
 
   values.sort((a,b)=> a[9] - b[9]);
 
+  var fields = [
+"submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky","row"];
+
+  return _json({
+    status: "ok", fields: fields, values: values
+  });
+}
+
+/* 讀取：取底部 520 列， fields+values */
+function _listRecent3(sheet){
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return _json({status:"error", msg:"no_data"});
+  }
+  var lastCol  = sheet.getLastColumn();
+  var startRow = Math.max(2,lastRow - 519);
+  var rows     = lastRow - startRow + 1;
+  var values = sheet.getRange(startRow, 1, rows, lastCol).getValues();
+  const epoch = Date.UTC(1899,11,30);
+  values.forEach(function(row, i){
+    row[2] = _toSerialInt(row[2], epoch);
+    row.push(startRow + i);
+  });
+  values.sort((a,b)=> a[5].localeCompare(b[5]));
+  values.sort((a,b)=>{
+  return String(a[3]).localeCompare(String(b[3]), 'en', { numeric:true });
+});
+  values.sort((a,b)=> b[2] - a[2]);
   var fields = [
 "submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky","row"];
 
