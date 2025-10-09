@@ -169,7 +169,14 @@ function renderResponse(j){
 
   rowsEl.appendChild(frag);
   function cell(t){ const d=document.createElement('div'); d.textContent=t; return d; }
-  function group(t){ const g=document.createElement('div'); g.className='group'; g.textContent=t; return g; }
+  /* function group(t){ const g=document.createElement('div'); g.className='group'; g.textContent=t; return g; } */
+function group(t){
+  const g = document.createElement('div');
+  g.className = 'group';
+  g.style.fontWeight = '600';
+  g.append(cell(t),cell('I D'),cell('姓名'),cell('假別'));
+  return g;
+}
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
   function empty(){ const r=document.createElement('div'); r.className='row'; r.append(cell('—'),cell('—'),cell('此日期無資料'),cell('—')); return r; }
   function line(n,id,name,dn){
