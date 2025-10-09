@@ -21,9 +21,8 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 .input{display:flex;justify-content:center;margin:7px 0;}
 .in{ width:200px;height:44px;border-radius:10px;border:1px solid #334155;background:#0f172a; color:var(--text);text-align:center;font-size:18px;letter-spacing:.2em;text-transform:uppercase; }
 .in:focus{outline:2px solid var(--accent);}
-
-.mmdd{ text-align:center;background:var(--glass);border:1px solid #1f2937;padding:6px 14px;border-radius:999px;font-weight:700;margin:3px auto;width:max-content; }
-
+/* background:var(--glass);border:1px solid #1f2937; */
+.mmdd{ text-align:center; padding:6px 14px; border-radius:999px; font-weight:700; margin:3px auto; width:max-content; background:inherit; border:1px solid transparent; }
 .mmdd.sel{
   appearance:none;
   -webkit-appearance:none;
@@ -44,11 +43,8 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   background-size:10px 6px;
   padding-right:26px;
   cursor:pointer;
-}
-
- 
+} 
 .mmdd.sel:focus{outline:2px solid var(--accent)}
-
 .group{margin-top:16px;text-align:center;}
 .gtitle{font-size:12px;color:var(--sub);margin-bottom:1px;}
 .btnrow{display:grid;gap:10px;}
@@ -86,14 +82,14 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   transform:translateY(1px);
   box-shadow:0 2px 6px rgba(0,0,0,.5) inset; filter:brightness(.95); }
 
-.draftB .ok { color: #22c55e; }
-.draftB .ng { color: #ef4444; }
-.draftB .on { color: #ffd700; }
 /* 草稿B（主體下方，無外框，置中） */
 .draftB{
   width:100%;max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8); border:none;border-radius:12px;padding:8px 6px;text-align:center;box-shadow:none; }
 .line{padding:6px 8px;border-bottom:1px dashed #334155;font-size:13px;}
 .line:last-child{border-bottom:0;}
+.draftB .ok { color: #22c55e; }
+.draftB .ng { color: #ef4444; }
+.draftB .on { color: #ffd700; }
 
 /* 底部狀態列 */
 .footerbar{ height:var(--footer-h);position:fixed;left:0;bottom:0;width:100%;display:flex;justify-content:space-between;align-items:center;
@@ -102,9 +98,8 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 .sitem{display:flex;align-items:center;gap:6px; }
 .dot{width:10px;height:10px;border-radius:50%;background:#475569;}
 .dot.ok{background:#22c55e;} .dot.bad{background:#ef4444; }
-.clock{font-variant-numeric:tabular-nums;color:var(--accent); }
 .ver{color:#60a5fa;font-weight:700; }
-
+.clock{font-variant-numeric:tabular-nums;color:var(--accent); }
 /* 上傳中 */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;}
 .spinner{width:50px;height:50px;border-radius:50%;border:4px solid rgba(255,255,255,.3);border-top-color:var(--accent);animation:spin 1s linear infinite;}
