@@ -192,8 +192,7 @@ function group(t,cls){
   function line(n,id,name,dn,cls){
     const r=document.createElement('div'); 
     r.className = 'row ' + cls.toUpperCase();
-    const nameCell=cell(name); nameCell.title=name;
-    r.append(cell(n), cell(id), nameCell, cell(dn||'')); return r;
+    r.append(cell(n), cell(id), cell(name), cell(dn)) ; return r;
   }
 }
 
