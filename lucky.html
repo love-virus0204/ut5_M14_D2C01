@@ -12,7 +12,7 @@
   --accent:#10b981;
   --muted:#334155;
 }
-html,body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--fg);height:100%;max-width: 600px; margin: 0 auto; }
+html,body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--fg);height:100%;max-width: 480px; margin: 0 auto; }
 body{display:flex;flex-direction:column;overflow:hidden;}
 .top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#1e293b;border-bottom:1px solid #334155;}
 .clock{font-family:monospace;font-size:1em;}
@@ -190,7 +190,7 @@ function renderResponse(j){
 function group(t,cls){
   const g = document.createElement('div');
   g.className = 'group ' + cls.toUpperCase();
-  g.append(cell(t),cell('工　　號'),cell('姓　　名'),cell('假　別'),cell('　'));
+  g.append(cell(t),cell('工　號'),cell('姓　　名'),cell('假別'),cell('　'));
   return g;
 }
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
