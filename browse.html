@@ -103,62 +103,51 @@ function splitDays(rows){
 }
 
 /* ===== 渲染：每大筆一個 section；===== */
+/* ===== 渲染：每個日期一個 section，左右 A/B 卡片 ===== */
 function render(groups){
   const root = document.getElementById('sections');
-  root.innerHTML = '';
-
-  if(!groups.length){
+  if (!groups || !groups.length){
     root.innerHTML = `<div class="empty">目前無資料</div>`;
     return;
   }
 
-  for(const g of groups){
-    const sec = document.createElement('div');
-    sec.className = 'section';
+  root.innerHTML = groups.map(g => sectionHTML(g)).join('');
 
-    const hd = document.createElement('div');
-    hd.className = 'sect-hd';
-    const title = document.createElement('div');
-    title.className = 'sect-title';
-    title.textContent = `日期：${mdFromSerial(g.dateSerial)}`;
-    const cnt = document.createElement('div');
-    cnt.className = 'count';
-    cnt.textContent = `筆數：${g.pairs.length}`;
-    hd.appendChild(title); hd.appendChild(cnt);
-
-    const grid = document.createElement('div');
-    grid.className = 'grid';
-
-    const cardA = document.createElement('div');
-    cardA.className = 'card';
-    cardA.innerHTML = `<h3>A 班</h3><div class="table"><table><thead><tr><th>ID</th><th>假別</th></tr></thead><tbody id="tbA_${g.dateSerial}"></tbody></table></div>`;
-
-    const cardB = document.createElement('div');
-    cardB.className = 'card';
-    cardB.innerHTML = `<h3>B 班</h3><div class="table"><table><thead><tr><th>ID</th><th>假別</th></tr></thead><tbody id="tbB_${g.dateSerial}"></tbody></table></div>`;
-
-    grid.appendChild(cardA); grid.appendChild(cardB);
-    sec.appendChild(hd); sec.appendChild(grid);
-    root.appendChild(sec);
-
-    const ta = document.getElementById(`tbA_${g.dateSerial}`);
-    const tb = document.getElementById(`tbB_${g.dateSerial}`);
-
-    // 逐列填入（對齊行數）
-    for(const p of g.pairs){
-      const trA = document.createElement('tr');
-      const trB = document.createElement('tr');
-      if(p.a){ trA.innerHTML = `<td>${p.a.id}</td><td>${p.a.dN}</td>`; } else { trA.innerHTML = `<td></td><td></td>`; }
-      if(p.b){ trB.innerHTML = `<td>${p.b.id}</td><td>${p.b.dN}</td>`; } else { trB.innerHTML = `<td></td><td></td>`; }
-      ta.appendChild(trA); tb.appendChild(trB);
-    }
-
-    // 空清單提示
-    if(!g.pairs.length){
-      ta.parentElement.innerHTML = `<div class="empty">此日期無資料</div>`;
-      tb.parentElement.innerHTML = `<div class="empty">此日期無資料</div>`;
-    }
+  function sectionHTML(g){
+    const title = `日期：${mdFromSerial(g.date)}`;
+    const total = (g.A?.length||0) + (g.B?.length||0);
+    return `
+      <div class="section">
+        <div class="sect-hd">
+          <div class="sect-title">${title}</div>
+          <div class="count">筆數：${total}</div>
+        </div>
+        <div class="grid">
+          ${card('A 班', g.A)}
+          ${card('B 班', g.B)}
+        </div>
+      </div>`;
   }
+
+  function card(h3, list){
+    if (!list || !list.length){
+      return `<div class="card"><h3>${h3}</h3><div class="empty">此日期無資料</div></div>`;
+    }
+    // 用簡單表格，兩欄：ID / 假別
+    const rows = list.map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.dN)}</td></tr>`).join('');
+    return `
+      <div class="card">
+        <h3>${h3}</h3>
+        <div class="table">
+          <table>
+            <thead><tr><th>ID</th><th>假別</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  function esc(s){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 }
 
 /* ===== 流程 ===== */
