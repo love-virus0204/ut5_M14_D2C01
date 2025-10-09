@@ -109,16 +109,14 @@ function hideMask(){mask.classList.remove('show');}
 function parseLuckyData(data){
   if(!data||data.status!=='ok')return[];
   const F=Object.fromEntries(data.fields.map((k,i)=>[k,i]));
-  return data.values.map(a=>({
-    date:a[F.date],id:a[F.id],shift:a[F.shift],dN:a[F.dN],name:a[F.name]
+  return data.values.map(a=>({ date:a[F.date],id:a[F.id],shift:a[F.shift],dN:a[F.dN],name:a[F.name]
   }));
 }
 
 function renderResponse(j){
   const list = parseLuckyData(j);
   const serial = currentSerial();
-  const rows = list.filter(r => Number(r.date)===serial)
-                   .filter(r => ['A','B'].includes(String(r.shift||'').toUpperCase()));
+  const rows = list.filter(r => Number(r.date)===serial).filter(r => ['A','B'].includes(String(r.shift||'').toUpperCase()));
 
   const A=[], B=[];
   rows.forEach(r => (String(r.shift).toUpperCase()==='A' ? A : B).push(r));
