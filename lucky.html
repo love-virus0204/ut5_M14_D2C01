@@ -36,26 +36,34 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 </style>
 </head>
 <body>
-  <div class="top">
-    <div class="status" id="gasStatus">
-      <span class="dot" id="gasDot"></span>
-      <span id="gasText">n/a</span>
-    </div>
-      <button class="btn" id="btnDraw">抽籤</button>
-    <div class="clock" id="nowTime">--/-- --:--:--</div>
-    <div class="btns">
-      <button class="btn" id="btnRead">讀表</button>
-    </div>
+<div class="top">
+  <!-- 狀態燈 -->
+  <div class="status" id="gasStatus">
+    <span class="dot" id="gasDot"></span>
+    <span id="gasText">n/a</span>
   </div>
 
-  <div class="main">
-    <div class="select-bar">
-      <select id="daySel" class="sel"></select>
-    </div>
-    <div id="rows" class="rows"></div>
-  </div>
+  <!-- 抽籤按鈕 -->
+  <div class="btns">
+    <button class="btn" id="btnDraw">抽籤</button></div>
 
-  <div id="mask" class="mask">處理中…</div>
+  <!-- 時間顯示 -->
+  <div class="clock" id="nowTime">--/-- --:--:--</div>
+
+  <!-- 日期選單 -->
+  <div class="select-bar">
+    <select id="daySel" class="sel"></select></div>
+
+  <!-- 讀表按鈕 -->
+  <div class="btns">
+    <button class="btn" id="btnRead">讀表</button></div>
+</div>
+
+<div class="main">
+  <div id="rows" class="rows"></div>
+</div>
+
+<div id="mask" class="mask">處理中…</div>
 
 <script>
 const API_URL='https://script.google.com/macros/s/AKfycbw1jdsG18FEoO2x-CgkOUXdFIpotUy3xJsJQBKf-FKuFQyKt2DLqLShtBuxNwoOjynj/exec';
