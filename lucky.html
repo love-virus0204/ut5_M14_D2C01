@@ -189,7 +189,7 @@ function group(t,cls){
   return g;
 }
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
-  function empty(){ const r=document.createElement('div'); r.className='row'; r.append(cell('—'),cell('—'),cell('無資料'),cell('—'),cell('－')); return r; }
+  function empty(){ const r=document.createElement('div'); r.className='row'; r.append(cell('—'),cell('　'),cell('無資料'),cell('　'),cell('　')); return r; }
   function line(n,id,name,dn,cls){
     const r=document.createElement('div'); 
     r.className = 'row ' + cls.toUpperCase();
