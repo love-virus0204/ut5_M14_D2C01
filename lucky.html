@@ -89,20 +89,16 @@ function currentSerial(){return Number(daySel.value);}
 function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--';}
 
 /* ===== 狀態顯示 ===== */
-const gasDot  = document.getElementById('gasDot');
-const gasText = document.getElementById('gasText');
-// 'n/a' | 'GAS' | 'GG'
-  function setGas(status){
-    gasDot.className = 'dot' + (status==='GAS' ? ' ok' : status==='GG' ? ' err' : '');
-    gasText.textContent = status;
-  }
+  const gasDot  = document.getElementById('gasDot');
+  const gasText = document.getElementById('gasText');
+
   setGas('n/a');
   async function pingGas(){
     try{
-      const r = await fetch(API_URL+' action=ping',{cache:'no-store'});
-      const j = await r.json();
-      setGas(j.status==='ok' ? 'GAS' : 'GG');
-      }catch(_){
+      const res = await fetch(API_URL + '?target=ping', { cache:'no-store' });
+      const j = await res.json();
+      setGas(j.status === 'ok' ? 'GAS' : 'GG');
+    }catch(e){
       setGas('GG');
     }
   }
