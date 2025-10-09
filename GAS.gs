@@ -120,7 +120,7 @@ function _softDelete(sheet, p){
   var rowValue  = ["DEL", admin_id, deletedAt]; // 1×3
 
   for (var i = 0; i < targets.length; i++){
-    sheet.getRange(targets[i], 7, 1, 3).setValues([rowValue]);
+    sheet.getRange(targets[i], 8, 1, 3).setValues([rowValue]);
   }
   return _json({status:"ok", count: targets.length});
 }
@@ -144,10 +144,10 @@ function _listRecent(sheet){
     row.push(startRow + i);
   });
 
-  values.sort((a,b)=> b[8] - a[8]);
+  values.sort((a,b)=> b[9] - a[9]);
 
   var fields = [
-"submittedAt","key","date","id","shift","dN","admin_id","deletedAt","lucky","row"];
+"submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky","row"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -183,7 +183,7 @@ function serialToYmd(n, epoch){
   return Utilities.formatDate(d, TZ, 'yyyy-MM-dd');
 }
 
-/*** 日期序號轉換（Excel 基準：1899-12-30） ***/
+/*** 日期序號轉換（Excel 基準）***/
 function _toSerialInt(v, epoch){
   if (typeof v === 'number') return Math.floor(v);
   if (Object.prototype.toString.call(v) === '[object Date]') {
@@ -203,7 +203,6 @@ function _json(obj){
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
-
 /* 工具 - off */
 
 function _listRecent2(sheet) {
