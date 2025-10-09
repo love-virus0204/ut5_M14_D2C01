@@ -179,7 +179,7 @@ function group(t){
   return g;
 }
   function sep(){ const s=document.createElement('div'); s.className='sep'; s.style.gridColumn='1/-1'; return s; }
-  function empty(){ const r=document.createElement('div'); r.className='row'; r.append(cell('—'),cell('—'),cell('此日期無資料'),cell('—')); return r; }
+  function empty(){ const r=document.createElement('div'); r.className='row'; r.append(cell('—'),cell('—'),cell('無資料'),cell('—')); return r; }
   function line(n,id,name,dn){
     const r=document.createElement('div'); r.className='row';
     const nameCell=cell(name); nameCell.title=name;
