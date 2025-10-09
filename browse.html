@@ -82,7 +82,7 @@ async function fetchList(payload){
   return {rows:[]};
 }
 
-/* ===== 依「兩大筆資料（date 不同）」→ 各自拆 A/B → 配對列 ===== */
+/* ===== 依「資料（date 不同）」→ 各自拆 A/B → 配對列 ===== */
 function splitDays(rows){
   var n = 7
   const alive = rows.filter(x => !x.deletedAt);
