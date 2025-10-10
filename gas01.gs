@@ -59,19 +59,24 @@ function _drawLucky(sh, dateSerial, rankedIds) {
 }
 
 function _buildLuckyRanks(sh) {
+  // A:C = id,name,tier
   const values = sh.getRange(2, 1, sh.getLastRow() - 1, 3).getValues();
+  // 僅 1..5 有權重
+  const WEI = { 1:2, 2:3, 3:5, 4:8, 5:12 };
   const weightMap = {};
   const pool = [];
 
   for (let i = 0; i < values.length; i++) {
     const [id, name, tier] = values[i];
-    const w = Number(tier);
-    if (!id || isNaN(w) || w <= 0) continue;
+    const t = Number(tier);
+    const w = WEI[t] || 0;
+    if (!id || w <= 0) continue;
 
     weightMap[id] = { name, w };
     for (let j = 0; j < w; j++) pool.push(id);
   }
 
+  // 洗牌
   for (let i = pool.length - 1; i > 0; i--) {
     const j = (Math.random() * (i + 1)) | 0;
     [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -82,6 +87,5 @@ function _buildLuckyRanks(sh) {
     name: weightMap[id].name,
     weight: weightMap[id].w
   }));
-
   return ranked;
 }
