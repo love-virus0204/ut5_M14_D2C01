@@ -335,7 +335,7 @@ function checkCutoff(){
    const mins = (+mt[3]) * 60 + (+mt[4]);
    if (mins > cuton && lock_st === 1) fillDateSelect();
    if (mins > cutoff && lock_st === 0) {
-     let lock_st = 1;
+     lock_st = 1;
      const sel   = document.getElementById('selDate');
      const first = sel.options[0];
      first.disabled = true;
