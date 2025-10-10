@@ -201,6 +201,7 @@ function ymdToSerial(y,m,d){ return Math.floor(Date.UTC(y,m-1,d)/86400000)+25569
 function mdLabel(y,m,d){ const mm=String(m).padStart(2,'0'), dd=String(d).padStart(2,'0'); return `${mm}/${dd}`; }
 
 /* ===== 產生 7 天清單並灌入下拉 ===== */
+let lock_st = 0;
 function fillDateSelect(){
   const sel = document.getElementById('selDate'); if(!sel) return;
   sel.innerHTML='';
@@ -214,6 +215,7 @@ function fillDateSelect(){
     sel.appendChild(opt);
   }
   sel.selectedIndex=0;
+  lock_st = 0;
 }
 
 function startClock(){
@@ -331,7 +333,9 @@ function checkCutoff(){
   const mt  = clk.textContent.match(/^(\d{2})\/(\d{2}) (\d{2}):(\d{2})/);
    if(!mt) return;
    const mins = (+mt[3]) * 60 + (+mt[4]);
-   if (mins > cutoff) {
+   if (mins > cuton && lock_st === 1) fillDateSelect();
+   if (mins > cutoff && lock_st === 0) {
+     let lock_st = 1;
      const sel   = document.getElementById('selDate');
      const first = sel.options[0];
      first.disabled = true;
