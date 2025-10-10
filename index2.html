@@ -188,6 +188,17 @@ function tpeParts(){
   }).formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{}); return { y:+p.year, m:+p.month, d:+p.day, h:+p.hour, mi:+p.minute, s:+p.second };
 }
 
+function startClock(){
+  const el=document.getElementById('clock');
+  const tick=()=>{
+    const p=tpeParts();
+    const mm=String(p.m).padStart(2,'0'), dd=String(p.d).padStart(2,'0');
+    const hh=String(p.h).padStart(2,'0'), mi=String(p.mi).padStart(2,'0'), ss=String(p.s).padStart(2,'0');
+    if(el) el.textContent=`${mm}/${dd} ${hh}:${mi}:${ss}`;
+  };
+  tick(); setInterval(tick,1000);
+}
+
 function baseYMD_fromTPE(){
   let {y,m,d,h,mi}=tpeParts();
   if (h*60+mi>cuton){ const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+1); y=t.getUTCFullYear(); m=t.getUTCMonth()+1; d=t.getUTCDate(); }
@@ -216,31 +227,6 @@ function fillDateSelect(){
   }
   sel.selectedIndex=0;
   lock_st = 0;
-}
-
-function startClock(){
-  const el=document.getElementById('clock');
-  const tick=()=>{
-    const p=tpeParts();
-    const mm=String(p.m).padStart(2,'0'), dd=String(p.d).padStart(2,'0');
-    const hh=String(p.h).padStart(2,'0'), mi=String(p.mi).padStart(2,'0'), ss=String(p.s).padStart(2,'0');
-    if(el) el.textContent=`${mm}/${dd} ${hh}:${mi}:${ss}`;
-  };
-  tick(); setInterval(tick,1000);
-}
-
-/* ===== 日期邏輯 ===== */
-function baseYMD(){
-  if (!tNow) return;
-  const tn = tNow.getUTCHours() * 60 + tNow.getUTCMinutes();
-  const t = new Date(tNow);
-  if (tn >= 65) t.setUTCDate(t.getUTCDate() + 1);
-  CUR_SER = Math.floor(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate())/86400000) + 25569;
-  const mm = String(t.getUTCMonth() + 1).padStart(2,'0');
-  const dd = String(t.getUTCDate()).padStart(2,'0');
-  MD_STR  = `${mm}/${dd}`;
-  const el = document.getElementById('mmdd');
-  if (el) el.textContent = `報　名：　 ${mm}/${dd} 　跨  加`;
 }
 
 /* ===== 草稿A ===== */
