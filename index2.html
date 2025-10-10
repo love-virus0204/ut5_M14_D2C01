@@ -335,11 +335,10 @@ function checkCutoff(){
    const mins = (+mt[3]) * 60 + (+mt[4]);
    if (mins > cuton && lock_st === 1) fillDateSelect();
    if (mins > cutoff && lock_st === 0) {
-     lock_st = 1;
      const sel   = document.getElementById('selDate');
-     const first = sel.options[0];
-     first.disabled = true;
-     if (sel.selectedIndex === 0 && sel.options.length > 1) sel.selectedIndex = 1;
+     if (sel.selectedIndex === 0) sel.selectedIndex = 1;
+     sel.options[0].disabled = true;
+     lock_st = 1;
    }
 }
 
