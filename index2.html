@@ -200,9 +200,8 @@ function startClock(){
 }
 
 function baseYMD_fromTPE(){
-  let {y,m,d,h,mi}=tpeParts();
-  if (h*60+mi>cuton){ const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+1); y=t.getUTCFullYear(); m=t.getUTCMonth()+1; d=t.getUTCDate(); }
-  return {y,m,d};
+
+
 }
 
 /* ===== 轉 Excel 基準 日期序號===== */
@@ -216,7 +215,9 @@ let lock_st = 0;
 function fillDateSelect(){
   const sel = document.getElementById('selDate'); if(!sel) return;
   sel.innerHTML='';
-  let {y,m,d}=baseYMD_fromTPE();
+  let {y,m,d,h,mi}=tpeParts();
+  if (h*60+mi>cuton){ const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+1); y=t.getUTCFullYear(); m=t.getUTCMonth()+1; d=t.getUTCDate(); }
+  return {y,m,d};
   for(let i=0;i<7;i++){
     const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+i);
     const yy=t.getUTCFullYear(), mm=t.getUTCMonth()+1, dd=t.getUTCDate();
