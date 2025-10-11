@@ -94,6 +94,10 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 <div id="mask" class="mask">處理中…</div>
 
 <script>
+const test = new Image();
+test.onload = () => console.log('OK:', test.width, test.height);
+test.onerror = e => console.warn('FAIL', e);
+test.src = "https://drive.usercontent.google.com/download?id=1y8F-y9gS_kgzn2YsQZZi0ie_YH19qBAs&export=download";
 /* ===== 綁定 ===== */
 document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
