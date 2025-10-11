@@ -91,17 +91,21 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 /* ===== 綁定 ===== */
 document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
+const el = document.getElementById('nowTime');
+
+
+
 
 /* ===== 日期選單 ===== */
 const daySel=document.getElementById('daySel');
 const base = ymdToSerial(now);
 const DAYS = Array.from({ length:7 }, (_, k) => {
-  let s = base + k
-   const ymd = serialToYMD(s);
+  const s = base + k
+  const ymd = serialToYMD(s);
   return {
     ymd,
     serial: s,
-    label:ymd.slice(5);
+    label:ymd.slice(5)
   };
 });
 daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
@@ -120,7 +124,7 @@ function setGas(status){
 setGas('n/a');
 async function pingGas(){
   try{
-    const res = await fetch(API_URL + '?target=ping', { cache:'no-store' });
+    const res = await fetch(api_url + '?target=ping', { cache:'no-store' });
     const j = await res.json();
     setGas(j.status === 'ok' ? 'GAS' : 'GG');
   }catch(e){
@@ -129,9 +133,7 @@ async function pingGas(){
 }
 
 /* ===== 即時時間顯示 ===== */
-function tickN(){
-document.getElementById('nowTime').textContent=now;
-}
+function tickN(){ el.textContent = now; }
 
 /* ===== 遮罩控制 ===== */
 const mask=document.getElementById('mask');
@@ -203,8 +205,7 @@ async function reloadData(){
     const p=new URLSearchParams();
     p.append('action','list_recent');
     p.append('dateSerial',currentSerial());
-    const r=await fetch(A
-api_url,{method:'POST',body:p});
+    const r=await fetch(api_url,{method:'POST',body:p});
     const j=await r.json();
     renderResponse(j);
   }catch(e){showMask('讀取失敗');setTimeout(hideMask,1500);}
