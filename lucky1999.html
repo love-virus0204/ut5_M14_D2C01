@@ -93,17 +93,22 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 
 /* ===== 日期選單 ===== */
 const daySel=document.getElementById('daySel');
+const base = new Date(T0);
 
-const baseYMD=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(T0);
-const DAYS=Array.from({length:7},(_,k)=>{
-  const d=new Date(T0.getFullYear(),T0.getMonth(),T0.getDate()+k);
-  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
-  const ymd=`${y}-${m}-${dd}`;
-  return{ymd,serial:ymdToSerial(ymd),label:fmtMDfromYMD(ymd)};
+// 產生連續日期陣列
+const DAYS = Array.from({ length: daysToShow }, (_, k) => {
+  const d = new Date(base);
+  d.setDate(d.getDate() + k);
+  const y  = d.getFullYear();
+  const m  = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const ymd = `${y}-${m}-${dd}`;
+  return {
+    ymd,
+    serial: ymdToSerial(ymd),
+    label: fmtMDfromYMD(ymd)
+  };
 });
-daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
-function currentSerial(){return Number(daySel.value);}
-function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--';}
 
 /* ===== 狀態顯示 ===== */
 const gasDot  = document.getElementById('gasDot');
