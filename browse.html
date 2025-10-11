@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>D2｜名單瀏覽</title>
+<style>
+:root{--bg:#0b1220;--panel:#0f172acc;--text:#e5e7eb;--sub:#94a3b8;--line:#1f2937;--accent:#22d3ee}
+html,body{height:100%;margin:0;background:linear-gradient(135deg,#0b1023,#101a36 45%,#0b1a23);color:var(--text);font-family:system-ui,Inter,"PingFang TC","Microsoft JhengHei",sans-serif}
+.container{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px}
+h1{margin:6px 0 8px;font-size:18px;letter-spacing:.08em;color:var(--accent);text-align:center}
+.panel{width:min(900px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:10px}
+.section{margin:8px 0 10px}
+.sect-hd{display:flex;justify-content:space-between;align-items:center;margin:2px 0 6px}
+.sect-title{font-size:14px;color:#93c5fd}
+.count{font-size:12px;color:#a7f3d0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card{background:#0b1324;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.card h3{margin:0;padding:6px 8px;font-size:13px;color:#c7d2fe;border-bottom:1px solid var(--line);text-align:center}
+.table{max-height:48vh;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px dashed #1f2a44;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
+.empty{padding:14px;color:var(--sub);text-align:center}
+.spinner{border:4px solid rgba(255,255,255,.2);border-top:4px solid var(--accent);border-radius:50%;width:42px;height:42px;animation:spin 1s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none}
+.btn{appearance:none;border:0;border-radius:10px;background:linear-gradient(180deg,#0ea5e9,#0369a1);padding:8px 18px;color:#fff;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:transform .12s}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(1px)}
+.updated{ font-size:12px; color:var(--sub)}
+
+.toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:12px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>D2 大夜班跨加｜名單瀏覽</h1>
+
+  <div id="loading" class="spinner"></div>
+
+  <section id="box" class="panel hidden">
+    <!-- 動態塞入兩大筆（依日期） -->
+    <div id="sections"></div>
+  </section>
+
+  <div class="toolbar">
+    <button class="btn" id="reload">重新整理</button>
+    <div class="updated">更新：<span id="ut">--/-- --:--</span></div>
+  </div>
+
+<script>
+/* ===== 常數 ===== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbz5TXqNou2gdKn1JXEiqTvAGjpwnT0BucbI3HCBkZfgwHH922uvRIwavS8WZYC_6soQ/exec';
+
+/* ===== 工具 ===== */
+const pad=n=>String(n).padStart(2,'0');
+const nowTPE=()=>new Date(Date.now()+8*60*60*1000);
+const mdFromSerial=s=>{const t=new Date((s-25569)*86400000);return `${pad(t.getUTCMonth()+1)}/${pad(t.getUTCDate())}`};
+
+/* ===== POST：URLSearchParams ===== */
+async function fetchList(payload){
+  const body = new URLSearchParams(payload);
+
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    body: body
+  });
+  const j = await res.json();
+  if (!j || j.status !== 'ok' || !Array.isArray(j.fields) || !Array.isArray(j.values))
+    return { rows: [] };
+
+  const F = Object.fromEntries(j.fields.map((k, i) => [k, i]));
+  const rows = j.values.map(a => ({
+    submittedAt: a[F.submittedAt],
+    key:         a[F.key],
+    date:        Number(a[F.date]),
+    id:          a[F.id],
+    shift:       a[F.shift],
+    dN:          a[F.dN],
+    admin_id:    a[F.admin_id],
+    deletedAt:   a[F.deletedAt],
+    lucky:       a[F.lucky],
+    row:         a[F.row]
+  }));
+  return { rows };
+}
+
+/* ===== 依{資料}→ 拆 A/B → 配對 ===== */
+function splitDays(rows){
+  const n = 7;
+  const dates = [];
+  for (const r of rows){
+    if (!dates.includes(r.date)){
+      dates.push(r.date);
+      if (dates.length === n) break;
+    }
+  }
+  return dates.map(dSer => {
+    const subset = rows.filter(x => x.date === dSer);
+    return {
+      date: dSer,
+      A: subset.filter(x => x.shift === 'A').map(x => ({ id:x.id, dN:x.dN })),
+      B: subset.filter(x => x.shift === 'B').map(x => ({ id:x.id, dN:x.dN }))
+    };
+  });
+}
+
+/* ===== 渲染：每日 sectionA/B 卡片 ===== */
+function render(groups){
+  const root = document.getElementById('sections');
+  if (!groups || !groups.length){
+    root.innerHTML = `<div class="empty">目前無資料</div>`;
+    return;
+  }
+
+  root.innerHTML = groups.map(g => sectionHTML(g)).join('');
+
+  function sectionHTML(g){
+    const title = `日期：${mdFromSerial(g.date)}`;
+    const total = (g.A?.length||0) + (g.B?.length||0);
+    return `
+      <div class="section">
+        <div class="sect-hd">
+          <div class="sect-title">${title}</div>
+          <div class="count">筆數：${total}</div>
+        </div>
+        <div class="grid">
+          ${card('A 班', g.A)}
+          ${card('B 班', g.B)}
+        </div>
+      </div>`;
+  }
+  function card(h3, list){
+    if (!list || !list.length){
+      return `<div class="card"><h3>${h3}</h3><div class="empty">本日無資料</div></div>`;
+    }
+    const rows = list.map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.dN)}</td></tr>`).join('');
+    return `
+      <div class="card">
+        <h3>${h3}</h3>
+        <div class="table">
+          <table>
+            <thead><tr><th>ID</th><th>假別</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+  function esc(s){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+}
+
+/* ===== 流程 ===== */
+async function loadData(payload){
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('box').classList.add('hidden');
+
+  let rows=[];
+  try{ const {rows:r}=await fetchList(payload); rows=r.slice(0,520); }catch(_){ rows=[]; }
+
+  const groups = splitDays(rows);
+  render(groups);
+
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('box').classList.remove('hidden');
+
+  const d=nowTPE(); document.getElementById('ut').textContent=`${pad(d.getUTCMonth()+1)}/${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+}
+
+/* ===== 首次與刷新（參數你可改）===== */
+const DEFAULT_PAYLOAD = { action:'list_recent3' };
+document.getElementById('reload').addEventListener('click',()=>loadData(DEFAULT_PAYLOAD));
+loadData(DEFAULT_PAYLOAD);
+</script>
+</body>
+</html>
