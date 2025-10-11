@@ -100,6 +100,9 @@ const DAYS = Array.from({ length: daysToShow }, (_, k) => {
     label:ymd.slice(5);
   };
 });
+daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
+function currentSerial(){return Number(daySel.value);}
+function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--';}
 
 /* ===== 狀態顯示 ===== */
 const gasDot  = document.getElementById('gasDot');
