@@ -88,6 +88,10 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 <div id="mask" class="mask">處理中…</div>
 
 <script>
+/* ===== 綁定 ===== */
+document.getElementById('btnRead').onclick=reloadData;
+document.getElementById('btnDraw').onclick=draw;
+
 /* ===== 日期選單 ===== */
 const daySel=document.getElementById('daySel');
 const base = ymdToSerial(now);
@@ -219,10 +223,6 @@ async function draw(){
     setTimeout(hideMask,1000);
   }catch(e){showMask('抽籤失敗');setTimeout(hideMask,1500);}
 }
-
-/* ===== 綁定 ===== */
-document.getElementById('btnRead').onclick=reloadData;
-document.getElementById('btnDraw').onclick=draw;
 
 /* ===== 初始化 ===== */
   tickN();
