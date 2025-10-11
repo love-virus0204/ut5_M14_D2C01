@@ -93,19 +93,16 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 
 /* ===== 日期選單 ===== */
 const daySel=document.getElementById('daySel');
-const base = new Date(T0);
-
-// 產生連續日期陣列
+const base = ymdToSerial(now);
 const DAYS = Array.from({ length: daysToShow }, (_, k) => {
-  const d = new Date(base);
-  d.setDate(d.getDate() + k);
-  const y  = d.getFullYear();
-  const m  = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
+  let s = base + k
+
+
+
   const ymd = `${y}-${m}-${dd}`;
   return {
     ymd,
-    serial: ymdToSerial(ymd),
+    serial: s,
     label: fmtMDfromYMD(ymd)
   };
 });
