@@ -89,23 +89,11 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 
 <script>
 
-/* ===== 時間控制 ===== */
-function nowCorrected(){
-  const p=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',hour12:false,
-  year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(new Date());
-  const g=t=>Number(p.find(x=>x.type===t).value);
-  return new Date(g('year'),g('month')-1,g('day'),g('hour'),g('minute'),g('second'));
-}
-function ymdToSerial(ymd){
-  const [y,m,d]=ymd.split('-').map(Number);
-  const epoch=Date.UTC(1899,11,30);
-  return Math.floor((Date.UTC(y,m-1,d)-epoch)/86400000);
-}
-function fmtMDfromYMD(ymd){return ymd.slice(5).replace('-','/');}
+
 
 /* ===== 日期選單 ===== */
 const daySel=document.getElementById('daySel');
-const T0=nowCorrected();
+
 const baseYMD=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(T0);
 const DAYS=Array.from({length:7},(_,k)=>{
   const d=new Date(T0.getFullYear(),T0.getMonth(),T0.getDate()+k);
