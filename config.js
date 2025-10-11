@@ -3,9 +3,7 @@ window.api_url = 'https://script.google.com/macros/s/AKfycbz5TXqNou2gdKn1JXEiqTv
 
 /* ===== min Tools ===== */
 window.epoch = Date.UTC(1899,11,30);
-window.now = "";
-function tick() {
-  const sbT = new Intl.DateTimeFormat("zh-TW", {
+const sbT = new Intl.DateTimeFormat("zh-TW", {
     timeZone: "Asia/Taipei",
     hour12: false,
     year: "numeric",
@@ -15,8 +13,8 @@ function tick() {
     minute: "2-digit",
     second: "2-digit"
   });
-  now = sbT.format(new Date());
-}
+window.now = "";
+function tick() { now = sbT.format(new Date()); }
 tick();
 setInterval(tick, 1000);
 
