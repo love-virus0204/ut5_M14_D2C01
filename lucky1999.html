@@ -37,7 +37,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
   background-image: url("https://drive.google.com/uc?export=view&id=1y8F-y9gS_kgzn2YsQZZi0ie_YH19qBAs");
   transition: background-image 1s ease-in-out, opacity 1s ease;
   border-radius: 8px;
-}
+opacity: 1; }
 
 .group{border-bottom:1px solid #334155;margin-top:8px;padding-bottom:4px }
 .row{border-bottom:1px solid #1e293b; }
@@ -159,7 +159,7 @@ function parseLuckyData(data){
 // === 背景圖片清單 ===
 const bgList = [ "https://drive.google.com/uc?export=view&id=1y8F-y9gS_kgzn2YsQZZi0ie_YH19qBAs", "https://drive.google.com/uc?export=view&id=1Rl8JiUo3-3Nud_iHgw0zHZmRohUlv7Wf", "https://drive.google.com/uc?export=view&id=1ZpOrfwCkZ03P95XSegf3eb0b3KwLOSPa", "https://drive.google.com/uc?export=view&id=1hLJk4xQPCfKZyS49FGhIQCaNLqUCgAO6", "https://drive.google.com/uc?export=view&id=1Nr_grkmpM_ckGXombYjbzfcwbQ6BGAPj", "https://drive.google.com/uc?export=view&id=1XBMdXO7E_XdSTWsfoNdOxJ3b-SemViw9"
 ];
-// === 初始值與輪播 ===
+
 let bgIndex = 0;
 function rotateBackground() {
   rowsEl.style.opacity = 0;
