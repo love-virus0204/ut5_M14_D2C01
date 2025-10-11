@@ -15,7 +15,7 @@
 }
 html,body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--fg);height:100%;max-width: 480px; margin: 0 auto; }
 body{display:flex;flex-direction:column;overflow:hidden;}
-.top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#1e293b;border-bottom:1px solid #334155;}
+.top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#1e293b;border-bottom:1px solid #334155; height: 40px; }
 .clock{font-family:monospace;font-size:1em;}
 .btns{display:flex;gap:6px;}
 .btn:hover{background:#334155;}
@@ -93,9 +93,6 @@ document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
 const el = document.getElementById('nowTime');
 
-
-
-
 /* ===== 日期選單 ===== */
 const daySel=document.getElementById('daySel');
 const base = ymdToSerial(now);
@@ -133,7 +130,8 @@ async function pingGas(){
 }
 
 /* ===== 即時時間顯示 ===== */
-function tickN(){ el.textContent = now; }
+function tickN() {
+el.textContent=now.slice(5); }
 
 /* ===== 遮罩控制 ===== */
 const mask=document.getElementById('mask');
