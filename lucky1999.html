@@ -88,7 +88,6 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 <div id="mask" class="mask">處理中…</div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbz5TXqNou2gdKn1JXEiqTvAGjpwnT0BucbI3HCBkZfgwHH922uvRIwavS8WZYC_6soQ/exec';
 
 /* ===== 時間控制 ===== */
 function nowCorrected(){
@@ -139,10 +138,8 @@ async function pingGas(){
 }
 
 /* ===== 即時時間顯示 ===== */
-function tick(){
-  const t=nowCorrected();
-  const s=`${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
-  document.getElementById('nowTime').textContent=s;
+function tickN(){
+document.getElementById('nowTime').textContent=now;
 }
 
 /* ===== 遮罩控制 ===== */
@@ -215,7 +212,8 @@ async function reloadData(){
     const p=new URLSearchParams();
     p.append('action','list_recent');
     p.append('dateSerial',currentSerial());
-    const r=await fetch(API_URL,{method:'POST',body:p});
+    const r=await fetch(A
+api_url,{method:'POST',body:p});
     const j=await r.json();
     renderResponse(j);
   }catch(e){showMask('讀取失敗');setTimeout(hideMask,1500);}
@@ -227,7 +225,7 @@ async function draw(){
     const p=new URLSearchParams();
     p.append('action','lucky');
     p.append('dateSerial',currentSerial());
-    const r=await fetch(API_URL,{method:'POST',body:p});
+    const r=await fetch(api_url,{method:'POST',body:p});
     const j=await r.json();
     renderResponse(j);
     showMask('抽籤完成');
@@ -240,8 +238,8 @@ document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
 
 /* ===== 初始化 ===== */
-  tick();
-    setInterval(tick,1000);
+  tickN();
+    setInterval(tickN,1000);
   pingGas();
     setInterval(pingGas, 45000);
 // document.addEventListener('DOMContentLoaded', reloadData);
