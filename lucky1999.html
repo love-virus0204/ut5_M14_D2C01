@@ -125,7 +125,7 @@ const gasText = document.getElementById('gasText');
 
 function setGas(status){
   if(!gasDot || !gasText) return;
-  gasDot.className = 'dot' + (status==='GAS' ? ' ok' : status==='GG' ? ' err' : '');
+  gasDot.className = 'dot' + (status==='GAS' ? ' ok' : status==='ng' ? ' err' : '');
   gasText.textContent = status;
 }
 setGas('n/a');
