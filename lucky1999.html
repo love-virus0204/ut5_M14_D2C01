@@ -88,22 +88,16 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 <div id="mask" class="mask">處理中…</div>
 
 <script>
-
-
-
 /* ===== 日期選單 ===== */
 const daySel=document.getElementById('daySel');
 const base = ymdToSerial(now);
 const DAYS = Array.from({ length: daysToShow }, (_, k) => {
   let s = base + k
-  
-
-
-  const ymd = serialToYMD(s);
+   const ymd = serialToYMD(s);
   return {
     ymd,
     serial: s,
-    label: fmtMDfromYMD(ymd)
+    label:ymd.slice(5);
   };
 });
 
