@@ -96,10 +96,10 @@ const daySel=document.getElementById('daySel');
 const base = ymdToSerial(now);
 const DAYS = Array.from({ length: daysToShow }, (_, k) => {
   let s = base + k
+  
 
 
-
-  const ymd = `${y}-${m}-${dd}`;
+  const ymd = serialToYMD(s);
   return {
     ymd,
     serial: s,
