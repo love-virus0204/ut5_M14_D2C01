@@ -63,27 +63,25 @@ const mdFromSerial=s=>{const t=new Date((s-25569)*86400000);return `${pad(t.getU
 
 /* ===== POST：URLSearchParams ===== */
 async function fetchList(payload){
-  const body = new URLSearchParams(payload);
+ const body = new URLSearchParams(payload);
+ const res = await fetch(fetch(api_url, {
+  action:'list_recent3'
+  method: 'POST',
+  body: params,
+  cache: 'no-store'
+});
 
-  const res = await fetch(api_url, {
-    method: 'POST',
-    body: body
-  });
   const j = await res.json();
   if (!j || j.status !== 'ok' || !Array.isArray(j.fields) || !Array.isArray(j.values))
     return { rows: [] };
 
   const F = Object.fromEntries(j.fields.map((k, i) => [k, i]));
   const rows = j.values.map(a => ({
-    submittedAt: a[F.submittedAt],
     key:         a[F.key],
     date:        Number(a[F.date]),
     id:          a[F.id],
     shift:       a[F.shift],
     dN:          a[F.dN],
-    admin_id:    a[F.admin_id],
-    deletedAt:   a[F.deletedAt],
-    lucky:       a[F.lucky],
     row:         a[F.row]
   }));
   return { rows };
@@ -154,7 +152,7 @@ function render(groups){
 }
 
 /* ===== 流程 ===== */
-async function loadData(payload){
+async function loadData(){
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('box').classList.add('hidden');
 
@@ -170,10 +168,8 @@ async function loadData(payload){
   const d=nowTPE(); document.getElementById('ut').textContent=`${pad(d.getUTCMonth()+1)}/${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
 }
 
-/* ===== 首次與刷新（參數你可改）===== */
-const DEFAULT_PAYLOAD = { action:'list_recent3' };
-document.getElementById('reload').addEventListener('click',()=>loadData(DEFAULT_PAYLOAD));
-loadData(DEFAULT_PAYLOAD);
+document.getElementById('reload').addEventListener('click',()=>loadData());
+loadData();
 </script>
 </body>
 </html>
