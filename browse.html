@@ -57,14 +57,14 @@ th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
 
 <script>
 /* ===== POST：URLSearchParams ===== */
-async function fetchList(payload){
- const body = new URLSearchParams(payload);
- const res = await fetch(fetch(api_url, {
-  action:'list_recent3'
-  method: 'POST',
-  body: params,
-  cache: 'no-store'
-});
+async function fetchList(){
+  const params = new URLSearchParams();
+  params.append('action', 'list_recent3');
+  const res = await fetch(api_url, {
+    method: 'POST',
+    body: params,
+    cache: 'no-store'
+  });
 
   const j = await res.json();
   if (!j || j.status !== 'ok' || !Array.isArray(j.fields) || !Array.isArray(j.values))
