@@ -52,22 +52,27 @@ body{display:flex;flex-direction:column;overflow:hidden;}
   transition:background .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
 .top .btn:hover{ background:#334155; }
+.select-bar{ position:relative; display:flex; align-items:center; }
+.select-bar::after{
+  content:""; position:absolute; right:10px; top:50%; transform:translateY(-50%);
+  width:0; height:0; pointer-events:none;
+  border-left:6px solid transparent; border-right:6px solid transparent; border-top:8px solid #FFD700;
+}
 
-/* 下拉：金色箭頭與樣式 */
+/* 下拉：常態高亮 + 移除原生箭頭 */
 .sel{
   appearance:none; -webkit-appearance:none; -moz-appearance:none;
-  border:1px solid #38bdf8;
-  background:#1e3a8a;
-  color:#fff;
-  box-shadow:0 0 6px #38bdf855;
-  border-radius:8px;
-  height:28px;
-  padding:0 10px;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='%23FFD700' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 8px center;
-  background-size:10px 6px;
-  padding-right:26px;
+  border:2px solid #00fff7; border-radius:8px;
+  height:28px; padding:0 28px 0 10px;
+  background:#1e3a8a; color:#fff;
+  box-shadow:0 0 8px #00fff7;
+  line-height:1; display:inline-flex; align-items:center;
+}
+.sel::-ms-expand{ display:none; }
+.sel:focus, .sel:focus-visible{
+  outline:none;
+  border-color:#00fff7;
+  box-shadow:0 0 12px #00fff7, 0 0 2px #00fff7 inset;
 }
 
 /* 小螢幕：只收緊間距與尺寸，字級不變 */
