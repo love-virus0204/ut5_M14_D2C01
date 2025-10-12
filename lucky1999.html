@@ -154,18 +154,27 @@ function parseLuckyData(data){
 }
 
 // === 背景圖片清單 ===
-const bgList = [ "https://drive.usercontent.google.com/download?id=1y8F-y9gS_kgzn2YsQZZi0ie_YH19qBAs&export=view", "https://drive.usercontent.google.com/download?id=1Rl8JiUo3-3Nud_iHgw0zHZmRohUlv7Wf&export=view", "https://drive.usercontent.google.com/download?id=1ZpOrfwCkZ03P95XSegf3eb0b3KwLOSPa&export=view", "https://drive.usercontent.google.com/download?id=1hLJk4xQPCfKZyS49FGhIQCaNLqUCgAO6&export=view", "https://drive.usercontent.google.com/download?id=1Nr_grkmpM_ckGXombYjbzfcwbQ6BGAPj&export=view", "https://drive.usercontent.google.com/download?id=1XBMdXO7E_XdSTWsfoNdOxJ3b-SemViw9&export=view"
+const IMG_BASE = "https://cdn.imgchest.com/files/";
+const BG_LIST = [
+  "b9c23f4e91c6.jpg",
+  "31e59810dff0.jpg",
+  "73e52af2314c.jpg",
+  "45cea37d2076.jpg",
+  "2e6887215309.jpg",
+  "35864c4b541c.jpg"
 ];
+const BG_URLS = BG_LIST.map(name => `${IMG_BASE}${name}`);
+let idx = 0;
 
-let bgIndex = 0;
-function rotateBackground() {
-  rowsEl.style.opacity = 0;
-  setTimeout(() => {
-    bgIndex = (bgIndex + 1) % bgList.length;
-    rowsEl.style.backgroundImage = `url("${bgList[bgIndex]}")`;
-    rowsEl.style.opacity = 1;
-  }, 500);
+function cycleBG() {
+  rowsEl.style.transition = 'background-image 1s ease-in-out';
+  rowsEl.style.backgroundImage = `url('${BG_URLS[idx]}')`;
+  idx = (idx + 1) % BG_URLS.length;
 }
+
+cycleBG();
+  setInterval(cycleBG, 30000);
+
 
 /* ===== 資料渲染 ===== */
 function renderResponse(j){
