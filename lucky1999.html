@@ -32,7 +32,6 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 .rows { display:flex; flex-direction: column; box-sizing: border-box; gap: 2px; width: 90%; margin: 0 auto; }
 #rows{
   width:90%;
-  margin:0 auto;
   min-height:480px;
   background-position:center;
   background-repeat:no-repeat;
@@ -40,7 +39,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
   border-radius:8px;
   opacity:1;
   transition:background-image 1s ease-in-out,opacity 1s ease;
-  padding:10px;
+  padding:20px;
   background-clip:content-box; }
 .group{border-bottom:1px solid #334155;margin-top:8px;padding-bottom:4px }
 .row{border-bottom:1px solid #1e293b; }
@@ -125,6 +124,12 @@ function currentSerial() {
 
 function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--';}
 
+function currentS() {
+  const idx = daySel.selectedIndex;
+  const item = DAYS[idx];
+  return { A: item.serial, B: item.label };
+}
+
 /* ===== 狀態顯示 ===== */
 const gasDot  = document.getElementById('gasDot');
 const gasText = document.getElementById('gasText');
@@ -145,6 +150,34 @@ async function pingGas(){
   }
 }
 
+// === 背景圖片清單 ===
+const IMG_BASE = "https://cdn.imgchest.com/files/";
+const BG_LIST = [
+  "b9c23f4e91c6.jpg",
+  "31e59810dff0.jpg",
+  "73e52af2314c.jpg",
+  "45cea37d2076.jpg",
+  "2e6887215309.jpg",
+  "35864c4b541c.jpg"
+];
+const BG_URLS = BG_LIST.map(name => `${IMG_BASE}${name}`);
+
+let idx = 0;
+function cycleBG() {
+  rowsEl.style.backgroundImage = `url('${BG_URLS[idx]}')`;
+  idx = (idx + 1) % BG_URLS.length;
+}
+// 啟動背景循環（例如每 15 秒換一張）
+function BgCycle(state) {
+  if (state === 'stop') {
+    clearInterval(bgTimer);
+    rowsEl.style.backgroundImage = 'none';
+  } 
+  else if (state === 'start') {
+    bgTimer = setInterval(cycleBG, 15000);
+  }
+}
+
 /* ===== 即時時間顯示 ===== */
 function tickN() {
 el.textContent=now.slice(5); }
@@ -162,40 +195,11 @@ function parseLuckyData(data){
   }));
 }
 
-// === 背景圖片清單 ===
-const IMG_BASE = "https://cdn.imgchest.com/files/";
-const BG_LIST = [
-  "b9c23f4e91c6.jpg",
-  "31e59810dff0.jpg",
-  "73e52af2314c.jpg",
-  "45cea37d2076.jpg",
-  "2e6887215309.jpg",
-  "35864c4b541c.jpg"
-];
-const BG_URLS = BG_LIST.map(name => `${IMG_BASE}${name}`);
-
-let idx = 0;
-function cycleBG() {
-  rowsEl.style.transition = 'background-image 1s ease-in-out';
-  rowsEl.style.backgroundImage = `url('${BG_URLS[idx]}')`;
-  idx = (idx + 1) % BG_URLS.length;
-}
-// 啟動背景循環（例如每 30 秒換一張）
-function BgCycle(state) {
-  if (state === 'stop') {
-    clearInterval(bgTimer);
-    rowsEl.style.backgroundImage = 'none';
-  } 
-  else if (state === 'start') {
-    bgTimer = setInterval(cycleBG, 30000);
-  }
-}
-
 /* ===== 資料渲染 ===== */
 function renderResponse(j){
-  const list = parseLuckyData(j);
+  //const list = parseLuckyData(j);
   const serial = currentSerial();
-  const rows = list
+  const rows = parseLuckyData(j);
   .filter(r => Number(r.date) === serial)
   .filter(r => ['A','B'].includes(String(r.shift || '').toUpperCase()))
   .filter(r => Number(r.tier) < 3000);
@@ -203,7 +207,6 @@ function renderResponse(j){
   const A=[], B=[];
   rows.forEach(r => (String(r.shift).toUpperCase()==='A' ? A : B).push(r));
 
-  // const rowsEl = document.getElementById('rows');
   BgCycle('stop'); // 背景圖關閉 
   rowsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
