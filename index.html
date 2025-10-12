@@ -202,9 +202,10 @@ function fillDateSelect(){
       serial: s,
       label:ymd.slice(5)
   };
+  daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
   daySel.selectedIndex=0;
 });
-daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
+
 
 let currS = null;
 function currentS() {
