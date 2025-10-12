@@ -193,10 +193,9 @@ function parseLuckyData(data){
 
 /* ===== 資料渲染 ===== */
 function renderResponse(j){
-  //const list = parseLuckyData(j);
-  const rows = parseLuckyData(j);
+  const list = parseLuckyData(j);
   const serial = currentSerial();
-
+  const rows = list
   .filter(r => Number(r.date) === serial)
   .filter(r => ['A','B'].includes(String(r.shift || '').toUpperCase()))
   .filter(r => Number(r.tier) < 3000);
