@@ -174,8 +174,6 @@ const BG_LIST = [
 ];
 const BG_URLS = BG_LIST.map(name => `${IMG_BASE}${name}`);
 
-let bgTimer = null;
-let bgActive = true;
 let idx = 0;
 function cycleBG() {
   rowsEl.style.transition = 'background-image 1s ease-in-out';
@@ -184,15 +182,12 @@ function cycleBG() {
 }
 // 啟動背景循環（例如每 50 秒換一張）
 function toggleBgCycle(state) {
-  if (bgTimer) clearInterval(bgTimer);
-  if (state === 'start') {
-    bgActive = true;
-    el.style.backgroundImage = `url("${BG_LIST[0]}")`;
-    bgTimer = setInterval(cycleBG, 30000);
+  if (state === 'stop') {
+    clearInterval(bgTimer);
+    rowsEl.style.backgroundImage = 'none';
   } 
-  else if (state === 'stop') {
-    bgActive = false;
-    el.style.backgroundImage = 'none';
+  else if (state === 'start') {
+    bgTimer = setInterval(cycleBG, 30000);
   }
 }
 
