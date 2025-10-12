@@ -314,8 +314,8 @@ addEventListener('DOMContentLoaded', () => {
   setSel(aBtns, selA, 'a');
   setSel(bBtns, selB, 'b');
 
-  function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
-  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend(); }
+  function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); }
+  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); }
   aBtns.forEach(b => b.addEventListener('click', onA));
   bBtns.forEach(b => b.addEventListener('click', onB));
   sendBtn.addEventListener('click', send);
