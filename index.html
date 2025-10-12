@@ -255,7 +255,7 @@ async function send(){
   const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
   const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
   saveB({ ts, id, a: aDisp, b: selB, status, flag });
-  toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
+ // toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
 }
 
 function startClock(){ tn.textContent=now }
