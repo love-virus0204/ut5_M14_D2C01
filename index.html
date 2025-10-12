@@ -249,7 +249,7 @@ async function probeStatus(){
   const gas=document.getElementById('dotGas'),ss=document.getElementById('dotSs'),sh=document.getElementById('dotSh');
   const set=(el,c)=>{el.classList.remove('ok','bad');el.classList.add(c);};
   try{
-    const r=await fetch(API_URL+'?target=1',{method:'GET',cache:'no-store'});
+    const r=await fetch(api_url+'?target=1',{method:'GET',cache:'no-store'});
     set(gas,r.ok?'ok':'bad');
     const j=await r.json().catch(()=>null);
     if(j&&j.fileExists)set(ss,'ok');
@@ -264,7 +264,7 @@ function submitData(p){
   params.append('action','submit');params.append('key',p.key);
   params.append('date',p.date);params.append('shift',p.shift);
   params.append('id',p.id);params.append('dN',p.dN);
-  return fetch(API_URL,{method:'POST',body:params,cache:'no-store'})
+  return fetch(api_url,{method:'POST',body:params,cache:'no-store'})
     .then(r=>r.text()).then(t=>{try{return JSON.parse(t);}catch(_){return{status:'parse_failed',raw:t};}});
 }
 
