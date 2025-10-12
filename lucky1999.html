@@ -122,13 +122,9 @@ daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected'
 function currentSerial() {
   return Number(daySel.value);  }
 
-function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--';}
+function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--'; }
 
-function currentS() {
-  const idx = daySel.selectedIndex;
-  const item = DAYS[idx];
-  return { A: item.serial, B: item.label };
-}
+
 
 /* ===== 狀態顯示 ===== */
 const gasDot  = document.getElementById('gasDot');
@@ -198,8 +194,9 @@ function parseLuckyData(data){
 /* ===== 資料渲染 ===== */
 function renderResponse(j){
   //const list = parseLuckyData(j);
-  const serial = currentSerial();
   const rows = parseLuckyData(j);
+  const serial = currentSerial();
+
   .filter(r => Number(r.date) === serial)
   .filter(r => ['A','B'].includes(String(r.shift || '').toUpperCase()))
   .filter(r => Number(r.tier) < 3000);
