@@ -99,6 +99,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 <div id="mask" class="mask">處理中…</div>
 
 <script>
+let current = { A: null, B: null };
 /* ===== 綁定 ===== */
 document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
@@ -125,7 +126,11 @@ function currentSerial() {
 
 function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--'; }
 
-
+function currentS() {
+  const idx = daySel.selectedIndex;
+  const item = DAYS[idx];
+  return { A: item.serial, B: item.label };
+}
 
 /* ===== 狀態顯示 ===== */
 const gasDot  = document.getElementById('gasDot');
@@ -236,7 +241,9 @@ function tickN() {
 el.textContent=now.slice(5); }
 
 /* ===== 遮罩控制 ===== */
-function showMask(t){mask.textContent=t;mask.classList.add('show');}
+function showMask(t){
+  current = currentS();
+mask.textContent=t;mask.classList.add('show');}
 function hideMask(){mask.classList.remove('show');}
 
 
@@ -258,12 +265,14 @@ function cycleBG() {
   idx = (idx + 1) % BG_URLS.length;
 }
 // 啟動背景循環（例如每 15 秒換一張）
+let bgTimer = null;
 function BgCycle(state) {
   if (state === 'stop') {
     clearInterval(bgTimer);
     rowsEl.style.backgroundImage = 'none';
   } 
   else if (state === 'start') {
+    cycleBG();
     bgTimer = setInterval(cycleBG, 15000);
   }
 }
@@ -273,7 +282,6 @@ function BgCycle(state) {
     setInterval(tickN,1000);
   pingGas();
     setInterval(pingGas, 45000);
-  cycleBG();
   BgCycle('start');
 // document.addEventListener('DOMContentLoaded', reloadData);
 </script>
