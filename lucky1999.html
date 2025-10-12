@@ -155,7 +155,7 @@ function parseLuckyData(data){
 /* ===== 資料渲染 ===== */
 function renderResponse(j){
   const list = parseLuckyData(j);
-  const serial = currentSerial();
+
   const rows = list
   .filter(r => Number(r.date) === currS)
   .filter(r => ['A','B'].includes(String(r.shift || '').toUpperCase()))
