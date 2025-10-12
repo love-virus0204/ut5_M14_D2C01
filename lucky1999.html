@@ -164,13 +164,11 @@ const BG_LIST = [
 ];
 const BG_URLS = BG_LIST.map(name => `${IMG_BASE}${name}`);
 let idx = 0;
-
 function cycleBG() {
   rowsEl.style.transition = 'background-image 1s ease-in-out';
   rowsEl.style.backgroundImage = `url('${BG_URLS[idx]}')`;
   idx = (idx + 1) % BG_URLS.length;
 }
-
 cycleBG();
   setInterval(cycleBG, 30000);
 
