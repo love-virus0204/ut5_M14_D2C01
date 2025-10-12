@@ -1,9 +1,10 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
+<script src="./config.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>跨加開心報</title>
+<title>D2大夜班跨加報名系統</title>
 <style>
 :root{
   --footer-h: 48px;
@@ -56,7 +57,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   background-repeat:no-repeat;
   background-position:right 8px center;
   background-size:10px 6px;
-  padding-right:26px;
+  padding-right:20px;
   cursor:pointer;
 } 
 /* .mmddsel:focus{outline:2px solid var(--accent)} */
@@ -65,7 +66,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   box-shadow:0 0 8px #00fff7; }
 .group{margin-top:16px;text-align:center;}
 .gtitle{font-size:12px;color:var(--sub);margin-bottom:1px;}
-.btnrow{display:grid;column-gap:10px; row-gap: 14px;}
+.btnrow{display:grid;column-gap: 16px; row-gap: 40px; }
 .btnrow.two{grid-template-columns:repeat(2,minmax(0,1fr));}
 .btnrow.three{grid-template-columns:repeat(3,minmax(0,1fr));}
 .btn{
@@ -134,7 +135,6 @@ main{display:block;padding:8px 0 0;overflow:visible;}
       </div>
       <div id="mmdd" class="mmdd">報　名　<select id="selDate" class="mmddsel"></select>　跨加</div>
       <div class="group">
-        <div class="gtitle">　</div>
         <div class="btnrow two">
           <button class="btn red" data-a="假日">♦ 假 日 ♦</button>
           <button class="btn black" data-a="平日">♣ 平 日 ♣</button>
@@ -142,7 +142,6 @@ main{display:block;padding:8px 0 0;overflow:visible;}
       </div>
 
       <div class="group">
-        <div class="gtitle">　</div>
         <div class="btnrow three">
           <button class="btn" data-b="A">日班 | A</button>
           <button class="btn" data-b="N">取　消</button>
@@ -170,59 +169,21 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.4.9</div>
+  <div class="ver">版本：v1.5.1</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbz5TXqNou2gdKn1JXEiqTvAGjpwnT0BucbI3HCBkZfgwHH922uvRIwavS8WZYC_6soQ/exec';
-const TZ='Asia/Taipei';
   let selA='平日', selB='N';
   const cuton =  360; // 換日時間
   const cutoff = 130; // 超時時間
 
-/* ===== 轉 Excel 基準 日期序號===== */
-function ymdToSerial(y,m,d){ return Math.floor(Date.UTC(y,m-1,d)/86400000)+25569; }
-
-/* ===== mm/dd 文字 ===== */
-function mdLabel(y,m,d){ const mm=String(m).padStart(2,'0'), dd=String(d).padStart(2,'0'); return `  ${mm}/${dd}`; }
-
-/* ===== 時鐘（台北時間）===== */
-function tpeParts(){
-  const p = new Intl.DateTimeFormat('zh-Hant-TW',{ timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false
-  }).formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{}); return { y:+p.year, m:+p.month, d:+p.day, h:+p.hour, mi:+p.minute, s:+p.second };
-}
-
-function startClock(){
-  const el=document.getElementById('clock');
-  const tick=()=>{
-    const p=tpeParts();
-    const mm=String(p.m).padStart(2,'0'), dd=String(p.d).padStart(2,'0');
-    const hh=String(p.h).padStart(2,'0'), mi=String(p.mi).padStart(2,'0'), ss=String(p.s).padStart(2,'0');
-    if(el) el.textContent=`${mm}/${dd} ${hh}:${mi}:${ss}`;
-  };
-  tick(); setInterval(tick,1000);
-}
-
-/* ===== 產生 7 天清單並灌入下拉 ===== */
-let lock_st = 0;
-function fillDateSelect(){
-  const sel = document.getElementById('selDate'); if(!sel) return;
-  sel.innerHTML='';
-  let {y,m,d,h,mi}=tpeParts();
-  if (h*60+mi>cuton){ const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+1); y=t.getUTCFullYear(); m=t.getUTCMonth()+1; d=t.getUTCDate(); }
-  for(let i=0;i<7;i++){
-    const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+i);
-    const yy=t.getUTCFullYear(), mm=t.getUTCMonth()+1, dd=t.getUTCDate();
-    const opt=document.createElement('option');
- opt.value=String( ymdToSerial(yy,mm,dd) );
-    opt.textContent=mdLabel(yy,mm,dd);
-    sel.appendChild(opt);
-  }
-  sel.selectedIndex=0;
-  lock_st = 0;
-}
+const box  = document.getElementById('draftBoxB');
+const list = document.getElementById('draftB');
+const sel = document.getElementById('selDate');
+const el=document.getElementById('code');
+const tn=document.getElementById('clock');
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -231,26 +192,21 @@ function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 
 /* ===== 草稿B ===== */
 const DRAFTB_KEY='d2_draft_b_v1';
-function loadB(){try{return JSON.parse(localStorage.getItem(DRAFTB_KEY)||'[]');}catch(_){return[];}}
-function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,15)));} // 最新在上保留15筆
+let DRAFTB = JSON.parse(localStorage.getItem(DRAFTB_KEY) || '[]');
 
-function addB(item){
-  const arr = loadB();
-  arr.unshift(item);
-  saveB(arr.slice(0,15));
-  renderB();
+function saveB(item){
+  DRAFTB.unshift(item);
+  DRAFTB = DRAFTB.slice(0, 15);
+  localStorage.setItem(DRAFTB_KEY, JSON.stringify(DRAFTB));
+  renderB(DRAFTB);
 }
 
-function renderB(){
-  const box  = document.getElementById('draftBoxB');
-  const list = document.getElementById('draftB');
-  const arr  = loadB();
-  if(!arr.length){ box.style.display='none'; list.innerHTML=''; return; }
+function renderB(arr) {
+  const data = arr;
+  if (!data.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
-  list.innerHTML = arr.map(x =>
-    `<div class="line ${x.flag}">
-       ${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.status}
-     </div>`
+  list.innerHTML = data.map(x =>
+    `<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.status}</div>`
   ).join('');
 }
 
@@ -259,7 +215,7 @@ async function probeStatus(){
   const gas=document.getElementById('dotGas'),ss=document.getElementById('dotSs'),sh=document.getElementById('dotSh');
   const set=(el,c)=>{el.classList.remove('ok','bad');el.classList.add(c);};
   try{
-    const r=await fetch(API_URL+'?target=1',{method:'GET',cache:'no-store'});
+    const r=await fetch(api_url+'?target=1',{method:'GET',cache:'no-store'});
     set(gas,r.ok?'ok':'bad');
     const j=await r.json().catch(()=>null);
     if(j&&j.fileExists)set(ss,'ok');
@@ -274,58 +230,79 @@ function submitData(p){
   params.append('action','submit');params.append('key',p.key);
   params.append('date',p.date);params.append('shift',p.shift);
   params.append('id',p.id);params.append('dN',p.dN);
-  return fetch(API_URL,{method:'POST',body:params,cache:'no-store'})
+  return fetch(api_url,{method:'POST',body:params,cache:'no-store'})
     .then(r=>r.text()).then(t=>{try{return JSON.parse(t);}catch(_){return{status:'parse_failed',raw:t};}});
 }
 
 /* ===== 送出動作 ===== */
 async function send(){
-  const idEl = document.getElementById('code');
-  const id = idEl.value.trim().toUpperCase();
+  const curr = currentS();
+  const id = el.value.trim().toUpperCase();
   if(!/^[A-Z0-9]{5}$/.test(id)){
-    idEl.focus();
+    el.focus();
     return;
   }
-  const sel   = document.getElementById('selDate');
-  const ser   = Number(sel.value);
-  const mdTxt = sel.options[sel.selectedIndex].text;
-  const payload = { id, date: ser, key: `${ser}|${id}`, shift: selB, dN: selA };
+  const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA };
   showOverlay(true);
   let ok=false,res;
   try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
   catch(_){ ok=false; }
   showOverlay(false);
-  let ts='--/-- --:--';
-  const clk=document.getElementById('clock');
-  if(clk && clk.textContent){
-    const m=clk.textContent.match(/^(\d{2}\/\d{2}) (\d{2}:\d{2})/);
-    if(m) ts=`${m[1]} ${m[2]}`;
-  }
+  let ts= now.slice(5, 16);
+
   const status = ok ? 'ok':'ng';
   const bIsN   = String(selB).toUpperCase()==='N';
   const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
-  const aDisp  = bIsN ? `${mdTxt} - 取消` : `${mdTxt} - ${selA}`;
-  addB({ ts, id, a: aDisp, b: selB, status, flag });
-  toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
+  const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
+  saveB({ ts, id, a: aDisp, b: selB, status, flag });
+ // toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
+}
+
+function startClock(){ tn.textContent=now }
+  startClock();
+  setInterval(startClock,1000);
+/* ===== 產生 7 天清單並灌入下拉 ===== */
+let lock_st = 0;
+const DAYS = [];
+function fillDateSelect(){
+  let base = ymdToSerial(now);
+  if (mins >= cuton) { base += 1; }
+  DAYS.length = 0;
+  for (let k = 0; k < 7; k++) {
+    const s   = base + k;
+    const ymd = serialToYMD(s);
+    DAYS.push({ ymd, serial: s, label: ymd.slice(5) });
+  }
+  sel.innerHTML = DAYS
+    .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
+    .join('');
+  sel.selectedIndex = 0;
+  sel.focus();
+  lock_st = 0;
+}
+
+function currentS() {
+  const idx = sel.selectedIndex;
+  const s = sel.options[idx].value;
+  const b = sel.options[idx].textContent;
+  return { s , b };
 }
 
 function checkCutoff(){
-  const clk = document.getElementById('clock');
-  const mt  = clk.textContent.match(/^(\d{2})\/(\d{2}) (\d{2}):(\d{2})/);
-   if(!mt) return;
-   const mins = (+mt[3]) * 60 + (+mt[4]);
-   if (mins > cuton && lock_st === 1) fillDateSelect();
-   if (mins > cutoff && mins < cuton && lock_st === 0) {
-     const sel   = document.getElementById('selDate');
-     if (sel.selectedIndex === 0) sel.selectedIndex = 1;
-     sel.options[0].disabled = true;
-     lock_st = 1;
-   }
+  if (mins > cuton && lock_st === 1) {
+    fillDateSelect();
+  }
+  if (mins > cutoff && mins < cuton && lock_st === 0) {
+    if (sel.selectedIndex === 0)
+    sel.selectedIndex = 1;
+    sel.options[0].disabled = true;
+    sel.focus();
+    lock_st = 1;
+  }
 }
 
 /* ===== 輸入與選項 ===== */
 function bindInput(){
-  const el=document.getElementById('code');
   el.value=loadA();
   el.addEventListener('input',()=>{let x=el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5);el.value=x.toUpperCase();if(el.value.length===5)saveA(el.value);});
   el.addEventListener('focus',()=>{if(el.value)el.value='';});
@@ -333,26 +310,26 @@ function bindInput(){
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
-function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
 
 /* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded', ()=>{
-  setSel(document.querySelectorAll('[data-a]'), selA, 'a');
-  setSel(document.querySelectorAll('[data-b]'), selB, 'b');
-  document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click', ()=>{
-    selA = b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA, 'a'); enableSend();
-  }));
-  document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click', ()=>{
-    selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB, 'b'); enableSend();
-  }));
-  startClock();
-  bindInput();
-  enableSend();
-  probeStatus();
-  renderB();
+addEventListener('DOMContentLoaded', () => {
+  const aBtns = Array.from(document.querySelectorAll('[data-a]'));
+  const bBtns = Array.from(document.querySelectorAll('[data-b]'));
+  const sendBtn = document.getElementById('sendBtn');
+  setSel(aBtns, selA, 'a');
+  setSel(bBtns, selB, 'b');
+
+  function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); }
+  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); }
+  aBtns.forEach(b => b.addEventListener('click', onA));
+  bBtns.forEach(b => b.addEventListener('click', onB));
+  sendBtn.addEventListener('click', send);
+
   fillDateSelect();
-  checkCutoff();
-    setInterval(checkCutoff, 5*60*1000);   document.getElementById('sendBtn').addEventListener('click', send);
+  // checkCutoff(); setInterval(checkCutoff, 5 * 60 * 1000);
+  renderB(DRAFTB);
+  bindInput();
+  probeStatus();
 });
 </script>
 </body>
