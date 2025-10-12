@@ -180,7 +180,6 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   const cutoff = 130; // 超時時間
 
 const sel = document.getElementById('selDate');
-const idEl = document.getElementById('code');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 
@@ -208,7 +207,6 @@ function fillDateSelect(){
   lock_st = 0;
 }
 
-
 let curr = null;
 function currentS() {
   const idx = sel.selectedIndex;
@@ -216,9 +214,6 @@ function currentS() {
   const b = sel.options[idx].textContent;
   return { s , b };
 }
-
-
-
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -276,12 +271,11 @@ function submitData(p){
 
 /* ===== 送出動作 ===== */
 async function send(){
-  const id = idEl.value.trim().toUpperCase();
+  const id = el.value.trim().toUpperCase();
   if(!/^[A-Z0-9]{5}$/.test(id)){
-    idEl.focus();
+    el.focus();
     return;
   }
-
   curr = currentS();
   const payload = { id, date: curr.s, key: `${curr.b}|${id}`, shift: selB, dN: selA };
   showOverlay(true);
@@ -294,7 +288,7 @@ async function send(){
   const status = ok ? 'ok':'ng';
   const bIsN   = String(selB).toUpperCase()==='N';
   const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
-  const aDisp  = bIsN ? `${mdTxt} - 取消` : `${curr.b} - ${selA}`;
+  const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
   addB({ ts, id, a: aDisp, b: selB, status, flag });
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
@@ -302,7 +296,6 @@ async function send(){
 function checkCutoff(){
    if (mins > cuton && lock_st === 1) fillDateSelect();
    if (mins > cutoff && mins < cuton && lock_st === 0) {
-     const sel   = document.getElementById('selDate');
      if (sel.selectedIndex === 0) sel.selectedIndex = 1;
      sel.options[0].disabled = true;
      lock_st = 1;
