@@ -288,7 +288,7 @@ function currentS() {
 }
 
 function checkCutoff(){
-   if (mins > cuton && lock_st === 1) fillDateSelect();
+   if (mins > cuton && lock_st === 1) fillDateSelect(); sel.dispatchEvent(new Event('change'));
    if (mins > cutoff && mins < cuton && lock_st === 0) {
      if (sel.selectedIndex === 0) sel.selectedIndex = 1;
      sel.options[0].disabled = true;
