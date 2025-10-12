@@ -72,12 +72,12 @@ async function fetchList(){
 
   const F = Object.fromEntries(j.fields.map((k, i) => [k, i]));
   const rows = j.values.map(a => ({
-    key:         a[F.key],
-    date:        Number(a[F.date]),
-    id:          a[F.id],
-    shift:       a[F.shift],
-    dN:          a[F.dN],
-    row:         a[F.row]
+    key: a[F.key],
+    date: Number(a[F.date]),
+    id: a[F.id],
+    shift: a[F.shift],
+    dN: a[F.dN],
+    row: a[F.row]
   }));
   return { rows };
 }
