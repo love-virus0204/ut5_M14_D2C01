@@ -186,7 +186,7 @@ function cycleBG() {
 function startBgCycle(){
   if(bgTimer) clearInterval(bgTimer);
   bgActive = true;
-  bgTimer = setInterval(changeBg, 30000);
+  bgTimer = setInterval(cycleBG, 30000);
 }
 function stopBgCycle(){
   bgActive = false;
