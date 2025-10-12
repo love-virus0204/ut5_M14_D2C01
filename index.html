@@ -179,41 +179,11 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   const cuton =  360; // 換日時間
   const cutoff = 130; // 超時時間
 
+const box  = document.getElementById('draftBoxB');
+const list = document.getElementById('draftB');
 const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
-
-function startClock(){ tn.textContent=now }
-  startClock();
-    setInterval(startClock,1000);
-
-
-/* ===== 產生 7 天清單並灌入下拉 ===== */
-let lock_st = 0;
-const DAYS = [];
-function fillDateSelect(){
-  let base = ymdToSerial(now);
-  if (mins >= cuton) { base += 1; }
-  DAYS.length = 0;
-  for (let k = 0; k < 7; k++) {
-    const s   = base + k;
-    const ymd = serialToYMD(s);
-    DAYS.push({ ymd, serial: s, label: ymd.slice(5) });
-  }
-  sel.innerHTML = DAYS
-    .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
-    .join('');
-  sel.selectedIndex = 0;
-  lock_st = 0;
-}
-
-let curr = null;
-function currentS() {
-  const idx = sel.selectedIndex;
-  const s = sel.options[idx].value;
-  const b = sel.options[idx].textContent;
-  return { s , b };
-}
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -228,13 +198,10 @@ function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,15)))
 function addB(item){
   const arr = loadB();
   arr.unshift(item);
-  saveB(arr.slice(0,15));
   renderB();
 }
 
 function renderB(){
-  const box  = document.getElementById('draftBoxB');
-  const list = document.getElementById('draftB');
   const arr  = loadB();
   if(!arr.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
@@ -277,7 +244,7 @@ async function send(){
     return;
   }
   curr = currentS();
-  const payload = { id, date: curr.s, key: `${curr.b}|${id}`, shift: selB, dN: selA };
+  const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA };
   showOverlay(true);
   let ok=false,res;
   try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
@@ -291,6 +258,36 @@ async function send(){
   const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
   addB({ ts, id, a: aDisp, b: selB, status, flag });
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
+}
+
+function startClock(){ tn.textContent=now }
+  startClock();
+  setInterval(startClock,1000);
+/* ===== 產生 7 天清單並灌入下拉 ===== */
+let lock_st = 0;
+const DAYS = [];
+function fillDateSelect(){
+  let base = ymdToSerial(now);
+  if (mins >= cuton) { base += 1; }
+  DAYS.length = 0;
+  for (let k = 0; k < 7; k++) {
+    const s   = base + k;
+    const ymd = serialToYMD(s);
+    DAYS.push({ ymd, serial: s, label: ymd.slice(5) });
+  }
+  sel.innerHTML = DAYS
+    .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
+    .join('');
+  sel.selectedIndex = 0;
+  lock_st = 0;
+}
+
+let curr = null;
+function currentS() {
+  const idx = sel.selectedIndex;
+  const s = sel.options[idx].value;
+  const b = sel.options[idx].textContent;
+  return { s , b };
 }
 
 function checkCutoff(){
