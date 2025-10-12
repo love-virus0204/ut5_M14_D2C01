@@ -17,44 +17,52 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang 
 body{display:flex;flex-direction:column;overflow:hidden;}
 
 
+/* === TOP (fixed sizing, cross-browser stable) ==================== */
 .top{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  padding:6px 12px; height:60px; box-sizing:border-box;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:8px; padding:6px 12px; height:60px; box-sizing:border-box;
   background:#1e293b; border-bottom:1px solid #334155;
 
-
+  /* prevent auto font zoom & wrapping */
   text-size-adjust:none; -webkit-text-size-adjust:none; -moz-text-size-adjust:none;
   white-space:nowrap; overflow:hidden;
 
-  font-size:clamp(13px, 2.2vw, 16px); line-height:1.2; letter-spacing:.02em;
+  /* lock typography for consistency */
+  font-size:14px; line-height:1.2; letter-spacing:.02em;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
 }
-
-
 .top > *{ flex:0 0 auto; font-size:inherit; color:#e5e7eb; }
 
-/* 狀態燈 */
+/* status */
 .top .status{ display:flex; align-items:center; gap:6px; }
 .top .dot{ width:10px; height:10px; border-radius:50%; background:#475569; }
 .top .dot.ok{ background:#22c55e; } .top .dot.err{ background:#ef4444; }
 
+/* clock */
+.top .clock{ font-family:monospace; font-size:12px; line-height:1; color:#94a3b8; }
 
-.top .clock{ font-family:monospace; font-size:0.9em; line-height:1; color:#94a3b8; }
-
+/* controls: buttons + select share base look */
 .top .btn, .top .sel{
   display:inline-flex; align-items:center; justify-content:center;
-  height:28px; padding:0 10px; border-radius:8px; line-height:1;
+  height:28px; padding:0 10px; line-height:1; border-radius:8px;
   border:1px solid #334155; background:#1f2937; color:#e5e7eb;
   transition:background .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
 .top .btn:hover{ background:#334155; }
+
+/* select visual + gold arrow */
 .top .sel{
   appearance:none; -webkit-appearance:none; -moz-appearance:none;
   border-color:#38bdf8; background:#1e3a8a; color:#fff; box-shadow:0 0 6px #38bdf855;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'><path fill='%23ffd700' d='M0 0l5 6 5-6z'/></svg>");
-  background-repeat:no-repeat; background-position:right 8px center; background-size:10px 6px; padding-right:26px; }
+  background-repeat:no-repeat; background-position:right 8px center; background-size:10px 6px;
+  padding-right:26px;
+}
 .top .sel:focus-visible{ outline:none; border-color:#00fff7; box-shadow:0 0 8px #00fff7; }
+
+/* small screens: only tighten spacing, keep fixed font sizes */
 @media (max-width:480px){
-  .top{ gap:6px; padding:6px 8px; height:54px; font-size:clamp(12px, 3vw, 14px); }
+  .top{ gap:6px; padding:6px 8px; height:54px; }
   .top .btn, .top .sel{ height:26px; padding:0 8px; }
   .top .sel{ padding-right:22px; background-size:9px 5px; }
 }
