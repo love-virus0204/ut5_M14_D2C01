@@ -153,8 +153,7 @@ async function loadData(){
 
   let rows = [];
   try {
-    const { rows: r } = await fetchList(payload);
-    rows = r;
+    rows = await fetchList();
   } catch (_) {
     rows = [];
   }
