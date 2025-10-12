@@ -308,22 +308,26 @@ function setSel(btns,val,attr){
 function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
 
 /* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded', ()=>{
-  setSel(document.querySelectorAll('[data-a]'), selA, 'a');
-  setSel(document.querySelectorAll('[data-b]'), selB, 'b');
-  document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click', ()=>{
-    selA = b.dataset.a; setSel(document.querySelectorAll('[data-a]'), selA, 'a'); enableSend();
-  }));
-  document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click', ()=>{
-    selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB, 'b'); enableSend();
-  }));
+addEventListener('DOMContentLoaded', () => {
+  const aBtns = Array.from(document.querySelectorAll('[data-a]'));
+  const bBtns = Array.from(document.querySelectorAll('[data-b]'));
+  const sendBtn = document.getElementById('sendBtn');
+  setSel(aBtns, selA, 'a');
+  setSel(bBtns, selB, 'b');
+
+  function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
+  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend(); }
+  aBtns.forEach(b => b.addEventListener('click', onA));
+  bBtns.forEach(b => b.addEventListener('click', onB));
+  sendBtn.addEventListener('click', send);
+
   fillDateSelect();
+  checkCutoff();
+  renderB(DRAFTB);
   bindInput();
   enableSend();
   probeStatus();
-  renderB(DRAFTB);
-  checkCutoff();
-  setInterval(checkCutoff, 5*60*1000);   document.getElementById('sendBtn').addEventListener('click', send);
+  setInterval(checkCutoff, 5 * 60 * 1000);
 });
 </script>
 </body>
