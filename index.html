@@ -169,7 +169,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.4.9</div>
+  <div class="ver">版本：v1.5.1</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
@@ -189,7 +189,7 @@ function startClock(){ el.textContent=now }
 /* ===== 產生 7 天清單並灌入下拉 ===== */
 let lock_st = 0;
 const DAYS = [];
-const daySel = document.getElementById('selDate');
+const sel = document.getElementById('selDate');
 
 function fillDateSelect(){
   let base = ymdToSerial(now);
@@ -200,10 +200,10 @@ function fillDateSelect(){
     const ymd = serialToYMD(s);
     DAYS.push({ ymd, serial: s, label: ymd.slice(5) });
   }
-  daySel.innerHTML = DAYS
+  sel.innerHTML = DAYS
     .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
     .join('');
-  daySel.selectedIndex = 0;
+  sel.selectedIndex = 0;
   lock_st = 0;
 }
 
@@ -300,10 +300,6 @@ async function send(){
 }
 
 function checkCutoff(){
-  const clk = document.getElementById('clock');
-  const mt  = clk.textContent.match(/^(\d{2})\/(\d{2}) (\d{2}):(\d{2})/);
-   if(!mt) return;
-   const mins = (+mt[3]) * 60 + (+mt[4]);
    if (mins > cuton && lock_st === 1) fillDateSelect();
    if (mins > cutoff && mins < cuton && lock_st === 0) {
      const sel   = document.getElementById('selDate');
