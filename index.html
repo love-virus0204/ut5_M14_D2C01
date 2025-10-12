@@ -198,6 +198,7 @@ function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,15)))
 function addB(item){
   const arr = loadB();
   arr.unshift(item);
+  saveB(arr.slice(0,15)); 
   renderB();
 }
 
