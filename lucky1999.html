@@ -181,7 +181,7 @@ function cycleBG() {
   idx = (idx + 1) % BG_URLS.length;
 }
 // 啟動背景循環（例如每 30 秒換一張）
-function toggleBgCycle(state) {
+function BgCycle(state) {
   if (state === 'stop') {
     clearInterval(bgTimer);
     rowsEl.style.backgroundImage = 'none';
@@ -204,7 +204,7 @@ function renderResponse(j){
   rows.forEach(r => (String(r.shift).toUpperCase()==='A' ? A : B).push(r));
 
   // const rowsEl = document.getElementById('rows');
-  toggleBgCycle('stop'); // 背景圖關閉 
+  BgCycle('stop'); // 背景圖關閉 
   rowsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
   frag.appendChild(group('_A','a'));
@@ -274,7 +274,7 @@ async function draw(){
     setInterval(tickN,1000);
   pingGas();
     setInterval(pingGas, 45000);
-  toggleBgCycle('start')
+  BgCycle('start');
 // document.addEventListener('DOMContentLoaded', reloadData);
 </script>
 </body>
