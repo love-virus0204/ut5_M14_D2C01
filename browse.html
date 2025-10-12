@@ -153,7 +153,8 @@ async function loadData(){
 
   let rows = [];
   try {
-    rows = await fetchList();
+    const { rows: r } = await fetchList();
+    rows = r;
   } catch (_) {
     rows = [];
   }
@@ -164,6 +165,7 @@ async function loadData(){
   document.getElementById('box').classList.remove('hidden');
 
 document.getElementById('ut').textContent=now
+}
 
 document.getElementById('reload').addEventListener('click',()=>loadData());
 loadData();
