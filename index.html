@@ -188,22 +188,29 @@ function startClock(){ el.textContent=now }
 
 /* ===== 產生 7 天清單並灌入下拉 ===== */
 let lock_st = 0;
+const DAYS = [];
+const daySel=document.getElementById('selDate');
 function fillDateSelect(){
-  const sel = document.getElementById('selDate'); if(!sel) return;
-  sel.innerHTML='';
-  let {y,m,d,h,mi}=tpeParts();
-  if (h*60+mi>cuton){ const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+1); y=t.getUTCFullYear(); m=t.getUTCMonth()+1; d=t.getUTCDate(); }
-  for(let i=0;i<7;i++){
-    const t=new Date(Date.UTC(y,m-1,d)); t.setUTCDate(t.getUTCDate()+i);
-    const yy=t.getUTCFullYear(), mm=t.getUTCMonth()+1, dd=t.getUTCDate();
-    const opt=document.createElement('option');
- opt.value=String( ymdToSerial(yy,mm,dd) );
-    opt.textContent=mdLabel(yy,mm,dd);
-    sel.appendChild(opt);
-  }
-  sel.selectedIndex=0;
-  lock_st = 0;
-}
+  let base = ymdToSerial(now);
+  if (misi =>coton) base -=1
+  daySel.innerHTML='';
+  const DAYS = Array.from({ length:7 }, (_, k) => {
+    const s = base + k
+    const ymd = serialToYMD(s);
+    return {
+      ymd,
+      serial: s,
+      label:ymd.slice(5)
+  };
+  daySel.selectedIndex=0;
+});
+daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
+
+let currS = null;
+function currentS() {
+  return Number(daySel.value); }
+
+
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
