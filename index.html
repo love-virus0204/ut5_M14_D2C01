@@ -254,7 +254,7 @@ async function send(){
   const bIsN   = String(selB).toUpperCase()==='N';
   const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
   const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
-  addB({ ts, id, a: aDisp, b: selB, status, flag });
+  saveB({ ts, id, a: aDisp, b: selB, status, flag });
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
 
@@ -317,11 +317,11 @@ addEventListener('DOMContentLoaded', ()=>{
   document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click', ()=>{
     selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB, 'b'); enableSend();
   }));
+  fillDateSelect();
   bindInput();
   enableSend();
   probeStatus();
-  renderB();
-  fillDateSelect();
+  renderB(DRAFTB);
   checkCutoff();
   setInterval(checkCutoff, 5*60*1000);   document.getElementById('sendBtn').addEventListener('click', send);
 });
