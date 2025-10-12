@@ -192,24 +192,25 @@ function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 
 /* ===== 草稿B ===== */
 const DRAFTB_KEY='d2_draft_b_v1';
-function loadB(){try{return JSON.parse(localStorage.getItem(DRAFTB_KEY)||'[]');}catch(_){return[];}}
-function saveB(a){localStorage.setItem(DRAFTB_KEY,JSON.stringify(a.slice(0,15)));} // 最新在上保留15筆
-
-function addB(item){
-  const arr = loadB();
-  arr.unshift(item);
-  saveB(arr.slice(0,15)); 
-  renderB();
+function loadB(){
+  try { return JSON.parse(localStorage.getItem(DRAFTB_KEY) || '[]'); }
+  catch { return []; }
 }
 
-function renderB(){
-  const arr  = loadB();
-  if(!arr.length){ box.style.display='none'; list.innerHTML=''; return; }
+function saveB(item){
+  const arr = loadB();
+  arr.unshift(item);
+  const newArr = arr.slice(0, 15);
+  localStorage.setItem(DRAFTB_KEY, JSON.stringify(newArr));
+  renderB(newArr);
+}
+
+function renderB(arr) {
+  const data = arr;
+  if (!data.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
-  list.innerHTML = arr.map(x =>
-    `<div class="line ${x.flag}">
-       ${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.status}
-     </div>`
+  list.innerHTML = data.map(x =>
+    `<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.status}</div>`
   ).join('');
 }
 
@@ -244,7 +245,7 @@ async function send(){
     el.focus();
     return;
   }
-  curr = currentS();
+  const curr = currentS();
   const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA };
   showOverlay(true);
   let ok=false,res;
@@ -283,7 +284,6 @@ function fillDateSelect(){
   lock_st = 0;
 }
 
-let curr = null;
 function currentS() {
   const idx = sel.selectedIndex;
   const s = sel.options[idx].value;
