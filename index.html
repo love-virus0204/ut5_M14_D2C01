@@ -289,7 +289,7 @@ async function send(){
   try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
   catch(_){ ok=false; }
   showOverlay(false);
-  let ts='--/-- --:--';
+  let ts= now.slice(5, 16);
 
   const status = ok ? 'ok':'ng';
   const bIsN   = String(selB).toUpperCase()==='N';
