@@ -192,7 +192,7 @@ function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 
 /* ===== 草稿B ===== */
 const DRAFTB_KEY='d2_draft_b_v1';
-const DRAFTB = JSON.parse(localStorage.getItem('DRAFTB_KEY) || '[]');
+const DRAFTB = JSON.parse(localStorage.getItem(DRAFTB_KEY) || '[]');
 
 function saveB(item){
   DRAFTB.unshift(item);
