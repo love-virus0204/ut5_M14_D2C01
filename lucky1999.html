@@ -121,7 +121,8 @@ const DAYS = Array.from({ length:7 }, (_, k) => {
 daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
 
 let currS = null;
-function currentS() {return daySel.value; }
+function currentS() {
+  return Number(daySel.value); }
 
 /* ===== 狀態顯示 ===== */
 const gasDot  = document.getElementById('gasDot');
