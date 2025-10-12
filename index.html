@@ -305,7 +305,6 @@ function bindInput(){
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
-function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
 
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
@@ -325,7 +324,6 @@ addEventListener('DOMContentLoaded', () => {
   checkCutoff();
   renderB(DRAFTB);
   bindInput();
-  enableSend();
   probeStatus();
   setInterval(checkCutoff, 5 * 60 * 1000);
 });
