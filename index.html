@@ -283,7 +283,7 @@ async function send(){
   }
 
   curr = currentS();
-  const payload = { id, date: curr.s, key: `${ser}|${id}`, shift: selB, dN: selA };
+  const payload = { id, date: curr.s, key: `${curr.b}|${id}`, shift: selB, dN: selA };
   showOverlay(true);
   let ok=false,res;
   try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
