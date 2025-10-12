@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
+<script src="./config.js"></script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>D2｜名單瀏覽</title>
@@ -55,9 +56,6 @@ th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
   </div>
 
 <script>
-/* ===== 常數 ===== */
-const API_URL = 'https://script.google.com/macros/s/AKfycbz5TXqNou2gdKn1JXEiqTvAGjpwnT0BucbI3HCBkZfgwHH922uvRIwavS8WZYC_6soQ/exec';
-
 /* ===== 工具 ===== */
 const pad=n=>String(n).padStart(2,'0');
 const nowTPE=()=>new Date(Date.now()+8*60*60*1000);
@@ -67,7 +65,7 @@ const mdFromSerial=s=>{const t=new Date((s-25569)*86400000);return `${pad(t.getU
 async function fetchList(payload){
   const body = new URLSearchParams(payload);
 
-  const res = await fetch(API_URL, {
+  const res = await fetch(api_url, {
     method: 'POST',
     body: body
   });
