@@ -292,6 +292,7 @@ function checkCutoff(){
    if (mins > cutoff && mins < cuton && lock_st === 0) {
      if (sel.selectedIndex === 0) sel.selectedIndex = 1;
      sel.options[0].disabled = true;
+     sel.dispatchEvent(new Event('change'));
      lock_st = 1;
    }
 }
