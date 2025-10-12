@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
+<script src="./config.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>D2大夜班跨加報名系統</title>
@@ -174,34 +175,16 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbz5TXqNou2gdKn1JXEiqTvAGjpwnT0BucbI3HCBkZfgwHH922uvRIwavS8WZYC_6soQ/exec';
-const TZ='Asia/Taipei';
   let selA='平日', selB='N';
   const cuton =  360; // 換日時間
   const cutoff = 130; // 超時時間
 
-/* ===== 轉 Excel 基準 日期序號===== */
-function ymdToSerial(y,m,d){ return Math.floor(Date.UTC(y,m-1,d)/86400000)+25569; }
 
-/* ===== mm/dd 文字 ===== */
-function mdLabel(y,m,d){ const mm=String(m).padStart(2,'0'), dd=String(d).padStart(2,'0'); return ` » ${mm}/${dd}`; }
+const el=document.getElementById('clock');
+function startClock(){ el.textContent=now }
+  startClock();
+    setInterval(startClock,1000);
 
-/* ===== 時鐘（台北時間）===== */
-function tpeParts(){
-  const p = new Intl.DateTimeFormat('zh-Hant-TW',{ timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false
-  }).formatToParts(new Date()).reduce((a,b)=>(a[b.type]=b.value,a),{}); return { y:+p.year, m:+p.month, d:+p.day, h:+p.hour, mi:+p.minute, s:+p.second };
-}
-
-function startClock(){
-  const el=document.getElementById('clock');
-  const tick=()=>{
-    const p=tpeParts();
-    const mm=String(p.m).padStart(2,'0'), dd=String(p.d).padStart(2,'0');
-    const hh=String(p.h).padStart(2,'0'), mi=String(p.mi).padStart(2,'0'), ss=String(p.s).padStart(2,'0');
-    if(el) el.textContent=`${mm}/${dd} ${hh}:${mi}:${ss}`;
-  };
-  tick(); setInterval(tick,1000);
-}
 
 /* ===== 產生 7 天清單並灌入下拉 ===== */
 let lock_st = 0;
