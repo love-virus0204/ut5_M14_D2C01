@@ -179,9 +179,12 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   const cuton =  360; // 換日時間
   const cutoff = 130; // 超時時間
 
+const sel = document.getElementById('selDate');
+const idEl = document.getElementById('code');
+const el=document.getElementById('code');
+const tn=document.getElementById('clock');
 
-const el=document.getElementById('clock');
-function startClock(){ el.textContent=now }
+function startClock(){ tn.textContent=now }
   startClock();
     setInterval(startClock,1000);
 
@@ -189,8 +192,6 @@ function startClock(){ el.textContent=now }
 /* ===== 產生 7 天清單並灌入下拉 ===== */
 let lock_st = 0;
 const DAYS = [];
-const sel = document.getElementById('selDate');
-
 function fillDateSelect(){
   let base = ymdToSerial(now);
   if (mins >= cuton) { base += 1; }
@@ -275,7 +276,6 @@ function submitData(p){
 
 /* ===== 送出動作 ===== */
 async function send(){
-  const idEl = document.getElementById('code');
   const id = idEl.value.trim().toUpperCase();
   if(!/^[A-Z0-9]{5}$/.test(id)){
     idEl.focus();
@@ -311,7 +311,6 @@ function checkCutoff(){
 
 /* ===== 輸入與選項 ===== */
 function bindInput(){
-  const el=document.getElementById('code');
   el.value=loadA();
   el.addEventListener('input',()=>{let x=el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5);el.value=x.toUpperCase();if(el.value.length===5)saveA(el.value);});
   el.addEventListener('focus',()=>{if(el.value)el.value='';});
@@ -331,14 +330,13 @@ addEventListener('DOMContentLoaded', ()=>{
   document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click', ()=>{
     selB = b.dataset.b; setSel(document.querySelectorAll('[data-b]'), selB, 'b'); enableSend();
   }));
-  startClock();
   bindInput();
   enableSend();
   probeStatus();
   renderB();
   fillDateSelect();
   checkCutoff();
-    setInterval(checkCutoff, 5*60*1000);   document.getElementById('sendBtn').addEventListener('click', send);
+  setInterval(checkCutoff, 5*60*1000);   document.getElementById('sendBtn').addEventListener('click', send);
 });
 </script>
 </body>
