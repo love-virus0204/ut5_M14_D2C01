@@ -16,7 +16,7 @@
 html,body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--fg);height:100%;max-width: 480px; margin: 0 auto; }
 body{display:flex;flex-direction:column;overflow:hidden;}
 .top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#1e293b;border-bottom:1px solid #334155; height: 40px; }
-.clock{font-family:monospace;font-size:0.7em;}
+.clock{font-family:monospace;clamp(0.65rem, 1.8vw, 0.9rem); }
 .btns{display:flex;gap:6px;}
 .btn:hover{background:#334155;}
 .btn{display:inline-flex;align-items:center;height:28px;padding:0 8px;}
