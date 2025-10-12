@@ -99,7 +99,6 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 <div id="mask" class="mask">處理中…</div>
 
 <script>
-let current = { A: null, B: null };
 /* ===== 綁定 ===== */
 document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
@@ -121,16 +120,8 @@ const DAYS = Array.from({ length:7 }, (_, k) => {
 });
 daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
 
-function currentSerial() {
-  return Number(daySel.value);  }
-
-function currentMD(){const hit=DAYS.find(x=>x.serial===currentSerial());return hit?hit.label:'--/--'; }
-
-function currentS() {
-  const idx = daySel.selectedIndex;
-  const item = DAYS[idx];
-  return { A: item.serial, B: item.label };
-}
+let currS = null;
+function currentS() {return daySel.value; }
 
 /* ===== 狀態顯示 ===== */
 const gasDot  = document.getElementById('gasDot');
@@ -165,7 +156,7 @@ function renderResponse(j){
   const list = parseLuckyData(j);
   const serial = currentSerial();
   const rows = list
-  .filter(r => Number(r.date) === serial)
+  .filter(r => Number(r.date) === currS)
   .filter(r => ['A','B'].includes(String(r.shift || '').toUpperCase()))
   .filter(r => Number(r.tier) < 3000);
 
@@ -212,10 +203,11 @@ document.addEventListener('click', e=>{
 /* ===== 通訊 ===== */
 async function reloadData(){
   showMask('讀取中…');
+  currS = currentS();
   try{
     const p=new URLSearchParams();
     p.append('action','list_recent');
-    p.append('dateSerial',currentSerial());
+    p.append('dateSerial',currS);
     const r=await fetch(api_url,{method:'POST',body:p});
     const j=await r.json();
     renderResponse(j);
@@ -224,10 +216,11 @@ async function reloadData(){
 }
 async function draw(){
   showMask('抽籤中…');
+  currS = currentS();
   try{
     const p=new URLSearchParams();
     p.append('action','lucky');
-    p.append('dateSerial',currentSerial());
+    p.append('dateSerial',currS);
     const r=await fetch(api_url,{method:'POST',body:p});
     const j=await r.json();
     renderResponse(j);
@@ -241,9 +234,7 @@ function tickN() {
 el.textContent=now.slice(5); }
 
 /* ===== 遮罩控制 ===== */
-function showMask(t){
-  current = currentS();
-mask.textContent=t;mask.classList.add('show');}
+function showMask(t){mask.textContent=t;mask.classList.add('show'); }
 function hideMask(){mask.classList.remove('show');}
 
 
