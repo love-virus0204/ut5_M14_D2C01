@@ -104,7 +104,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
 const el = document.getElementById('nowTime');
-const rowsEl = document.getElementById("rows");
+const rowsEl = document.getElementById('rows');
 
 /* ===== 日期選單 ===== */
 const daySel=document.getElementById('daySel');
@@ -237,8 +237,7 @@ function group(t,cls){
 /* ===== 點擊高亮 ===== */
 document.addEventListener('click', e=>{
   const row = e.target.closest('.row');
-  if (!row) return;
-  document.querySelectorAll('.row.selected').forEach(r=>r.classList.remove('selected'));
+  if (!row) return; document.querySelectorAll('.row.selected').forEach(r=>r.classList.remove('selected'));
   row.classList.add('selected');
 });
 
@@ -274,6 +273,7 @@ async function draw(){
     setInterval(tickN,1000);
   pingGas();
     setInterval(pingGas, 45000);
+  cycleBG();
   BgCycle('start');
 // document.addEventListener('DOMContentLoaded', reloadData);
 </script>
