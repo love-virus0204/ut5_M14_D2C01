@@ -58,8 +58,6 @@ th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
 <script>
 /* ===== 工具 ===== */
 const pad=n=>String(n).padStart(2,'0');
-const nowTPE=()=>new Date(Date.now()+8*60*60*1000);
-const mdFromSerial=s=>{const t=new Date((s-25569)*86400000);return `${pad(t.getUTCMonth()+1)}/${pad(t.getUTCDate())}`};
 
 /* ===== POST：URLSearchParams ===== */
 async function fetchList(payload){
@@ -165,8 +163,7 @@ async function loadData(){
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('box').classList.remove('hidden');
 
-  const d=nowTPE(); document.getElementById('ut').textContent=`${pad(d.getUTCMonth()+1)}/${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
-}
+document.getElementById('ut').textContent=now
 
 document.getElementById('reload').addEventListener('click',()=>loadData());
 loadData();
