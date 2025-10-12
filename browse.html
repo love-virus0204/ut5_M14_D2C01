@@ -82,22 +82,28 @@ async function fetchList(){
   return { rows };
 }
 
-/* ===== 依{資料}→ 拆 A/B → 配對 ===== */
 function splitDays(rows){
-  const n = 7;
-  const dates = [];
-  for (const r of rows){
+  const n = 7, dates = [];
+  for (const r of sorted){
     if (!dates.includes(r.date)){
       dates.push(r.date);
       if (dates.length === n) break;
     }
   }
-  return dates.map(dSer => {
-    const subset = rows.filter(x => x.date === dSer);
+  const sorted = rows.slice().sort((a,b)=>{
+    const d1 = String(a.dN||'').localeCompare(String(b.dN||''));
+    if (d1 !== 0) return d1;
+    const i1 = String(a.id||'').localeCompare(String(b.id||''), 'en', {numeric:true, sensitivity:'base'});
+    if (i1 !== 0) return i1;
+    return (b.date||0) - (a.date||0);
+  });
+
+  return dates.map(dSer=>{
+    const subset = sorted.filter(x=>x.date === dSer);
     return {
       date: dSer,
-      A: subset.filter(x => x.shift === 'A').map(x => ({ id:x.id, dN:x.dN })),
-      B: subset.filter(x => x.shift === 'B').map(x => ({ id:x.id, dN:x.dN }))
+      A: subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id,dN:x.dN})),
+      B: subset.filter(x=>String(x.shift).toUpperCase()==='B').map(x=>({id:x.id,dN:x.dN}))
     };
   });
 }
