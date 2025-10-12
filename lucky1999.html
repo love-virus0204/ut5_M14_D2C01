@@ -180,7 +180,7 @@ function cycleBG() {
   rowsEl.style.backgroundImage = `url('${BG_URLS[idx]}')`;
   idx = (idx + 1) % BG_URLS.length;
 }
-// 啟動背景循環（例如每 50 秒換一張）
+// 啟動背景循環（例如每 30 秒換一張）
 function toggleBgCycle(state) {
   if (state === 'stop') {
     clearInterval(bgTimer);
@@ -190,7 +190,6 @@ function toggleBgCycle(state) {
     bgTimer = setInterval(cycleBG, 30000);
   }
 }
-
 
 /* ===== 資料渲染 ===== */
 function renderResponse(j){
