@@ -208,9 +208,14 @@ function fillDateSelect(){
 }
 
 
-let currS = null;
+let curr = null;
 function currentS() {
-  return Number(daySel.value); }
+  const idx = sel.selectedIndex;
+  const s = sel.options[idx].value;
+  const b = sel.options[idx].textContent;
+  return { s , b };
+}
+
 
 
 
@@ -276,25 +281,20 @@ async function send(){
     idEl.focus();
     return;
   }
-  const sel   = document.getElementById('selDate');
-  const ser   = Number(sel.value);
-  const mdTxt = sel.options[sel.selectedIndex].text;
-  const payload = { id, date: ser, key: `${ser}|${id}`, shift: selB, dN: selA };
+
+  curr = currentS();
+  const payload = { id, date: curr.s, key: `${ser}|${id}`, shift: selB, dN: selA };
   showOverlay(true);
   let ok=false,res;
   try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
   catch(_){ ok=false; }
   showOverlay(false);
   let ts='--/-- --:--';
-  const clk=document.getElementById('clock');
-  if(clk && clk.textContent){
-    const m=clk.textContent.match(/^(\d{2}\/\d{2}) (\d{2}:\d{2})/);
-    if(m) ts=`${m[1]} ${m[2]}`;
-  }
+
   const status = ok ? 'ok':'ng';
   const bIsN   = String(selB).toUpperCase()==='N';
   const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
-  const aDisp  = bIsN ? `${mdTxt} - 取消` : `${mdTxt} - ${selA}`;
+  const aDisp  = bIsN ? `${mdTxt} - 取消` : `${curr.b} - ${selA}`;
   addB({ ts, id, a: aDisp, b: selB, status, flag });
   toast(ok ? `已送出（${selA}/${selB}）` : '失敗');
 }
