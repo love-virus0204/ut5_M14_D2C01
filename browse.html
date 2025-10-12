@@ -56,9 +56,6 @@ th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
   </div>
 
 <script>
-/* ===== 工具 ===== */
-const pad=n=>String(n).padStart(2,'0');
-
 /* ===== POST：URLSearchParams ===== */
 async function fetchList(payload){
  const body = new URLSearchParams(payload);
@@ -116,7 +113,7 @@ function render(groups){
   root.innerHTML = groups.map(g => sectionHTML(g)).join('');
 
   function sectionHTML(g){
-    const title = `日期：${mdFromSerial(g.date)}`;
+    const title = `日期：${serialToMD(g.date)}`;
     const total = (g.A?.length||0) + (g.B?.length||0);
     return `
       <div class="section">
