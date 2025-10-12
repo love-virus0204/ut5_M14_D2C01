@@ -102,6 +102,7 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 /* ===== 綁定 ===== */
 document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
+const mask=document.getElementById('mask');
 const el = document.getElementById('nowTime');
 const rowsEl = document.getElementById('rows');
 
@@ -145,43 +146,6 @@ async function pingGas(){
     setGas('GG');
   }
 }
-
-// === 背景圖片清單 ===
-const IMG_BASE = "https://cdn.imgchest.com/files/";
-const BG_LIST = [
-  "b9c23f4e91c6.jpg",
-  "31e59810dff0.jpg",
-  "73e52af2314c.jpg",
-  "45cea37d2076.jpg",
-  "2e6887215309.jpg",
-  "35864c4b541c.jpg"
-];
-const BG_URLS = BG_LIST.map(name => `${IMG_BASE}${name}`);
-
-let idx = 0;
-function cycleBG() {
-  rowsEl.style.backgroundImage = `url('${BG_URLS[idx]}')`;
-  idx = (idx + 1) % BG_URLS.length;
-}
-// 啟動背景循環（例如每 15 秒換一張）
-function BgCycle(state) {
-  if (state === 'stop') {
-    clearInterval(bgTimer);
-    rowsEl.style.backgroundImage = 'none';
-  } 
-  else if (state === 'start') {
-    bgTimer = setInterval(cycleBG, 15000);
-  }
-}
-
-/* ===== 即時時間顯示 ===== */
-function tickN() {
-el.textContent=now.slice(5); }
-
-/* ===== 遮罩控制 ===== */
-const mask=document.getElementById('mask');
-function showMask(t){mask.textContent=t;mask.classList.add('show');}
-function hideMask(){mask.classList.remove('show');}
 
 /* ===== 資料解析 ===== */
 function parseLuckyData(data){
@@ -265,6 +229,43 @@ async function draw(){
     showMask('抽籤完成');
     setTimeout(hideMask,1000);
   }catch(e){showMask('抽籤失敗');setTimeout(hideMask,1500);}
+}
+
+/* ===== 即時時間顯示 ===== */
+function tickN() {
+el.textContent=now.slice(5); }
+
+/* ===== 遮罩控制 ===== */
+function showMask(t){mask.textContent=t;mask.classList.add('show');}
+function hideMask(){mask.classList.remove('show');}
+
+
+// === 背景圖片清單 ===
+const IMG_BASE = "https://cdn.imgchest.com/files/";
+const BG_LIST = [
+  "b9c23f4e91c6.jpg",
+  "31e59810dff0.jpg",
+  "73e52af2314c.jpg",
+  "45cea37d2076.jpg",
+  "2e6887215309.jpg",
+  "35864c4b541c.jpg"
+];
+const BG_URLS = BG_LIST.map(name => `${IMG_BASE}${name}`);
+
+let idx = 0;
+function cycleBG() {
+  rowsEl.style.backgroundImage = `url('${BG_URLS[idx]}')`;
+  idx = (idx + 1) % BG_URLS.length;
+}
+// 啟動背景循環（例如每 15 秒換一張）
+function BgCycle(state) {
+  if (state === 'stop') {
+    clearInterval(bgTimer);
+    rowsEl.style.backgroundImage = 'none';
+  } 
+  else if (state === 'start') {
+    bgTimer = setInterval(cycleBG, 15000);
+  }
 }
 
 /* ===== 初始化 ===== */
