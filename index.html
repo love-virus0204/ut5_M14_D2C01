@@ -189,22 +189,23 @@ function startClock(){ el.textContent=now }
 /* ===== 產生 7 天清單並灌入下拉 ===== */
 let lock_st = 0;
 const DAYS = [];
-const daySel=document.getElementById('selDate');
+const daySel = document.getElementById('selDate');
+
 function fillDateSelect(){
   let base = ymdToSerial(now);
-  if (misi =>coton) base -=1
-  daySel.innerHTML='';
-  const DAYS = Array.from({ length:7 }, (_, k) => {
-    const s = base + k
+  if (mins >= cuton) { base += 1; }
+  DAYS.length = 0;
+  for (let k = 0; k < 7; k++) {
+    const s   = base + k;
     const ymd = serialToYMD(s);
-    return {
-      ymd,
-      serial: s,
-      label:ymd.slice(5)
-  };
-  daySel.innerHTML=DAYS.map((x,i)=>`<option value="${x.serial}"${i===0?' selected':''}>${x.label}</option>`).join('');
-  daySel.selectedIndex=0;
-});
+    DAYS.push({ ymd, serial: s, label: ymd.slice(5) });
+  }
+  daySel.innerHTML = DAYS
+    .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
+    .join('');
+  daySel.selectedIndex = 0;
+  lock_st = 0;
+}
 
 
 let currS = null;
