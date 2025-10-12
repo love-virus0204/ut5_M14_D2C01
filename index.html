@@ -192,7 +192,7 @@ function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 
 /* ===== 草稿B ===== */
 const DRAFTB_KEY='d2_draft_b_v1';
-const DRAFTB = JSON.parse(localStorage.getItem(DRAFTB_KEY) || '[]');
+let DRAFTB = JSON.parse(localStorage.getItem(DRAFTB_KEY) || '[]');
 
 function saveB(item){
   DRAFTB.unshift(item);
@@ -236,12 +236,12 @@ function submitData(p){
 
 /* ===== 送出動作 ===== */
 async function send(){
+  const curr = currentS();
   const id = el.value.trim().toUpperCase();
   if(!/^[A-Z0-9]{5}$/.test(id)){
     el.focus();
     return;
   }
-  const curr = currentS();
   const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA };
   showOverlay(true);
   let ok=false,res;
