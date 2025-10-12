@@ -192,17 +192,13 @@ function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 
 /* ===== 草稿B ===== */
 const DRAFTB_KEY='d2_draft_b_v1';
-function loadB(){
-  try { return JSON.parse(localStorage.getItem(DRAFTB_KEY) || '[]'); }
-  catch { return []; }
-}
+const DRAFTB = JSON.parse(localStorage.getItem('DRAFTB_KEY) || '[]');
 
 function saveB(item){
-  const arr = loadB();
-  arr.unshift(item);
-  const newArr = arr.slice(0, 15);
-  localStorage.setItem(DRAFTB_KEY, JSON.stringify(newArr));
-  renderB(newArr);
+  DRAFTB.unshift(item);
+  DRAFTB = DRAFTB.slice(0, 15);
+  localStorage.setItem(DRAFTB_KEY, JSON.stringify(DRAFTB));
+  renderB(DRAFTB);
 }
 
 function renderB(arr) {
