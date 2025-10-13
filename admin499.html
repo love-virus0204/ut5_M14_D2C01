@@ -274,7 +274,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
 
     let limitSerial=''; let ymdShow='';
     if(p.limit!=='' && Number(p.limit)>0){
-      let base = ;
+      let base = ymdToSerial(now);
       if(mins<500) base = base - 1;
       limitSerial = base + Number(p.limit);
       ymdShow = serialToYmd(limitSerial);
