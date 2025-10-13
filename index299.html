@@ -169,13 +169,14 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.1</div>
+  <div class="ver">版本：v1.5.3</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
 <script>
-  let selA='平日', selB='N';
+  let lock_st = 0, selA='平日', selB='N';
+  const DAYS = [];
   const cuton =  360; // 換日時間
   const cutoff = 130; // 超時時間
 
@@ -223,12 +224,14 @@ async function probeStatus(){
   }catch(_){set(gas,'bad');}
 }
 
+function startClock(){ tn.textContent=now }
+
 /* ===== 傳送 ===== */
 function showOverlay(on){document.getElementById('overlay').style.display=on?'flex':'none';}
 function submitData(p){
   const params=new URLSearchParams();
   params.append('action','submit');
-  params.append('user',uid);
+  params.append('uid',p.uid);
   params.append('key',p.key);
   params.append('date',p.date);
   params.append('shift',p.shift);
@@ -250,7 +253,7 @@ async function send(){
     el.focus();
     return;
   }
-  const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA };
+  const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA, uid: uid };
   showOverlay(true);
   let ok=false,res;
   try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
@@ -266,29 +269,6 @@ async function send(){
  // toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
 }
 
-function startClock(){ tn.textContent=now }
-  startClock();
-  setInterval(startClock,1000);
-/* ===== 產生 7 天清單並灌入下拉 ===== */
-let lock_st = 0;
-const DAYS = [];
-function fillDateSelect(){
-  let base = ymdToSerial(now);
-  if (mins >= cuton) { base += 1; }
-  DAYS.length = 0;
-  for (let k = 0; k < 7; k++) {
-    const s   = base + k;
-    const ymd = serialToYMD(s);
-    DAYS.push({ ymd, serial: s, label: ymd.slice(5) });
-  }
-  sel.innerHTML = DAYS
-    .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
-    .join('');
-  sel.selectedIndex = 0;
-  sel.focus();
-  lock_st = 0;
-}
-
 function currentS() {
   const idx = sel.selectedIndex;
   const s = sel.options[idx].value;
@@ -297,7 +277,7 @@ function currentS() {
 }
 
 function checkCutoff(){
-  if (mins > cuton && lock_st === 1) {
+  if (mins >= cuton && lock_st === 1) {
     fillDateSelect();
   }
   if (mins > cutoff && mins < cuton && lock_st === 0) {
@@ -319,8 +299,28 @@ function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
 function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
+
+/* ===== 產生 7 天清單並灌入下拉 ===== */
+function fillDateSelect(){
+  let base = ymdToSerial(now);
+  if (mins >= cuton) { base += 1; }
+  DAYS.length = 0;
+  for (let k = 0; k < 7; k++) {
+    const s   = base + k;
+    const ymd = serialToYMD(s);
+    DAYS.push({ ymd, serial: s, label: ymd.slice(5) });
+  }
+  sel.innerHTML = DAYS
+    .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
+    .join('');
+  sel.selectedIndex = 0;
+  sel.focus();
+  lock_st = 0;
+}
+
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
+  startClock();
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
   const bBtns = Array.from(document.querySelectorAll('[data-b]'));
   const sendBtn = document.getElementById('sendBtn');
@@ -338,6 +338,7 @@ addEventListener('DOMContentLoaded', () => {
   renderB(DRAFTB);
   bindInput();
   probeStatus();
+  setInterval(startClock,1000);
   //setInterval(checkCutoff, 5 * 60 * 1000);
 });
 </script>
