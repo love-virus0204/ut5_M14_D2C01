@@ -299,7 +299,7 @@ async function send(){
   const bDisp = selB === 'N' ? '_' : selB;
   const aDisp = `${curr.b} - ${selB === 'N' ? '取消' : selA}`;
   saveB({ ts, id, a: aDisp, b: bDisp, msg:  `${resultText}`, flag });
- // toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
+ toast(ok ? `已送出（${selA} / ${selB}）` : '失敗')
 }
 
 function currentS() {
