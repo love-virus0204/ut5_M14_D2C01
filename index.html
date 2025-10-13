@@ -175,6 +175,29 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 </div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
+<div id="toast"></div>
+
+<style>
+#toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30,41,59,.9);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity .3s ease, bottom .3s ease;
+  pointer-events: none;
+  z-index: 9999;
+}
+#toast.show {
+  opacity: 1;
+  bottom: 60px;
+}
+</style>
 <script>
   let lock_st = 0, selA='平日', selB='N';
   const DAYS = [];
@@ -185,6 +208,7 @@ const box  = document.getElementById('draftBoxB');
 const list = document.getElementById('draftB');
 const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
+const en=document.getElementById('toast');
 const tn=document.getElementById('clock');
 
 /* ===== 草稿A ===== */
@@ -350,6 +374,12 @@ addEventListener('DOMContentLoaded', () => {
   setInterval(startClock,1000);
   setInterval(checkCutoff, 5 * 60 * 1000);
 });
+function toast(msg, duration = 2200) {
+  if (!en) return;
+  en.textContent = msg;
+  en.classList.add('show');
+  setTimeout(() => en.classList.remove('show'), duration);
+}
 </script>
 </body>
 </html>
