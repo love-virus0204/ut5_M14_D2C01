@@ -103,7 +103,7 @@ function splitDays(rows){
     const subset = buckets.get(dSer).slice().sort(sortRow);
     return {
       date: dSer,
-      A: subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id,name:/^[A-Za-z0-9]+$/.test(x.name) ? '匿名' : x.name,dN:x.dN})),
+      A: subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id,name:/^[A-Za-z0-9]+$/.test(x.name) ? '' : x.name,dN:x.dN})),
       B: subset.filter(x=>String(x.shift).toUpperCase()==='B').map(x=>({id:x.id,name:/^[A-Za-z0-9]+$/.test(x.name) ? '' : x.name,dN:x.dN}))
     };
   });
@@ -136,7 +136,7 @@ function render(groups){
   }
   function card(h3, list){
     if (!list || !list.length){
-      return `<div class="card"><h3>${h3}</h3><div class="empty">本日無資料</div></div>`;
+      return `<div class="card"><div class="empty">本日無資料</div></div>`;
     }
     const rows = list.map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.name)}</td><td>${esc(r.dN)}</td></tr>`).join('');
     return `
