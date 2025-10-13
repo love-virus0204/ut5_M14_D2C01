@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
+<script src="./config.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ID與設備驗證</title>
@@ -71,7 +72,6 @@ button:hover{filter:brightness(1.2);}
 </div>
 <div class="overlay" id="overlay"><div class="spinner"></div></div>
 <script>
-const api_url="https://script.google.com/macros/s/你的GAS網址/exec";
 const overlay=document.getElementById('overlay');
 const msg=document.getElementById('msg');
 function showOverlay(on){overlay.style.display=on?'flex':'none';}
@@ -88,7 +88,7 @@ async function verify(){
     const j=await r.json();
     showOverlay(false);
     if(j.status==="ok"){
-      msg.style.color="#22c55e";msg.textContent="驗證成功，將關閉...";
+      msg.style.color="#22c55e";msg.textContent="驗證成功，3s 後將關閉...";
       saveUser(uid);
       setTimeout(()=>window.close(),3000);
     }else if(j.status==="wrong_pwd"){
