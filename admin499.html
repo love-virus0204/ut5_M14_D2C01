@@ -206,7 +206,7 @@ setInterval(tickClock, 1000);
     rows.innerHTML='';
     for(const v of values){
       const id=v[0], name=v[1], tier=v[2], rawLimit=v[3];
-      const ymd = (rawLimit == 0) ? '永久' : serialToYmd(rawLimit);
+      const ymd = (rawLimit == 0) ? '永久' : serialToYMD(rawLimit);
       const tr = document.createElement('tr');
       tr.dataset.id=id;
       tr.innerHTML = `
