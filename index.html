@@ -228,7 +228,7 @@ function showOverlay(on){document.getElementById('overlay').style.display=on?'fl
 function submitData(p){
   const params=new URLSearchParams();
   params.append('action','submit');
-  params.append('user',uid);
+  params.append('user',p.uid);
   params.append('key',p.key);
   params.append('date',p.date);
   params.append('shift',p.shift);
@@ -250,7 +250,7 @@ async function send(){
     el.focus();
     return;
   }
-  const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA };
+  const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA, uid: uid };
   showOverlay(true);
   let ok=false,res;
   try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
