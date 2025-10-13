@@ -119,8 +119,8 @@ uidEl.addEventListener('input',()=>{
 async function verify(){
   const uid=document.getElementById('uid').value.trim().toUpperCase();
   const pwd=document.getElementById('pwd').value.trim();
-  if(!/^[A-Z0-9]{5}$/.test(uid)){msg.textContent="帳號格式錯誤";return;}
-  if(!/^[A-Za-z0-9]{4,10}$/.test(pwd)){msg.textContent="密碼格式錯誤";return;}
+  if(!/^[A-Z0-9]{5}$/.test(uid)){msg.textContent="account error";return;}
+  if(!/^[A-Za-z0-9]{4,10}$/.test(pwd)){msg.textContent="authentication failed";return;}
 
   showOverlay(true); msg.textContent="";
   const p=new URLSearchParams({action:"auth_check",id:uid,swd:pwd});
