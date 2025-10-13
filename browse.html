@@ -83,23 +83,24 @@ async function fetchList(){
 }
 
 function splitDays(rows){
-  const n = 7, dates = [];
-  for (const r of sorted){
-    if (!dates.includes(r.date)){
-      dates.push(r.date);
-      if (dates.length === n) break;
-    }
+  const N = 7;
+  const buckets = new Map();
+  for (const r of rows){
+    const d = Number(r.date)||0;
+    if(!buckets.has(d)) buckets.set(d, []);
+    buckets.get(d).push(r);
   }
-  const sorted = rows.slice().sort((a,b)=>{
-    const d1 = String(a.dN||'').localeCompare(String(b.dN||''));
-    if (d1 !== 0) return d1;
-    const i1 = String(a.id||'').localeCompare(String(b.id||''), 'en', {numeric:true, sensitivity:'base'});
-    if (i1 !== 0) return i1;
-    return (b.date||0) - (a.date||0);
-  });
+
+  const dates = [...buckets.keys()].sort((a,b)=>b-a).slice(0, N);
+
+  const sortRow = (a,b)=>{
+    const d = String(a.dN||'').localeCompare(String(b.dN||''));
+    if(d!==0) return d;
+    return String(a.id||'').localeCompare(String(b.id||''), 'en', {numeric:true, sensitivity:'base'});
+  };
 
   return dates.map(dSer=>{
-    const subset = sorted.filter(x=>x.date === dSer);
+    const subset = buckets.get(dSer).slice().sort(sortRow);
     return {
       date: dSer,
       A: subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id,dN:x.dN})),
