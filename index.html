@@ -277,7 +277,7 @@ function fillDateSelect(){
     .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
     .join('');
   sel.selectedIndex = 0;
-  //sel.focus();
+  sel.focus();
   lock_st = 0;
 }
 
@@ -296,7 +296,7 @@ function checkCutoff(){
     if (sel.selectedIndex === 0)
     sel.selectedIndex = 1;
     sel.options[0].disabled = true;
-    //sel.focus();
+    sel.focus();
     lock_st = 1;
   }
 }
@@ -310,7 +310,7 @@ function bindInput(){
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
-
+function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
@@ -319,12 +319,12 @@ addEventListener('DOMContentLoaded', () => {
   setSel(aBtns, selA, 'a');
   setSel(bBtns, selB, 'b');
 
-  function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); }
-  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); }
+  function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
+  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend();}
   aBtns.forEach(b => b.addEventListener('click', onA));
   bBtns.forEach(b => b.addEventListener('click', onB));
   sendBtn.addEventListener('click', send);
-
+  enableSend();
   fillDateSelect();
   checkCutoff();
   renderB(DRAFTB);
