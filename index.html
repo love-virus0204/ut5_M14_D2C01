@@ -262,7 +262,7 @@ async function send(){
   showOverlay(false);
   let ts= now.slice(5, 16);
   const status = ok ? 'ok':'ng';
-  const resultText = ok ? '成功' : '失敗';
+  const resultText = ok ? '上傳成功' : '連線失敗';
   const flag = !ok
     ? 'ng'
     : selB === 'N'
@@ -274,7 +274,7 @@ async function send(){
           : 'ok';
   const bDisp = selB === 'N' ? '  ' : selB;
   const aDisp = `${curr.b} - ${selB === 'N' ? '取消' : selA}`;
-  saveB({ ts, id, a: aDisp, b: bDisp, msg:  `上傳${resultText}`, flag });
+  saveB({ ts, id, a: aDisp, b: bDisp, msg:  `${resultText}`, flag });
  // toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
 }
 
