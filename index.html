@@ -272,9 +272,9 @@ async function send(){
         : selA === '平日'
           ? 'ok2'
           : 'ok';
-  const bIsN   = String(selB).toUpperCase()==='N';
-  const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
-  saveB({ ts, id, a: aDisp, b: selB, msg:  `上傳${resultText}`, flag });
+  const bDisp = selB === 'N' ? '  ' : selB;
+  const aDisp = `${curr.b} - ${selB === 'N' ? '取消' : selA}`;
+  saveB({ ts, id, a: aDisp, b: bDisp, msg:  `上傳${resultText}`, flag });
  // toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
 }
 
