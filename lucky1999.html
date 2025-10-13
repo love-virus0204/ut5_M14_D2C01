@@ -303,10 +303,15 @@ const BG_LIST = [
 ];
 const BG_URLS = BG_LIST.map(name => `${IMG_BASE}${name}`);
 
-let idx = 0;
+let prevIdx = -1;
+const bg_n = BG_URLS.length;
 function cycleBG() {
+  let idx;
+  do {
+    idx = Math.floor(Math.random() * bg_n);
+} while (idx === prevIdx);
+  prevIdx = idx;
   rowsEl.style.backgroundImage = `url('${BG_URLS[idx]}')`;
-  idx = (idx + 1) % BG_URLS.length;
 }
 // 啟動背景循環（例如每 15 秒換一張）
 let bgTimer = null;
