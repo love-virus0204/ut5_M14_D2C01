@@ -213,7 +213,7 @@ function renderResponse(j){
   const rows = list
   .filter(r => Number(r.date) === currS)
   .filter(r => ['A','B'].includes(String(r.shift || '').toUpperCase()))
-  .filter(r => Number(r.tier) < 3000);
+   .filter(r => Number(r.tier) > 0 && Number(r.tier) < 3000);
 
   const A=[], B=[];
   rows.forEach(r => (String(r.shift).toUpperCase()==='A' ? A : B).push(r));
