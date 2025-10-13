@@ -32,8 +32,28 @@ box-shadow:0 0 20px rgba(0,255,240,.2); }
   100%{box-shadow:0 0 30px rgba(0,255,240,.6); } }
 h1{font-size:20px;letter-spacing:.1em;margin-bottom:24px;color:var(--accent);}
 input{ width:80%;max-width:240px;height:44px;margin:8px 0;padding:0 10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:var(--text); font-size:16px;text-align:center; }
-button{ width:120px;height:44px;margin-top:20px; border-radius:10px;border:1px solid var(--accent);background:linear-gradient(180deg,#06b6d4,#0ea5e9);color:#fff;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:all .2s ease; }
-button:hover{filter:brightness(1.2);}
+
+button{
+  width:120px;height:44px;margin-top:20px;
+  border-radius:10px;
+  border:1px solid var(--accent);
+  background:#000;
+  color:var(--accent);
+  font-weight:700;letter-spacing:.08em;
+  cursor:pointer;
+  transition:all .25s ease;
+  box-shadow:0 0 12px rgba(0,255,240,.2) inset,0 0 8px rgba(0,255,240,.3); }
+
+button:hover{
+  color:#fff;
+  background:radial-gradient(circle at center,#022,#000);
+  box-shadow:0 0 18px rgba(0,255,240,.6),
+             0 0 10px rgba(0,255,240,.4) inset; transform:translateY(-1px); }
+
+button:active{
+  transform:translateY(1px);
+  box-shadow:0 0 8px rgba(0,255,240,.4) inset; }
+
 .overlay{
   position:fixed;inset:0;display:none;
   background:rgba(0,0,0,.5); align-items:center;justify-content:center;
