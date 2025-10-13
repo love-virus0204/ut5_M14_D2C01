@@ -193,7 +193,7 @@ function saveA(id){localStorage.setItem(DRAFTA_KEY,id);}
 function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 
 /* ===== 草稿B ===== */
-const DRAFTB_KEY='d2_draft_b_v1';
+const DRAFTB_KEY='d2_draft_b_v2';
 let DRAFTB = JSON.parse(localStorage.getItem(DRAFTB_KEY) || '[]');
 
 function saveB(item){
@@ -261,10 +261,22 @@ async function send(){
   catch(_){ ok=false; }
   showOverlay(false);
   let ts= now.slice(5, 16);
-
   const status = ok ? 'ok':'ng';
+  let flag;
+  if (ok) {
+    if (selB === 'N') {
+      flag = 'xd';
+    } else if (selA === '假日') {
+      flag = 'ok1';
+    } else if (selA === '平日') {
+      flag = 'ok2';
+    } else {
+      flag = 'ok';
+    }
+  } else {
+    flag = 'ng';
+  }
   const bIsN   = String(selB).toUpperCase()==='N';
-  const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
   const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
   saveB({ ts, id, a: aDisp, b: selB, status, flag });
  // toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
