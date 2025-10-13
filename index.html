@@ -272,7 +272,7 @@ async function send(){
         : selA === '平日'
           ? 'ok2'
           : 'ok';
-  const bDisp = selB === 'N' ? '\u00A0' : selB;
+  const bDisp = selB === 'N' ? '_' : selB;
   const aDisp = `${curr.b} - ${selB === 'N' ? '取消' : selA}`;
   saveB({ ts, id, a: aDisp, b: bDisp, msg:  `${resultText}`, flag });
  // toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
