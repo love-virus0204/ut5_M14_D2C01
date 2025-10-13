@@ -50,11 +50,21 @@ button:hover{filter:brightness(1.2);}
 <body>
 <div class="container">
   <h1>組織認證入口</h1>
-  <input id="uid" placeholder="輸入＀５碼＀ＩＤ" maxlength="5" inputmode="latin">
-  <br>
-  <input id="pwd" placeholder="Please enter the key for verification" type="password" minlength="4" maxlength="10">
-  <br>
-  <button id="loginBtn">驗　證</button>
+  <form autocomplete="off">
+    <input id="uid" name="uid"
+         placeholder="輸入＀５碼＀ＩＤ" maxlength="5"
+         autocomplete="off" spellcheck="false"
+         autocapitalize="off" autocorrect="off" inputmode="text">
+    <br>
+    <input id="pwd" name="auth"
+         placeholder="Please enter the key for verification" type="password"
+         minlength="4" maxlength="10"
+         autocomplete="new-password" spellcheck="false"
+         autocapitalize="off" autocorrect="off">
+    <br>
+    <button id="loginBtn" type="button"> Login.. </button>
+  </form>
+
   <div class="msg" id="msg"></div>
 </div>
 <div class="overlay" id="overlay"><div class="spinner"></div></div>
