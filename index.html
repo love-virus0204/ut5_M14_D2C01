@@ -227,16 +227,24 @@ async function probeStatus(){
 function showOverlay(on){document.getElementById('overlay').style.display=on?'flex':'none';}
 function submitData(p){
   const params=new URLSearchParams();
-  params.append('action','submit');params.append('key',p.key);
-  params.append('date',p.date);params.append('shift',p.shift);
-  params.append('id',p.id);params.append('dN',p.dN);
+  params.append('action','submit');
+  params.append('user',uid);
+  params.append('key',p.key);
+  params.append('date',p.date);
+  params.append('shift',p.shift);
+  params.append('id',p.id);
+  params.append('dN',p.dN);
   return fetch(api_url,{method:'POST',body:params,cache:'no-store'})
     .then(r=>r.text()).then(t=>{try{return JSON.parse(t);}catch(_){return{status:'parse_failed',raw:t};}});
 }
 
 /* ===== 送出動作 ===== */
+  const uid = localStorage.getItem('user_id');
 async function send(){
   const curr = currentS();
+  if (!uid) {
+    window.open('verify.html', '_blank');
+    return; }
   const id = el.value.trim().toUpperCase();
   if(!/^[A-Z0-9]{5}$/.test(id)){
     el.focus();
