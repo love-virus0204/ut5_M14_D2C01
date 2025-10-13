@@ -62,7 +62,7 @@ th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
 /* ===== POST：URLSearchParams ===== */
 async function fetchList(){
   const params = new URLSearchParams();
-  params.append('action', 'list_recent3');
+  params.append('action', 'list_recent');
   const res = await fetch(api_url, {
     method: 'POST',
     body: params,
