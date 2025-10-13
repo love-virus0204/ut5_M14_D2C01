@@ -103,8 +103,8 @@ function splitDays(rows){
     const subset = buckets.get(dSer).slice().sort(sortRow);
     return {
       date: dSer,
-      A: subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id,name:x.name,dN:x.dN})),
-      B: subset.filter(x=>String(x.shift).toUpperCase()==='B').map(x=>({id:x.id,name:x.name,dN:x.dN}))
+      A: subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id,name:/^[A-Za-z0-9]+$/.test(x.name) ? '匿名' : x.name,dN:x.dN})),
+      B: subset.filter(x=>String(x.shift).toUpperCase()==='B').map(x=>({id:x.id,name:/^[A-Za-z0-9]+$/.test(x.name) ? '' : x.name,dN:x.dN}))
     };
   });
 }
