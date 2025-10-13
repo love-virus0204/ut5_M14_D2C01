@@ -184,7 +184,6 @@
   let uploadCount = 0;
 
   // ====== 時鐘（台北時區） ======
-  let nowTPE = new Date();
 function tickClock(){ el.textContent= now;}
 tickClock();
 setInterval(tickClock, 1000);
@@ -275,8 +274,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
 
     let limitSerial=''; let ymdShow='';
     if(p.limit!=='' && Number(p.limit)>0){
-      const mins = nowTPE.getUTCHours()*60 + nowTPE.getUTCMinutes();
-      let base = baseSerialFromTPE(new Date(nowTPE));
+      let base = ;
       if(mins<500) base = base - 1;
       limitSerial = base + Number(p.limit);
       ymdShow = serialToYmd(limitSerial);
