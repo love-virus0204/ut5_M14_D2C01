@@ -80,38 +80,48 @@ const overlay=document.getElementById('overlay');
 const msg=document.getElementById('msg');
 function showOverlay(on){overlay.style.display=on?'flex':'none';}
 function saveUser(u){localStorage.setItem('user_id',u);}
-const uidEl = document.getElementById('uid');
-uidEl.addEventListener('input', () => {
-  uidEl.value = uidEl.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+
+const uidEl=document.getElementById('uid');
+uidEl.addEventListener('input',()=>{
+  uidEl.value=uidEl.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
 });
+
 async function verify(){
   const uid=document.getElementById('uid').value.trim().toUpperCase();
   const pwd=document.getElementById('pwd').value.trim();
   if(!/^[A-Z0-9]{5}$/.test(uid)){msg.textContent="帳號格式錯誤";return;}
   if(!/^[A-Za-z0-9]{4,10}$/.test(pwd)){msg.textContent="密碼格式錯誤";return;}
-  showOverlay(true);msg.textContent="";
-  const p=new URLSearchParams({action:"auth_check",id:uid,swd:pwd});
+
+  showOverlay(true); msg.textContent="";
+  const p=new URLSearchParams({ action:"auth_check", id:uid,swd:pwd }); // ← pwd
+
   try{
     const r=await fetch(api_url,{method:"POST",body:p});
     const j=await r.json();
     showOverlay(false);
 
-if(j.status==="ok" && j.mode==="秘鑰通過"){
-msg.style.color="#22c55e";msg.textContent="驗證成功，3s 後將關閉...";
+    if(j.status==="ok" && j.mode==="秘鑰通過"){
       saveUser(uid);
+      msg.style.color="#22c55e";
+      msg.textContent="驗證成功，3s 後將關閉...";
       setTimeout(()=>window.close(),3000);
     }else if(j.status==="wrong_pwd"){
-      msg.style.color="#ef4444";msg.textContent="密碼錯誤";
+      msg.style.color="#ef4444";
+      msg.textContent="密碼錯誤";
       document.getElementById('pwd').value="";
     }else{
-      msg.style.color="#facc15";msg.textContent="伺服器錯誤";
+      msg.style.color="#facc15";
+      msg.textContent="伺服器錯誤";
     }
   }catch(_){
     showOverlay(false);
-    msg.style.color="#facc15";msg.textContent="網路連線失敗";
+    msg.style.color="#facc15";
+    msg.textContent="網路連線失敗";
   }
 }
+
 document.getElementById('loginBtn').addEventListener('click',verify);
+
 </script>
 </body>
 </html>
