@@ -277,7 +277,7 @@ function fillDateSelect(){
     .map((x,i)=>`<option value="${x.serial}" ${i===0?'selected':''}>${x.label}</option>`)
     .join('');
   sel.selectedIndex = 0;
-  sel.focus();
+  //sel.focus();
   lock_st = 0;
 }
 
@@ -296,7 +296,7 @@ function checkCutoff(){
     if (sel.selectedIndex === 0)
     sel.selectedIndex = 1;
     sel.options[0].disabled = true;
-    sel.focus();
+    //sel.focus();
     lock_st = 1;
   }
 }
