@@ -46,6 +46,10 @@ function doPost(e){
     case "list_recent3":
       return _listRecent3(sheet);
 
+    case "auth_check":
+      sheet = _sheet(sn_2);
+      return _check(sheet);
+
     case "list_recent2":
       sheet = _sheet(sn_2);
       return _listRecent2(sheet);
@@ -230,6 +234,21 @@ function _json(obj){
 }
 /* 工具 - off */
 
+function _check(sh) {
+  var lastRow = sh.getLastRow();
+  if (lastRow < 2) {
+    return _json({ status: "error", msg: "no_data" });
+  }
+
+  var lastCol = sheet.getLastColumn();
+  var values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+
+  const hitRow = _findRowByKey(sheet, String(p.id), 1);
+
+  if (hitRow > 0){
+
+    return _json({status:"ok", mode:"秘鑰通過"});
+
 function _listRecent2(sheet) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) {
@@ -249,7 +268,7 @@ function _listRecent2(sheet) {
 
   values.sort(function(a,b){ return b[4] - a[4]; });
 
-  const fields = ["id", "name", "tier", "limit_date", "updatedAt", "admin_id", "row"];
+  const fields = ["id", "name", "tier", "limit_date", "updatedAt", "admin_id", "pws", "row"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -276,7 +295,7 @@ function _upsert(sheet, p){
     sheet.getRange(hitRow, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
-    sheet.appendRow(row);
+    sheet.appendRow([...row, p.id]);
     const last = sheet.getLastRow();
     sheet.getRange(last, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
