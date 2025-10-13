@@ -90,7 +90,7 @@ async function verify(){
     const r=await fetch(api_url,{method:"POST",body:p});
     const j=await r.json();
     showOverlay(false);
-    if(j.status==="ok"){ 
+    if(j.mode==="秘鑰通過"){ 
 msg.style.color="#22c55e";msg.textContent="驗證成功，3s 後將關閉...";
       saveUser(uid);
       setTimeout(()=>window.close(),3000);
