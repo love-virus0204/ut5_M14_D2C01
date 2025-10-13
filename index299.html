@@ -227,16 +227,24 @@ async function probeStatus(){
 function showOverlay(on){document.getElementById('overlay').style.display=on?'flex':'none';}
 function submitData(p){
   const params=new URLSearchParams();
-  params.append('action','submit');params.append('key',p.key);
-  params.append('date',p.date);params.append('shift',p.shift);
-  params.append('id',p.id);params.append('dN',p.dN);
+  params.append('action','submit');
+  params.append('user',uid);
+  params.append('key',p.key);
+  params.append('date',p.date);
+  params.append('shift',p.shift);
+  params.append('id',p.id);
+  params.append('dN',p.dN);
   return fetch(api_url,{method:'POST',body:params,cache:'no-store'})
     .then(r=>r.text()).then(t=>{try{return JSON.parse(t);}catch(_){return{status:'parse_failed',raw:t};}});
 }
 
 /* ===== 送出動作 ===== */
+  const uid = localStorage.getItem('user_id');
 async function send(){
   const curr = currentS();
+  if (!uid) {
+    window.open('verify.html', '_blank');
+    return; }
   const id = el.value.trim().toUpperCase();
   if(!/^[A-Z0-9]{5}$/.test(id)){
     el.focus();
@@ -310,7 +318,7 @@ function bindInput(){
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
-function enableSend(){ document.getElementById('sendBtn').disabled=!(selA&&selB);}
+function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
@@ -320,17 +328,17 @@ addEventListener('DOMContentLoaded', () => {
   setSel(bBtns, selB, 'b');
 
   function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
-  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend(); }
+  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend();}
   aBtns.forEach(b => b.addEventListener('click', onA));
   bBtns.forEach(b => b.addEventListener('click', onB));
   sendBtn.addEventListener('click', send);
-
+  enableSend();
   fillDateSelect();
-  // checkCutoff(); setInterval(checkCutoff, 5 * 60 * 1000);
+  checkCutoff();
   renderB(DRAFTB);
   bindInput();
   probeStatus();
-  enableSend();
+  setInterval(checkCutoff, 5 * 60 * 1000);
 });
 </script>
 </body>
