@@ -104,7 +104,7 @@ function splitDays(rows){
     return {
       date: dSer,
       A: subset.filter(x=>String(x.shift).toUpperCase()==='A').map(x=>({id:x.id,dN:x.dN})),
-      B: subset.filter(x=>String(x.shift).toUpperCase()==='B').map(x=>({id:x.id,dN:x.dN}))
+      B: subset.filter(x=>String(x.shift).toUpperCase()==='B').map(x=>({id:x.id,name:x.name,dN:x.dN}))
     };
   });
 }
