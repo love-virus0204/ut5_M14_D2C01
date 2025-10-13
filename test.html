@@ -62,8 +62,7 @@ function doPost(e){
         switch (action) {
           case "submit":
             return _submit(sheet, p);
-          case "soft_delete":
-            return _softDelete(sheet, p);
+
           case "upsert":
             sheet = _sheet(sn_2);
             return _upsert(sheet, p);
@@ -91,7 +90,7 @@ function _submit(sheet, p){
     p.id,          // 4
     p.shift,       // 5
     p.dN,          // 6
-    'user'         // 7
+    p.user         // 7
   ];
 
   var hitRow = _findRowByKey(sheet, String(p.key), 2);
@@ -105,30 +104,6 @@ function _submit(sheet, p){
     sheet.getRange(last, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
   }
-}
-
-function _softDelete(sheet, p){
-  var admin_id = String(p.admin_id || "");
-  if (!admin_id) 
-    return _json({status:"error", msg:"no_admin_id"});
-  var lastRow = sheet.getLastRow();
-  var targets = [];
-  for (var k in p){
-    if (/^row\d+$/.test(k)) {
-      var r = Number(p[k]);
-      if (r && r >= 2 && r <= lastRow) targets.push(r);
-    }
-  }
-  if (targets.length === 0) 
-    return _json({status:"error", msg:"not_found"});
-
-  var deletedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
-  var rowValue  = ["DEL", admin_id, deletedAt]; // 1×3
-
-  for (var i = 0; i < targets.length; i++){
-    sheet.getRange(targets[i], 8, 1, 3).setValues([rowValue]);
-  }
-  return _json({status:"ok", count: targets.length});
 }
 
 /* 讀取：取底部 520 列， fields+values */
@@ -173,10 +148,9 @@ function _listRecent3(sheet){
   const epoch = Date.UTC(1899,11,30);
   values.forEach(function(row, i){
     row[2] = _toSerialInt(row[2], epoch);
-    row.push(startRow + i);
   });
   var fields = [
-"submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky","row"];
+"submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -265,12 +239,9 @@ function _listRecent2(sheet) {
 
   values.forEach(function(row, i) {
     row[3] = _toSerialInt(row[3], epoch);
-    row.push(startRow + i);
   });
 
-  values.sort(function(a,b){ return b[4] - a[4]; });
-
-  const fields = ["id", "name", "tier", "limit_date", "updatedAt", "admin_id", "pws", "row"];
+  const fields = ["id", "name", "tier", "limit_date", "updatedAt", "admin_id", "pws"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -287,7 +258,7 @@ function _upsert(sheet, p){
     p.tier,        // C tier
     p.limit_date,  // D limit_date
     updatedAt,     // E updatedAt
-    'admin'        // F admin_id
+    p.uid          // F admin_id
   ];
 
   const hitRow = _findRowByKey(sheet, String(p.id), 1);
@@ -297,7 +268,7 @@ function _upsert(sheet, p){
     sheet.getRange(hitRow, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
-    sheet.appendRow([...row, p.id]);
+    sheet.appendRow([...row, p.uid]);
     const last = sheet.getLastRow();
     sheet.getRange(last, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
