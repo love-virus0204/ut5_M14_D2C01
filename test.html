@@ -20,7 +20,7 @@ function doGet(e){
 
 function doPost(e){
   if (!e || !e.postData) return _json({status:"error", msg:"no_post_data"});
-  // 解析：JSON 優先，否則 x-www-form-urlencoded（e.parameter）
+
   var p = {};
   try {
     if (e.postData.type === 'application/json') {
@@ -48,7 +48,7 @@ function doPost(e){
 
     case "auth_check":
       sheet = _sheet(sn_2);
-      return _check(sheet);
+      return _check(sheet,p);
 
     case "list_recent2":
       sheet = _sheet(sn_2);
@@ -234,20 +234,22 @@ function _json(obj){
 }
 /* 工具 - off */
 
-function _check(sh) {
-  var lastRow = sh.getLastRow();
-  if (lastRow < 2) {
-    return _json({ status: "error", msg: "no_data" });
+function _check(sh, pid, pswd) {
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) return _json({ status: "error", msg: "no_data" });
+
+  const lastCol = sh.getLastColumn();
+  const values = sh.getRange(2, 1, lastRow - 1, lastCol).getValues();
+
+  for (let i = 0; i < values.length; i++) {
+    const id = values[i][0];
+    const ps = values[i][6];
+    if (id === pid && ps === pswd) {
+      return _json({ status: "ok", mode: "秘鑰通過" });
+    }
   }
-
-  var lastCol = sheet.getLastColumn();
-  var values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
-
-  const hitRow = _findRowByKey(sheet, String(p.id), 1);
-
-  if (hitRow > 0){
-
-    return _json({status:"ok", mode:"秘鑰通過"});
+  return _json({ status: "error", msg: "error" });
+}
 
 function _listRecent2(sheet) {
   var lastRow = sheet.getLastRow();
