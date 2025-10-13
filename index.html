@@ -169,7 +169,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.1</div>
+  <div class="ver">版本：v1.5.3</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
@@ -228,7 +228,7 @@ function showOverlay(on){document.getElementById('overlay').style.display=on?'fl
 function submitData(p){
   const params=new URLSearchParams();
   params.append('action','submit');
-  params.append('user',p.uid);
+  params.append('uid',p.uid);
   params.append('key',p.key);
   params.append('date',p.date);
   params.append('shift',p.shift);
