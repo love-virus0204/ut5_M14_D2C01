@@ -277,17 +277,17 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       let base = ymdToSerial(now);
       if(mins<500) base = base - 1;
       limitSerial = base + Number(p.limit);
-      ymdShow = serialToYmd(limitSerial);
+      ymdShow = serialToYMD(limitSerial);
       p.tier = 0;
     }
 
     showMask();
     const fot=new URLSearchParams();
-    form.append('action','upsert');
-    form.append('id',p.id);
-    form.append('name',p.name);
-    form.append('tier',String(p.tier));
-    form.append('limit_date',String(limitSerial));
+    fot.append('action','upsert');
+    fot.append('id',p.id);
+    fot.append('name',p.name);
+    fot.append('tier',String(p.tier));
+    fot.append('limit_date',String(limitSerial));
 
     fetch(api_url,{method:'POST',body:fot})
       .then(r=>r.json())
