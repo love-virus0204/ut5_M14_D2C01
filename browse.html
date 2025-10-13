@@ -18,7 +18,10 @@ h1{margin:6px 0 8px;font-size:18px;letter-spacing:.08em;color:var(--accent);text
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .card{background:#0b1324;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .card h3{margin:0;padding:6px 8px;font-size:13px;color:#c7d2fe;border-bottom:1px solid var(--line);text-align:center}
-.table{max-height:48vh;overflow:auto}
+//.table{max-height:48vh;overflow:auto}
+//.table { overflow: visible; }
+.table{ overflow-y: visible;
+max-height:unset; }
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{padding:8px 10px;border-bottom:1px dashed #1f2a44;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 th{position:sticky;top:0;background:#0b1324;color:var(--sub)}
