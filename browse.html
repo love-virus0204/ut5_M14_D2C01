@@ -138,7 +138,7 @@ function render(groups){
     if (!list || !list.length){
       return `<div class="card"><h3>${h3}</h3><div class="empty">本日無資料</div></div>`;
     }
-    const rows = list.map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.dN)}</td></tr>`).join('');
+    const rows = list.map(r => `<tr><td>${esc(r.id)}</td><td>${esc(r.name)}</td><td>${esc(r.dN)}</td></tr>`).join('');
     return `
       <div class="card">
 
