@@ -43,16 +43,13 @@ function doPost(e){
     case "list_recent":
       return _listRecent(sheet);
 
-    case "list_recent3":
-      return _listRecent3(sheet);
+    case "list_recent2":
+      sheet = _sheet(sn_2);
+      return _listRecent2(sheet);
 
     case "auth_check":
       sheet = _sheet(sn_2);
       return _check(sheet,p);
-
-    case "list_recent2":
-      sheet = _sheet(sn_2);
-      return _listRecent2(sheet);
 
     case "submit":
     case "upsert":
@@ -80,22 +77,22 @@ function doPost(e){
       return _json({ status: "error", msg: "unknown_action" });
   }
 }
-/* 寫入1..7：命中 key 覆寫 1..7 */
+
 function _submit(sheet, p){
   var submittedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
   var row = [
-    submittedAt,   // 1
-    p.key,         // 2
-    p.date,        // 3
-    p.id,          // 4
-    p.shift,       // 5
-    p.dN,          // 6
-    p.user         // 7
+    submittedAt, // 1
+    p.key,       // 2
+    p.date,      // 3
+    p.id,        // 4
+    p.shift,     // 5
+    p.dN,        // 6
+    p.uid        // 7
   ];
 
   var hitRow = _findRowByKey(sheet, String(p.key), 2);
   if (hitRow > 0){
-    sheet.getRange(hitRow, 1, 1, 7).setValues([row]); // 覆寫 1..7
+    sheet.getRange(hitRow, 1, 1, 7).setValues([row]);
     sheet.getRange(hitRow, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
@@ -122,33 +119,9 @@ function _listRecent(sheet){
   const epoch = Date.UTC(1899,11,30);
   values.forEach(function(row, i){
     row[2] = _toSerialInt(row[2], epoch);
-    row.push(startRow + i);
+    //row.push(startRow + i);
   });
 
-  values.sort((a,b)=> a[9] - b[9]);
-
-  var fields = [
-"submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky","row"];
-
-  return _json({
-    status: "ok", fields: fields, values: values
-  });
-}
-
-/* 讀取：取底部 520 列， fields+values */
-function _listRecent3(sheet){
-  var lastRow = sheet.getLastRow();
-  if (lastRow < 2) {
-    return _json({status:"error", msg:"no_data"});
-  }
-  var lastCol  = sheet.getLastColumn();
-  var startRow = Math.max(2,lastRow - 519);
-  var rows     = lastRow - startRow + 1;
-  var values = sheet.getRange(startRow, 1, rows, lastCol).getValues();
-  const epoch = Date.UTC(1899,11,30);
-  values.forEach(function(row, i){
-    row[2] = _toSerialInt(row[2], epoch);
-  });
   var fields = [
 "submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky"];
 
