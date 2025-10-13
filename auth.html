@@ -85,7 +85,7 @@ async function verify(){
   if(!/^[A-Z0-9]{5}$/.test(uid)){msg.textContent="帳號格式錯誤";return;}
   if(!/^[A-Za-z0-9]{4,10}$/.test(pwd)){msg.textContent="密碼格式錯誤";return;}
   showOverlay(true);msg.textContent="";
-  const p=new URLSearchParams({action:"auth_check",id:uid,pwd});
+  const p=new URLSearchParams({action:"auth_check",id:uid,swd:pwd});
   try{
     const r=await fetch(api_url,{method:"POST",body:p});
     const j=await r.json();
