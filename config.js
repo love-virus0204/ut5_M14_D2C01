@@ -90,3 +90,9 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener(ev, window.onInteract, { once: true, passive: true });
   });
 });
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(r => console.log('SW registered', r.scope))
+    .catch(console.error);
+}
