@@ -187,14 +187,16 @@ function _check(sh, p) {
   const lastCol = sh.getLastColumn();
   const values = sh.getRange(2, 1, lastRow - 1, lastCol).getValues();
 
-  for (let i = 0; i < values.length; i++) {
-    const id = values[i][0];
-    const ps = values[i][6];
-    if (id === p.id && ps === p.swd) {
-      return _json({ status: "ok", mode: "秘鑰通過" });
-    }
+  const found = values.find(r => r[0] === p.id);
+  if (!found) {
+    return _json({ status: "error", msg: "用戶未登錄" });
   }
-  return _json({ status: "error", msg: "error" });
+
+  if (found[6] === p.swd) {
+    return _json({ status: "ok", mode: "秘鑰通過" });
+  }
+
+  return _json({ status: "error", msg: "密碼錯誤" });
 }
 
 function _listRecent2(sh) {
