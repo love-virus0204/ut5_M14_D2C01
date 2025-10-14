@@ -8,26 +8,13 @@
 <style>
 :root{
   --footer-h: 48px;
-  --bg:#0b1220;
-  --panel:#1a2333cc;
-  --glass:#1f2937aa;
-  --text:#e5e7eb;
-  --sub:#94a3b8;
+  --bg:#0b1220; --panel:#1a2333cc; --glass:#1f2937aa; --text:#e5e7eb; --sub:#94a3b8;
   --accent:#22d3ee;
 }
-html,body{
-  margin:0;
-  height:100svh;
-  background:radial-gradient(circle at top,#0b1725,#060b15 80%);
-  color:var(--text); font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
-  overflow:hidden;
-  overscroll-behavior:none;
-  box-sizing:border-box;
-  padding-bottom:calc(var(--footer-h) + env(safe-area-inset-bottom,0px));
-}
-*,*::before,*::after{ box-sizing:inherit; }
+html,body{ padding-bottom:var(--footer-h); margin:0;height:100%;background:radial-gradient(circle at top,#0b1725,#060b15 80%); color:var(--text);font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif; overflow-x:hidden;box-sizing:border-box; }
+*,*::before,*::after{box-sizing:inherit}
 header{ text-align:center;padding:16px 0;font-size:20px;font-weight:700;letter-spacing:.08em; background:linear-gradient(90deg,#0d1b2a,#1b263b);box-shadow:0 2px 10px rgba(0,0,0,.4); }
-main{display:block;padding:8px 0 0;overflow:auto;height: calc(100svh - var(--footer-h) - var(--header-h)); }
+main{display:block;padding:8px 0 0;overflow:visible;}
 .container{width:80%;max-width:480px;min-width:240px;margin:0 auto;}
 .panel{ width:100%;background:var(--panel);border-radius:20px;padding:20px;margin:0;
   box-shadow:0 0 25px rgba(0,0,0,.4),inset 0 0 15px rgba(255,255,255,.06);backdrop-filter:blur(8px);
@@ -115,8 +102,8 @@ main{display:block;padding:8px 0 0;overflow:auto;height: calc(100svh - var(--foo
   box-shadow:0 2px 6px rgba(0,0,0,.5) inset; filter:brightness(.95); }
 
 /* 草稿B（主體下方，無外框，置中） */
-.draftBo{ width:100%;
-max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8); border:none;border-radius:12px;padding:8px 6px;text-align:center;box-shadow:none; }
+.draftB{
+  width:100%;max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8); border:none;border-radius:12px;padding:8px 6px;text-align:center;box-shadow:none; }
 .line{padding:6px 8px;border-bottom:1px dashed #334155;font-size:13px;}
 .line:last-child{border-bottom:0;}
 .draftB .ok1 { color: #ea0000; }
@@ -137,7 +124,6 @@ max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8); border:none;bord
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;}
 .spinner{width:50px;height:50px;border-radius:50%;border:4px solid rgba(255,255,255,.3);border-top-color:var(--accent);animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
 #toast{
   position:fixed; left:50%; bottom:40%; transform:translateX(-50%) translateY(8px);
   padding:10px 16px; border-radius:10px; background:#0b1324cc; color:#e5e7eb;
@@ -192,19 +178,13 @@ max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8); border:none;bord
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.4</div>
+  <div class="ver">版本：v1.5.3</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
-
-<div id="toast"></div>
-<audio id="bgm" src="./mus/login1.mp3" preload="auto"></audio>
+  <audio id="bgm" src="./mus/login1.mp3" preload="auto"></audio>
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js', { scope: '/' })
-    .catch(console.error);
-}
   let lock_st = 0, selA='平日', selB='N';
   const DAYS = [];
   const cuton =  360; // 換日時間
@@ -223,7 +203,7 @@ function saveA(id){localStorage.setItem(DRAFTA_KEY,id);}
 function loadA(){return localStorage.getItem(DRAFTA_KEY)||'';}
 
 /* ===== 草稿B ===== */
-const DRAFTB_KEY='d2_draft_b_v2';
+const DRAFTB_KEY='d2_draft_b_v3';
 let DRAFTB = JSON.parse(localStorage.getItem(DRAFTB_KEY) || '[]');
 
 function saveB(item){
@@ -238,12 +218,12 @@ function renderB(arr) {
   if (!data.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
   list.innerHTML = data.map(x =>
-    `<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.msg}</div>`
+    `<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.status}</div>`
   ).join('');
 }
 
 /* ===== 狀態燈（GET） ===== */
-async function getGas(){
+async function probeStatus(){
   const gas=document.getElementById('dotGas'),ss=document.getElementById('dotSs'),sh=document.getElementById('dotSh');
   const set=(el,c)=>{el.classList.remove('ok','bad');el.classList.add(c);};
   try{
@@ -291,6 +271,7 @@ async function send(){
   catch(_){ ok=false; }
   showOverlay(false);
   let ts= now.slice(5, 16);
+
   const status = ok ? 'ok':'ng';
   const resultText = ok ? '上傳成功' : '連線失敗';
   const flag = !ok
@@ -305,6 +286,7 @@ async function send(){
   const bDisp = selB === 'N' ? '_' : selB;
   const aDisp = `${curr.b} - ${selB === 'N' ? '取消' : selA}`;
   saveB({ ts, id, a: aDisp, b: bDisp, msg:  `${resultText}`, flag });
+ playSFX(0);
  toast(ok ? `　${aDisp}　` : '送出失敗')
 }
 
@@ -337,7 +319,15 @@ function bindInput(){
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
-function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB); }
+function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
+
+function toast(msg, duration = 2200){
+  if(!en) return;
+  en.textContent = msg;
+  en.classList.add('show');
+  clearTimeout(en._t);
+  en._t = setTimeout(()=>en.classList.remove('show'), duration);
+}
 
 /* ===== 產生 7 天清單並灌入下拉 ===== */
 function fillDateSelect(){
@@ -358,7 +348,8 @@ function fillDateSelect(){
 }
 
 /* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded', () => { startClock();
+addEventListener('DOMContentLoaded', () => {
+  startClock();
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
   const bBtns = Array.from(document.querySelectorAll('[data-b]'));
   const sendBtn = document.getElementById('sendBtn');
@@ -370,24 +361,15 @@ addEventListener('DOMContentLoaded', () => { startClock();
   aBtns.forEach(b => b.addEventListener('click', onA));
   bBtns.forEach(b => b.addEventListener('click', onB));
   sendBtn.addEventListener('click', send);
-  fillDateSelect();
   enableSend();
+  fillDateSelect();
   checkCutoff();
   renderB(DRAFTB);
   bindInput();
-  getGas();
+  probeStatus();
   setInterval(startClock,1000);
   setInterval(checkCutoff, 5 * 60 * 1000);
 });
-
-function toast(msg, duration = 2200){
-  if(!en) return;
-  playSFX(0);
-  en.textContent = msg;
-  en.classList.add('show');
-  clearTimeout(en._t);
-  en._t = setTimeout(()=>en.classList.remove('show'), duration);
-}
 </script>
 </body>
 </html>
