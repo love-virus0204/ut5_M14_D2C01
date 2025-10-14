@@ -187,7 +187,12 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
 
 <div id="toast"></div>
+<audio id="bgm" src="./mus/Prontera.mp3" preload="auto" loop></audio>
 <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    .catch(console.error);
+}
   let lock_st = 0, selA='平日', selB='N';
   const DAYS = [];
   const cuton =  360; // 換日時間
@@ -199,6 +204,7 @@ const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 const en=document.getElementById('toast');
+const bgm = document.getElementById('bgm');
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -348,16 +354,9 @@ function playSFX() {
     console.warn('　');
   });
 }
-/* /Prontera.wav'); */
-function playBGM() {
-  const bgm = new Audio('./mus/Prontera.mp3');
-  bgm.loop = true;
-  bgm.volume = 0.5;
-  bgm.play().catch(() => {
-    console.warn('　');
-  });
-}
- playBGM();
+
+function playBGM(){ bgm.play().catch(()=>{}); }
+function stopBGM(){ bgm.pause(); }
 
 function waitForUserInteraction(callback) {
   const once = () => {
@@ -372,6 +371,7 @@ events.forEach(ev => document.addEventListener(ev, once, { once: true }));
 
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => { startClock();
+  waitForUserInteraction(playBGM);
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
   const bBtns = Array.from(document.querySelectorAll('[data-b]'));
   const sendBtn = document.getElementById('sendBtn');
@@ -383,7 +383,6 @@ addEventListener('DOMContentLoaded', () => { startClock();
   aBtns.forEach(b => b.addEventListener('click', onA));
   bBtns.forEach(b => b.addEventListener('click', onB));
   sendBtn.addEventListener('click', send);
-  waitForUserInteraction(playBGM);
   fillDateSelect();
   enableSend();
   checkCutoff();
