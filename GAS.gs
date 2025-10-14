@@ -78,7 +78,7 @@ function doPost(e){
   }
 }
 
-function _submit(sheet, p){
+function _submit(sh, p){
   var submittedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
   var row = [
     submittedAt, // 1
@@ -90,31 +90,31 @@ function _submit(sheet, p){
     p.uid        // 7
   ];
 
-  var hitRow = _findRowByKey(sheet, String(p.key), 2);
+  var hitRow = _findRowByKey(sh, String(p.key), 2);
   if (hitRow > 0){
-    sheet.getRange(hitRow, 1, 1, 7).setValues([row]);
-    sheet.getRange(hitRow, 3).setNumberFormat('mm/dd');
+    sh.getRange(hitRow, 1, 1, 7).setValues([row]);
+    sh.getRange(hitRow, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
-    sheet.appendRow(row);
+    sh.appendRow(row);
     var last = sheet.getLastRow();
-    sheet.getRange(last, 3).setNumberFormat('mm/dd');
+    sh.getRange(last, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
   }
 }
 
 /* 讀取：取底部 520 列， fields+values */
-function _listRecent(sheet){
-  var lastRow = sheet.getLastRow();
+function _listRecent(sh){
+  var lastRow = sh.getLastRow();
   if (lastRow < 2) {
     return _json({status:"error", msg:"no_data"});
   }
 
-  var lastCol  = sheet.getLastColumn();
+  var lastCol  = sh.getLastColumn();
   var startRow = Math.max(2,lastRow - 519);
   var rows     = lastRow - startRow + 1;
 
-  var values = sheet.getRange(startRow, 1, rows, lastCol).getValues();
+  var values = sh.getRange(startRow, 1, rows, lastCol).getValues();
 
   const epoch = Date.UTC(1899,11,30);
   values.forEach(function(row, i){
@@ -140,11 +140,11 @@ throw _json({ status: "error", msg: "sheet_not_found" });
 return sh;
 }
 
-function _findRowByKey(sheet, key, ct){
-  var lastRow = sheet.getLastRow();
+function _findRowByKey(sh, key, ct){
+  var lastRow = sh.getLastRow();
   if (lastRow < 2) return 0;
   var rows = lastRow - 1;
-  var keys  = sheet.getRange(2, ct, rows, 1).getValues();
+  var keys  = sh.getRange(2, ct, rows, 1).getValues();
   for (var i=0;i<rows;i++){
     if (String(keys[i][0]) === key) return i + 2;
   }
@@ -198,14 +198,14 @@ function _check(sh, p) {
   return _json({ status: "error", msg: "error" });
 }
 
-function _listRecent2(sheet) {
-  var lastRow = sheet.getLastRow();
+function _listRecent2(sh) {
+  var lastRow = sh.getLastRow();
   if (lastRow < 2) {
     return _json({ status: "error", msg: "no_data" });
   }
 
-  var lastCol = sheet.getLastColumn();
-  var values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+  var lastCol = sh.getLastColumn();
+  var values = sh.getRange(2, 1, lastRow - 1, lastCol).getValues();
 
   const epoch = Date.UTC(1899, 11, 30);
   const startRow = 2;
@@ -222,7 +222,7 @@ function _listRecent2(sheet) {
 }
 
 
-function _upsert(sheet, p){
+function _upsert(sh, p){
   const updatedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
 
   const row = [
@@ -234,16 +234,16 @@ function _upsert(sheet, p){
     p.uid          // F uid
   ];
 
-  const hitRow = _findRowByKey(sheet, String(p.id), 1);
+  const hitRow = _findRowByKey(sh, String(p.id), 1);
 
   if (hitRow > 0){
-    sheet.getRange(hitRow, 1, 1, 6).setValues([row]);
-    sheet.getRange(hitRow, 4).setNumberFormat('mm/dd');
+    sh.getRange(hitRow, 1, 1, 6).setValues([row]);
+    sh.getRange(hitRow, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
-    sheet.appendRow([...row, p.uid]);
-    const last = sheet.getLastRow();
-    sheet.getRange(last, 4).setNumberFormat('mm/dd');
+    sh.appendRow([row]);
+    const last = sh.getLastRow();
+    sh.getRange(last, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
   }
 }
