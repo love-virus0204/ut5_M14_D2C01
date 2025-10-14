@@ -256,6 +256,7 @@ function submitData(p){
 /* ===== 送出動作 ===== */
 async function send(){
   const curr = currentS();
+   playSFX(1);
   const uid = localStorage.getItem('user_id');
   if (!uid) {
     window.open('verify.html', '_blank');
