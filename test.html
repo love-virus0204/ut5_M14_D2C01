@@ -123,7 +123,7 @@ function _listRecent(sheet){
   });
 
   var fields = [
-"submittedAt","key","date","id","shift","dN","name","admin_id","deletedAt","lucky"];
+"submittedAt","key","date","id","shift","dN","name","uid","deletedAt","lucky"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -214,7 +214,7 @@ function _listRecent2(sheet) {
     row[3] = _toSerialInt(row[3], epoch);
   });
 
-  const fields = ["id", "name", "tier", "limit_date", "updatedAt", "admin_id", "pws"];
+  const fields = ["id", "name", "tier", "limit_date", "updatedAt", "uid", "pws"];
 
   return _json({
     status: "ok", fields: fields, values: values
@@ -231,7 +231,7 @@ function _upsert(sheet, p){
     p.tier,        // C tier
     p.limit_date,  // D limit_date
     updatedAt,     // E updatedAt
-    p.uid          // F admin_id
+    p.uid          // F uid
   ];
 
   const hitRow = _findRowByKey(sheet, String(p.id), 1);
