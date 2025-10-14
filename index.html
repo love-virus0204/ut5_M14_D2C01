@@ -319,7 +319,7 @@ function bindInput(){
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
-function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
+function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB); playBGM(); }
 
 /* ===== 產生 7 天清單並灌入下拉 ===== */
 function fillDateSelect(){
@@ -339,15 +339,6 @@ function fillDateSelect(){
   lock_st = 0;
 }
 
-function playBGM2() {
-  const audio = new Audio('./mus/Prontera.wav');
-  audio.loop = true;
-  audio.volume = 0.5;
-  audio.play().catch(() => {
-    console.warn('播放被阻擋，等待互動');
-  });
-}
-
 function playSFX() {
   const audio = new Audio('./mus/levelup.wav');
   audio.loop = false;
@@ -356,7 +347,7 @@ function playSFX() {
     console.warn('　');
   });
 }
-/* const bgm = new Audio('./mus/Prontera.wav'); */
+/* /Prontera.wav'); */
 function playBGM() {
   const audio = new Audio('./mus/levelup.wav');
   audio.loop = false;
@@ -367,8 +358,7 @@ function playBGM() {
 }
 
 /* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded', () => {
-  startClock();
+addEventListener('DOMContentLoaded', () => { startClock();
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
   const bBtns = Array.from(document.querySelectorAll('[data-b]'));
   const sendBtn = document.getElementById('sendBtn');
@@ -382,7 +372,6 @@ addEventListener('DOMContentLoaded', () => {
   sendBtn.addEventListener('click', send);
   fillDateSelect();
   enableSend();
-  playBGM();
   checkCutoff();
   renderB(DRAFTB);
   bindInput();
