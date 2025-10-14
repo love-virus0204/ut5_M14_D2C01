@@ -106,25 +106,22 @@ button:active{
   <br>
   <div class="msg" id="msg"></div>
 </div>
-<div class="overlay" id="overlay"><div class="spinner"></div></div>
+  <div class="overlay" id="overlay"><div class="spinner"></div></div>
 
-<audio id="bgm" src="./mus/login3.mp3" preload="auto"></audio>
+  <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
 <script>
+  bgm.src = './mus/login3.mp3';
+  bgm.load();
 
-const uid = localStorage.getItem('user_id');
-if (uid) {
-  window.close();
-
-  // 若無法自動關閉（非腳本開啟頁面）
+  const uid = localStorage.getItem('user_id');
+if (uid) { window.close();
   setTimeout(() => {
     if (!window.closed) {
-      alert('請點擊「確定」以關閉視窗');
+      alert('請點擊「確定」');
       window.close();
     }
   }, 100);
 }
-
-
 
 /* 基本環境檢查 */
 const overlay=document.getElementById('overlay');
