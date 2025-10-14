@@ -341,7 +341,7 @@ function fillDateSelect(){
 
 function playBGM() {
   const audio = new Audio('./mus/Prontera.wav');
-  audio.loop = false;
+  audio.loop = true;
   audio.volume = 0.5;
   audio.play().catch(() => {
     console.warn('播放被阻擋，等待互動');
