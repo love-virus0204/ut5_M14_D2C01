@@ -187,6 +187,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 
 <div id="toast"></div>
 <audio id="bgm" src="./mus/Prontera.wav" loop></audio>
+<audio id="sfx" src="./mus/levelup.wav"></audio>
 <script>
   let lock_st = 0, selA='平日', selB='N';
   const DAYS = [];
@@ -200,6 +201,7 @@ const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 const en=document.getElementById('toast');
 const bgm=document.getElementById('bgm');
+const sfx=document.getElementById('sfx');
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -289,7 +291,7 @@ async function send(){
   const bDisp = selB === 'N' ? '_' : selB;
   const aDisp = `${curr.b} - ${selB === 'N' ? '取消' : selA}`;
   saveB({ ts, id, a: aDisp, b: bDisp, msg:  `${resultText}`, flag });
- toast(ok ? `已送出（${selA} / ${selB}）` : '失敗')
+ toast(ok ? `　${aDisp}　` : '送出失敗')
 }
 
 function currentS() {
