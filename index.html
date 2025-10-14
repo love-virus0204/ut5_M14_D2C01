@@ -106,9 +106,6 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   width:100%;max-width:640px;margin:6px auto 0;background:rgba(15,23,42,.8); border:none;border-radius:12px;padding:8px 6px;text-align:center;box-shadow:none; }
 .line{padding:6px 8px;border-bottom:1px dashed #334155;font-size:13px;}
 .line:last-child{border-bottom:0;}
-#line .line {
-  font-family: monospace;
-  white-space: pre; }
 .draftB .ok1 { color: #ea0000; }
 .draftB .ok2 { color: #00db00; }
 .draftB .xd  { color: #ffd700; }
@@ -225,9 +222,14 @@ function renderB(arr) {
   if (!data.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
   list.innerHTML = data.map(x =>
-    `<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.msg}</div>`
-  ).join('');
-}
+    `<div class="line">
+       <div>${x.ts}</div>
+       <div>${x.id}</div>
+       <div>${x.a}</div>
+       <div>${x.b}</div>
+       <div>${x.msg}</div>
+     </div>`
+).join(''); }
 
 /* ===== 狀態燈（GET） ===== */
 async function probeStatus(){
