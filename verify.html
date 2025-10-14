@@ -1,8 +1,21 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<script src="./config.js"></script>
 <meta charset="utf-8">
+<script src="./config.js"></script>
+<script>
+const uid = localStorage.getItem('user_id');
+if (uid) closeOrN(); 
+function closeOrN() {
+  window.close();
+  setTimeout(() => {
+    if (!window.closed) {
+      if (history.length > 1) history.back();
+      else location.href = 'index.html';
+    }
+  }, 120);
+}
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Google</title>
 <style>
@@ -110,9 +123,6 @@ button:active{
 
   <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
 <script>
-const uid = localStorage.getItem('user_id');
-if (uid) closeOrN(); 
-
 /* 基本環境檢查 */
 bgm.src = './mus/login3.mp3';
 bgm.load();
@@ -126,17 +136,6 @@ const uidEl=document.getElementById('uid');
 uidEl.addEventListener('input',()=>{
   uidEl.value=uidEl.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
 });
-
-
-function closeOrN() {
-  window.close();
-  setTimeout(() => {
-    if (!window.closed) {
-      if (history.length > 1) history.back();
-      else location.href = 'index.html';
-    }
-  }, 120);
-}
 
 /* 驗證邏輯 */
 let verifying = false;
