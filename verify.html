@@ -13,12 +13,19 @@
   --text:#e5e7eb;
   --sub:#9ca3af; }
 
-html,body{
-  margin:0; background:#000;
+html{ height: 100%; }
+body{ margin:0; background:#000;
+  overflow-y: hidden;
+  min-height:100svh;
+  overscroll-behavior: none;
   color:var(--text);
   font-family:system-ui,"PingFang TC","Microsoft JhengHei",sans-serif;
   display:flex;justify-content:center;
-  align-items:flex-start; min-height:100svh; }
+  align-items:flex-start; }
+@supports (-webkit-touch-callout: none) {
+  body{ position:fixed; inset:0; width:100vw; }
+}
+
 .container{
 margin-top:11svh; width:90%;
 max-width:380px;min-width:240px;
