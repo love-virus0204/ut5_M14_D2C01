@@ -348,14 +348,8 @@ function playSFX() {
   });
 }
 /* /Prontera.wav'); */
+const audio = new Audio('./mus/levelup.wav');
 function playBGM() {
-  let audio = new Audio('./mus/levelup.wav');
-  audio.loop = false;
-  audio.volume = 0;
-  audio.play().catch(() => {
-    console.warn('　');
-  });
-  let audio = new Audio('./mus/levelup.wav');
   audio.loop = false;
   audio.volume = 0.5;
   audio.play().catch(() => {
