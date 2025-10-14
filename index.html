@@ -357,8 +357,6 @@ function playBGM() {
   }).catch(() => console.warn('播放被阻擋'));
 }
 
-addEventListener('DOMContentLoaded', playBGM);
-
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
   startClock();
@@ -375,6 +373,7 @@ addEventListener('DOMContentLoaded', () => {
   sendBtn.addEventListener('click', send);
   fillDateSelect();
   enableSend();
+  playBGM();
   checkCutoff();
   renderB(DRAFTB);
   bindInput();
