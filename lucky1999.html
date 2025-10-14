@@ -155,6 +155,8 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 
 <audio id="bgm" src="./mus/Prontera.mp3" preload="auto"></audio>
 <script>
+bgm.src = './mus/Detektiv.mp3';
+bgm.load();
 /* ===== 綁定 ===== */
 document.getElementById('btnRead').onclick=reloadData;
 document.getElementById('btnDraw').onclick=draw;
