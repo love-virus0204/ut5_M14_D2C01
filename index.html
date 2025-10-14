@@ -339,7 +339,7 @@ function fillDateSelect(){
   lock_st = 0;
 }
 
-function playBGM() {
+function playBGM2() {
   const audio = new Audio('./mus/Prontera.wav');
   audio.loop = true;
   audio.volume = 0.5;
@@ -347,7 +347,17 @@ function playBGM() {
     console.warn('播放被阻擋，等待互動');
   });
 }
-playBGM();
+
+function playBGM() {
+  const bgm = new Audio('./mus/Prontera.wav');
+  bgm.loop = true;
+  bgm.volume = 0.0;
+  bgm.play().then(() => {
+    setTimeout(() => { bgm.volume = 0.5; }, 500);
+  }).catch(() => console.warn('播放被阻擋'));
+}
+
+addEventListener('DOMContentLoaded', playBGM);
 
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
