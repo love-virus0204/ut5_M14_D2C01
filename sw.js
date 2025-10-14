@@ -1,9 +1,12 @@
 // sw.js
-const CACHE = 'app-v1.1';
+const CACHE = 'app-v1.2';
 const ASSETS = [
   './mus/Prontera.mp3',
   './mus/levelup.wav',
-  './mus/login2.wav
+  './mus/login1.mp3',
+  './mus/login2.wav',
+  './mus/login3.mp3'
+
 ];
 
 self.addEventListener('install', e => {
