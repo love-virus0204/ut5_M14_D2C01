@@ -346,19 +346,9 @@ function fillDateSelect(){
   lock_st = 0;
 }
 
-function playSFX() {
-  const audio = new Audio('./mus/levelup.wav');
-  audio.loop = false;
-  audio.volume = 0.8;
-  audio.play().catch(() => {
-    console.warn('　');
-  });
-}
-
 function playBGM() {
   bgm.volume = 0.5;
   bgm.play().then(() => {
-    // 播放成功後移除所有監聽
     events.forEach(ev => window.removeEventListener(ev, onInteract, { passive:true }));
   }).catch(() => {
     console.warn('GG');
@@ -378,7 +368,6 @@ events.forEach(ev => window.addEventListener(ev, onInteract, { passive:true }));
 
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => { startClock();
-
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
   const bBtns = Array.from(document.querySelectorAll('[data-b]'));
   const sendBtn = document.getElementById('sendBtn');
@@ -402,23 +391,11 @@ addEventListener('DOMContentLoaded', () => { startClock();
 
 function toast(msg, duration = 2200){
   if(!en) return;
-  playSFX();
+  playSFX(0);
   en.textContent = msg;
   en.classList.add('show');
   clearTimeout(en._t);
   en._t = setTimeout(()=>en.classList.remove('show'), duration);
-}
-
-
-
-function toast2(msg, duration = 2200) {
-  if (!en) return;
-  en.textContent = msg;
-  en.classList.add('show');
-  const audio = new Audio('./mus/levelup.wav');
-  audio.loop = false;
-  audio.play().catch(() => {});
-  setTimeout(() => en.classList.remove('show'), duration);
 }
 </script>
 </body>
