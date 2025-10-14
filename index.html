@@ -124,6 +124,15 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;}
 .spinner{width:50px;height:50px;border-radius:50%;border:4px solid rgba(255,255,255,.3);border-top-color:var(--accent);animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+#toast{
+  position:fixed; left:50%; bottom:64px; transform:translateX(-50%) translateY(8px);
+  padding:10px 16px; border-radius:10px; background:#0b1324cc; color:#e5e7eb;
+  border:1px solid #334155; box-shadow:0 6px 20px rgba(0,0,0,.35);
+  font-weight:700; letter-spacing:.04em; z-index:9999;
+  opacity:0; transition:opacity .2s ease, transform .2s ease; pointer-events:none;
+}
+#toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -176,24 +185,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
 
-<div id="toast" role="status" aria-live="polite">—</div>
-<audio id="toastSound" preload="auto" src="./mus/levelup.wav"></audio>
-<style>
-#toast{
-  position:fixed; left:50%; bottom:240px; transform:translateX(-50%);
-  background:rgba(0,0,0,.85); color:#fff; padding:10px 16px;
-  border-radius:10px; font-size:14px; letter-spacing:.03em;
-  box-shadow:0 10px 30px rgba(0,0,0,.35); z-index:9999;
-  opacity:0; pointer-events:none;
-}
-@keyframes toast-pop{
-  0%{opacity:0; transform:translate(-50%,40px)}
-  20%{opacity:1; transform:translate(-50%,0)}
-  80%{opacity:1; transform:translate(-50%,0)}
-  100%{opacity:0; transform:translate(-50%,20px)}
-}
-#toast.show{ animation:toast-pop 2.2s ease forwards; }
-</style>
+<div id="toast"></div>
 <script>
   let lock_st = 0, selA='平日', selB='N';
   const DAYS = [];
@@ -206,8 +198,6 @@ const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 const en=document.getElementById('toast');
-const snd = document.getElementById('toastSound');
-
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -376,12 +366,7 @@ addEventListener('DOMContentLoaded', () => {
 function toast(msg, duration = 2200){
   if(!en) return;
   en.textContent = msg;
-  en.classList.remove('show');
-  void el.offsetWidth;
-  el.classList.add('show');
-
-  if (snd) { try { snd.currentTime = 0; snd.play(); } catch(_){} }
-
+  en.classList.add('show');
   clearTimeout(en._t);
   en._t = setTimeout(()=>en.classList.remove('show'), duration);
 }
