@@ -2,7 +2,8 @@
 const CACHE = 'app-v1.1';
 const ASSETS = [
   './mus/Prontera.mp3',
-  './mus/levelup.wav'
+  './mus/levelup.wav',
+  './mus/login2.wav
 ];
 
 self.addEventListener('install', e => {
