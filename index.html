@@ -375,6 +375,7 @@ addEventListener('DOMContentLoaded', () => {
 
 function toast(msg, duration = 2200){
   if(!en) return;
+  playBGM();
   en.textContent = msg;
   en.classList.add('show');
   clearTimeout(en._t);
