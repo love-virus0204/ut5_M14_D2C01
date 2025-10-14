@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <title>音樂播放測試</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: system-ui, "Microsoft JhengHei";
+      text-align: center;
+      padding-top: 20vh;
+    }
+    button {
+      background: #0af;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { background: #09c; }
+  </style>
+</head>
+<body>
+  <h1>🎵 音樂播放測試</h1>
+  <p>請確保與本頁同資料夾有 <code>levelup.wma</code></p>
+  <audio id="player" src="levelup.wma"></audio>
+  <div style="margin-top:20px;">
+    <button id="playBtn">播放 / 暫停</button>
+  </div>
+
+  <script>
+    const audio = document.getElementById('player');
+    const btn = document.getElementById('playBtn');
+
+    btn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play().catch(err => alert("播放失敗：" + err.message));
+      } else {
+        audio.pause();
+      }
+    });
+  </script>
+</body>
+</html>
