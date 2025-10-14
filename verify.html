@@ -13,14 +13,21 @@
   --text:#e5e7eb;
   --sub:#9ca3af; }
 
-html,body{
+html{ overflow:visible; }
+body{
+  margin:0;
+  min-height:100svh;
+  width:100%;
   overflow-x:visible;
-  overflow-y:hidden; 
-  margin:0; background:#000;
+  overflow-y:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  background:#000;
   color:var(--text);
   font-family:system-ui,"PingFang TC","Microsoft JhengHei",sans-serif;
-  display:flex;justify-content:center;
-  align-items:flex-start; min-height:100svh; }
+  box-sizing:border-box; }
+
 .container{
 margin-top:11svh; width:90%;
 max-width:380px;min-width:240px;
