@@ -76,7 +76,7 @@ window.playSFX = function(i){
 window.playBGM = function () {
   const bgm = document.getElementById('bgm');
   if (!bgm) return;
-  bgm.volume = 0.5;
+  bgm.volume = 0.7;
   bgm.play().catch(() => {}); };
 
 window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
