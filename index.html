@@ -353,14 +353,13 @@ function playSFX() {
   audio.loop = false;
   audio.volume = 0.8;
   audio.play().catch(() => {
-    console.warn('');
+    console.warn('　');
   });
 }
-
+/* const bgm = new Audio('./mus/Prontera.wav'); */
 function playBGM() {
- // const bgm = new Audio('./mus/Prontera.wav');
-  const audio = new Audio('./mus/levelup.wav');
-  bgm.loop = true;
+  const bgm = new Audio('./mus/levelup.wav');
+  bgm.loop = false;
   bgm.volume = 0.0;
   bgm.play().then(() => {
     setTimeout(() => { bgm.volume = 0.5; }, 500);
