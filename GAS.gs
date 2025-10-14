@@ -68,8 +68,7 @@ function doPost(e){
             sheet = _sheet(sn_2);
             const rankedIds = _buildLuckyRanks(sheet);
             sheet = _sheet(sn_1);
-            const dateSerial = Number(p.dateSerial);
-            return _drawLucky(sheet, dateSerial, rankedIds);
+            return _drawLucky(sheet, p, rankedIds);
         }
       });
 
