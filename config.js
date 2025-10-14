@@ -63,7 +63,7 @@ window.SOUND_LIST = [
 ];
 
 /* ===== 播放指定索引 ===== */
-window.playSound = function(i){
+window.playSFX = function(i){
   const src = SOUND_LIST[i];
   if(!src) return;
   const a = new Audio(src);
