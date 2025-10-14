@@ -71,3 +71,22 @@ window.playSFX = function(i){
   a.loop = false;
   a.play().catch(()=>{});
 };
+
+
+window.playBGM function () {
+  if (!bgm) return;
+  bgm.volume = 0.5;
+  bgm.play().then(() => {
+    events.forEach(ev => window.removeEventListener(ev, onInteract, { passive:true }));
+  }).catch(() => {
+    console.warn('GG');
+  });
+}
+
+// 通用互動事件列表（Chrome、行動端都吃）
+window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
+
+// 互動觸發函式
+window.onInteract function () {
+  playBGM();
+}
