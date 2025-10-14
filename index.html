@@ -361,6 +361,17 @@ function playBGM() {
   }).catch(() => console.warn('播放被阻擋'));
 }
 
+function waitForUserInteraction(callback) {
+  const once = () => {
+    callback();
+    events.forEach(ev => document.removeEventListener(ev, once));
+  };
+
+  const events = ['click','touchstart','touchmove','mousedown','keydown','wheel','scroll','mousemove'];
+
+events.forEach(ev => document.addEventListener(ev, once, { once: true }));
+}
+
 playBGM();
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => { startClock();
@@ -381,6 +392,7 @@ addEventListener('DOMContentLoaded', () => { startClock();
   renderB(DRAFTB);
   bindInput();
   probeStatus();
+waitForUserInteraction(playBGM);
   setInterval(startClock,1000);
   setInterval(checkCutoff, 5 * 60 * 1000);
 });
