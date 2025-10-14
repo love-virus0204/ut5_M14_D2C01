@@ -342,6 +342,15 @@ addEventListener('DOMContentLoaded', () => {
   setInterval(startClock,1000);
   //setInterval(checkCutoff, 5 * 60 * 1000);
 });
+
+function toast(msg, duration = 2200){
+  if(!en) return;
+  playSFX(0);
+  en.textContent = msg;
+  en.classList.add('show');
+  clearTimeout(en._t);
+  en._t = setTimeout(()=>en.classList.remove('show'), duration);
+}
 </script>
 </body>
 </html>
