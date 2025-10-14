@@ -111,7 +111,7 @@ button:active{
   <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
 <script>
 const uid = localStorage.getItem('user_id');
-if (uid) closeOrNavigate(); 
+if (uid) closeOrN(); 
 
 /* 基本環境檢查 */
 bgm.src = './mus/login3.mp3';
@@ -128,7 +128,7 @@ uidEl.addEventListener('input',()=>{
 });
 
 
-function closeOrNavigate() {
+function closeOrN() {
   window.close();
   setTimeout(() => {
     if (!window.closed) {
@@ -139,47 +139,63 @@ function closeOrNavigate() {
 }
 
 /* 驗證邏輯 */
+let verifying = false;
 async function verify(){
+  if (verifying) return;
   playSFX(1);
-  const uid=document.getElementById('uid').value.trim().toUpperCase();
-  const pwd=document.getElementById('pwd').value.trim();
-  if(!/^[A-Z0-9]{5}$/.test(uid)){msg.textContent="account error";return;}
-  if(!/^[A-Za-z0-9]{4,10}$/.test(pwd)){msg.textContent="authentication failed";return;}
 
+  const $uid = document.getElementById('uid');
+  const $pwd = document.getElementById('pwd');
+  const uid = $uid.value.trim().toUpperCase();
+  const pwd = $pwd.value.trim();
+
+  if (!/^[A-Z0-9]{5}$/.test(uid)) { msg.textContent = 'account error'; return; }
+  if (!/^[A-Za-z0-9]{4,10}$/.test(pwd)) { msg.textContent = 'authentication failed'; return; }
+
+  verifying = true;
   showOverlay(true);
   msg.textContent = '';
 
   const p = new URLSearchParams({ action: 'auth_check', id: uid, swd: pwd });
 
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 12000);
+
   try {
-    const r = await fetch(api_url, { method: 'POST', body: p } );
+    const r = await fetch(api_url, { method: 'POST', body: p, signal: ctl.signal });
+    if (!r.ok) throw new Error('bad_http');
     const j = await r.json();
+
+    if (j.status === 'ok' && j.mode === '秘鑰通過') {
+      saveUser(uid);
+      msg.style.color = '#22c55e';
+      msg.textContent = '驗證成功，3 秒後關閉...';
+      setTimeout(closeOrNavigate, 3000);
+      return;
+    }
+
+    if (j.status === 'error' && j.msg === '密碼錯誤') {
+      msg.style.color = '#ef4444';
+      msg.textContent = '密鑰錯誤';
+      $pwd.value = '';
+      return;
+    }
+
+    if (j.status === 'error' && (j.msg === '用戶未登錄' || j.msg === 'no_data')) {
+      msg.style.color = '#f59e0b';
+      msg.textContent = j.msg;
+      return;
+    }
+
+    msg.style.color = '#facc15';
+    msg.textContent = '伺服器錯誤';
+  } catch {
+    msg.style.color = '#facc15';
+    msg.textContent = '網路連線失敗';
+  } finally {
+    clearTimeout(t);
     showOverlay(false);
-
-  if (j.status === 'ok' && j.mode === '秘鑰通過') {
-    saveUser(uid);
-    msg.style.color = '#22c55e';
-    msg.textContent = '驗證成功，3 秒後關閉...';
-    setTimeout(closeOrNavigate, 3000);
-    return; }
-
-  if (j.status === 'error' && j.msg === '密碼錯誤') {
-    msg.style.color = '#ef4444';
-    msg.textContent = '密碼錯誤';
-    document.getElementById('pwd').value = '';
-    return; }
-
-  if (j.status === 'error' && (j.msg === '用戶未登錄' || j.msg === 'no_data')) {
-    msg.style.color = '#f59e0b';
-    msg.textContent = j.msg;
-    return; }
-
-  msg.style.color = '#facc15';
-  msg.textContent = '伺服器錯誤';
-  return; } catch {
-  showOverlay(false);
-  msg.style.color = '#facc15';
-  msg.textContent = '網路連線失敗';
+    verifying = false;
   }
 }
 
