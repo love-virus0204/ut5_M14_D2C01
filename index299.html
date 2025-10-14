@@ -276,8 +276,9 @@ async function send(){
   const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
   const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
   saveB({ ts, id, a: aDisp, b: selB, status, flag });
+
  playSFX(0);
- toast(ok ? `已送出（${selA}/${selB}）` : '失敗')
+ toast(ok ? `　${aDisp}　` : '送出失敗')
 }
 
 function currentS() {
