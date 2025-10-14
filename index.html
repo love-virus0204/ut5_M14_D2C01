@@ -319,7 +319,7 @@ function bindInput(){
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
-function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB); playBGM(); }
+function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB); }
 
 /* ===== 產生 7 天清單並灌入下拉 ===== */
 function fillDateSelect(){
@@ -356,7 +356,7 @@ function playBGM() {
     console.warn('　');
   });
 }
-
+playBGM();
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => { startClock();
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
