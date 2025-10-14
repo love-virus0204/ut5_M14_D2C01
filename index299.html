@@ -184,8 +184,11 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
   <div id="toast"></div>
-  <audio id="bgm" src="./mus/login1.mp3" preload="auto"></audio>
+
+  <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
 <script>
+  bgm.src = './mus/login1.mp3';
+  bgm.load();
   let lock_st = 0, selA='平日', selB='N';
   const DAYS = [];
   const cuton =  360; // 換日時間
