@@ -110,6 +110,10 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 .draftB .ok2 { color: #00db00; }
 .draftB .xd  { color: #ffd700; }
 .draftB .ng  { color: #00ffff; }
+#draftB .line {
+  font-family: monospace;
+  white-space: pre;
+}
 
 /* 底部狀態列 */
 .footerbar{ height:var(--footer-h);position:fixed;left:0;bottom:0;width:100%;display:flex;justify-content:space-between;align-items:center;
@@ -221,7 +225,7 @@ function renderB(arr) {
   const data = arr;
   if (!data.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
-  list.innerHTML = data.map(x =>
+  //list.innerHTML = data.map(x =>
     `<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.msg}</div>`
   ).join('');
 }
