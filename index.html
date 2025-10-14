@@ -378,7 +378,7 @@ function toast(msg, duration = 2200) {
   if (!en) return;
   en.textContent = msg;
   en.classList.add('show');
-  const audio = new Audio('./levelup.wav');
+  const audio = new Audio('./mus/levelup.wav');
   audio.loop = false;
   audio.play().catch(() => {});
   setTimeout(() => en.classList.remove('show'), duration);
