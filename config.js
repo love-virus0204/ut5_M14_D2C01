@@ -73,20 +73,20 @@ window.playSFX = function(i){
 };
 
 
-window.playBGM function () {
+window.playBGM = function () {
+  const bgm = document.getElementById('bgm');
   if (!bgm) return;
   bgm.volume = 0.5;
-  bgm.play().then(() => {
-    events.forEach(ev => window.removeEventListener(ev, onInteract, { passive:true }));
-  }).catch(() => {
-    console.warn('GG');
-  });
-}
+  bgm.play().catch(() => {}); };
 
-// 通用互動事件列表（Chrome、行動端都吃）
 window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 
-// 互動觸發函式
-window.onInteract function () {
+window.onInteract = function () {
   playBGM();
-}
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  window.events.forEach(ev => {
+    window.addEventListener(ev, window.onInteract, { once: true, passive: true });
+  });
+});
