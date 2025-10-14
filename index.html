@@ -350,10 +350,10 @@ function playBGM2() {
 
 function playSFX() {
   const audio = new Audio('./mus/levelup.wav');
-  audio.loop = true;
+  audio.loop = false;
   audio.volume = 0.8;
   audio.play().catch(() => {
-    console.warn('播放被阻擋，等待互動');
+    console.warn('');
   });
 }
 
@@ -363,7 +363,7 @@ function playBGM() {
   bgm.volume = 0.0;
   bgm.play().then(() => {
     setTimeout(() => { bgm.volume = 0.5; }, 500);
-  }).catch(() => console.warn('播放被阻擋'));
+  }).catch(() => console.warn('播放器被阻'));
 }
 
 /* ===== 啟動 ===== */
