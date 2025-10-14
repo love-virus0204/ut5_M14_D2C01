@@ -348,6 +348,15 @@ function playBGM2() {
   });
 }
 
+function playSFX() {
+  const audio = new Audio('./mus/levelup.wav');
+  audio.loop = true;
+  audio.volume = 0.8;
+  audio.play().catch(() => {
+    console.warn('播放被阻擋，等待互動');
+  });
+}
+
 function playBGM() {
   const bgm = new Audio('./mus/Prontera.wav');
   bgm.loop = true;
@@ -384,7 +393,7 @@ addEventListener('DOMContentLoaded', () => {
 
 function toast(msg, duration = 2200){
   if(!en) return;
-  playBGM();
+  playSFX();
   en.textContent = msg;
   en.classList.add('show');
   clearTimeout(en._t);
