@@ -180,7 +180,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.3</div>
+  <div class="ver">版本：v1.5.4</div>
   <div class="clock" id="clock">--/-- --:--:--</div>
 </div>
 
@@ -204,7 +204,6 @@ const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 const en=document.getElementById('toast');
-const bgm = document.getElementById('bgm');
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -345,9 +344,6 @@ function fillDateSelect(){
   sel.focus();
   lock_st = 0;
 }
-
-// 掛上監聽（任何互動都可觸發）
-events.forEach(ev => window.addEventListener(ev, onInteract, { passive:true }));
 
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => { startClock();
