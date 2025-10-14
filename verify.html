@@ -19,6 +19,9 @@ html,body{
   font-family:system-ui,"PingFang TC","Microsoft JhengHei",sans-serif;
   display:flex;justify-content:center;
   align-items:flex-start; min-height:100svh; }
+@supports (-webkit-touch-callout: none) {
+  body{ position:fixed; inset:0; width:100vw; }
+}
 .container{
 margin-top:11svh; width:90%;
 max-width:380px;min-width:240px;
