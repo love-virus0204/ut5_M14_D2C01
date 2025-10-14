@@ -358,7 +358,8 @@ function playSFX() {
 }
 
 function playBGM() {
-  const bgm = new Audio('./mus/Prontera.wav');
+ // const bgm = new Audio('./mus/Prontera.wav');
+  const audio = new Audio('./mus/levelup.wav');
   bgm.loop = true;
   bgm.volume = 0.0;
   bgm.play().then(() => {
