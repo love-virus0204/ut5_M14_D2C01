@@ -3,7 +3,7 @@
 <head>
 <script src="./config2.js"></script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ID與設備驗證</title>
 <style>
 :root{
@@ -13,14 +13,16 @@
   --text:#e5e7eb;
   --sub:#9ca3af; }
 
-html,body{
+html,body{ -webkit-text-size-adjust:100%;
+overflow-x:hidden
   margin:0; background:#000;
   color:var(--text);
   font-family:system-ui,"PingFang TC","Microsoft JhengHei",sans-serif;
   display:flex;justify-content:center;
-  align-items:flex-start; min-height:100svh; }
+  align-items:flex-start; min-height:100svh; } *,*::before,*::after{box-sizing:border-box}
 @supports (-webkit-touch-callout: none) {
   body{ position:fixed; inset:0; }
+width:100svh;
 }
 .container{
 margin-top:11svh; width:90%;
