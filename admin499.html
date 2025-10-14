@@ -266,7 +266,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       window.open('verify.html', '_blank');
       return; }
     const p={
-      uid:uid
+      uid:uid,
       id:(idEl.value||'').trim().toUpperCase(),
       name:(nameEl.value||'').trim(),
       tier:parseInt(tierEl.value,10),
@@ -289,7 +289,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
     showMask();
     const fot=new URLSearchParams();
     fot.append('action','upsert');
-    fot.append('user',p.uid);
+    fot.append('uid',p.uid);
     fot.append('id',p.id);
     fot.append('name',p.name);
     fot.append('tier',String(p.tier));
