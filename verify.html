@@ -111,10 +111,14 @@ button:active{
   <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
 <script>
 const uid = localStorage.getItem('user_id');
-if (uid) { window.close();
+if (uid) {
+  window.close();
   setTimeout(() => {
     if (!window.closed) {
-      location.href = 'index.html'; }
+      if (history.length > 1)
+        history.back();
+      else location.href = 'index.html';
+    }
   }, 100);
 }
 
