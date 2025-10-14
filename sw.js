@@ -1,6 +1,7 @@
 // sw.js
-const CACHE = 'app-v1.4';
+const CACHE = 'app-v1.5';
 const ASSETS = [
+  './mus/Detektiv.mp3',
   './mus/Prontera.mp3',
   './mus/levelup.wav',
   './mus/login1.mp3',
