@@ -358,12 +358,12 @@ function playSFX() {
 }
 /* const bgm = new Audio('./mus/Prontera.wav'); */
 function playBGM() {
-  const bgm = new Audio('./mus/levelup.wav');
-  bgm.loop = false;
-  bgm.volume = 0.0;
-  bgm.play().then(() => {
-    setTimeout(() => { bgm.volume = 0.5; }, 500);
-  }).catch(() => console.warn('播放器被阻'));
+  const audio = new Audio('./mus/levelup.wav');
+  audio.loop = false;
+  audio.volume = 0.5;
+  audio.play().catch(() => {
+    console.warn('　');
+  });
 }
 
 /* ===== 啟動 ===== */
