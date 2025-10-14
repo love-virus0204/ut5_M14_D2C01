@@ -1,4 +1,5 @@
-function _drawLucky(sh, dateSerial, rankedIds,p) {
+function _drawLucky(sh, p, rankedIds,p) {
+  const dateSerial = Number(p.dateSerial);
   const epoch = Date.UTC(1899,11,30);
   const now = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
 
