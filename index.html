@@ -225,7 +225,7 @@ function renderB(arr) {
 }
 
 /* ===== 狀態燈（GET） ===== */
-async function probeStatus(){
+async function getGas(){
   const gas=document.getElementById('dotGas'),ss=document.getElementById('dotSs'),sh=document.getElementById('dotSh');
   const set=(el,c)=>{el.classList.remove('ok','bad');el.classList.add(c);};
   try{
@@ -369,7 +369,6 @@ function waitForUserInteraction(callback) {
 events.forEach(ev => document.addEventListener(ev, once, { once: true }));
 }
 
-playBGM();
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => { startClock();
   const aBtns = Array.from(document.querySelectorAll('[data-a]'));
@@ -383,13 +382,13 @@ addEventListener('DOMContentLoaded', () => { startClock();
   aBtns.forEach(b => b.addEventListener('click', onA));
   bBtns.forEach(b => b.addEventListener('click', onB));
   sendBtn.addEventListener('click', send);
+  waitForUserInteraction(playBGM);
   fillDateSelect();
   enableSend();
   checkCutoff();
   renderB(DRAFTB);
   bindInput();
-  probeStatus();
-waitForUserInteraction(playBGM);
+  getGas();
   setInterval(startClock,1000);
   setInterval(checkCutoff, 5 * 60 * 1000);
 });
