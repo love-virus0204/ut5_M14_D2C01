@@ -272,11 +272,19 @@ async function send(){
   let ts= now.slice(5, 16);
 
   const status = ok ? 'ok':'ng';
-  const bIsN   = String(selB).toUpperCase()==='N';
-  const flag   = ok ? (bIsN ? 'on':'ok'):'ng';
-  const aDisp  = bIsN ? `${curr.b} - 取消` : `${curr.b} - ${selA}`;
-  saveB({ ts, id, a: aDisp, b: selB, status, flag });
-
+  const resultText = ok ? '上傳成功' : '連線失敗';
+  const flag = !ok
+    ? 'ng'
+    : selB === 'N'
+      ? 'xd'
+      : selA === '假日'
+        ? 'ok1'
+        : selA === '平日'
+          ? 'ok2'
+          : 'ok';
+  const bDisp = selB === 'N' ? '_' : selB;
+  const aDisp = `${curr.b} - ${selB === 'N' ? '取消' : selA}`;
+  saveB({ ts, id, a: aDisp, b: bDisp, msg:  `${resultText}`, flag });
  playSFX(0);
  toast(ok ? `　${aDisp}　` : '送出失敗')
 }
