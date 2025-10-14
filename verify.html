@@ -121,6 +121,7 @@ uidEl.addEventListener('input',()=>{
 
 /* 驗證邏輯 */
 async function verify(){
+  playSFX(1);
   const uid=document.getElementById('uid').value.trim().toUpperCase();
   const pwd=document.getElementById('pwd').value.trim();
   if(!/^[A-Z0-9]{5}$/.test(uid)){msg.textContent="account error";return;}
