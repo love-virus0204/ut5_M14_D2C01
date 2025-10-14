@@ -186,10 +186,6 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
 
 <div id="toast"></div>
-<div id="pl">
-<audio controls autoplay loop>
-  <source src="./mus/Prontera.wav" type="audio/mpeg">您的瀏覽器不支持音頻標籤
-</audio></div>
 <script>
   let lock_st = 0, selA='平日', selB='N';
   const DAYS = [];
@@ -355,10 +351,10 @@ function playSFX() {
 function playBGM() {
   const bgm = new Audio('./mus/Prontera.wav');
   bgm.loop = true;
-  bgm.volume = 0.0;
-  bgm.play().then(() => {
-    setTimeout(() => { bgm.volume = 0.5; }, 1000);
-  }).catch(() => console.warn('播放被阻擋'));
+  bgm.volume = 0.5;
+  bgm.play().catch(() => {
+    console.warn('　');
+  });
 }
 
 function waitForUserInteraction(callback) {
