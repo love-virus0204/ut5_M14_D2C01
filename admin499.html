@@ -236,8 +236,8 @@ setInterval(tickClock, 1000);
 
   // ====== 點列帶入（limit 清空） ======
   function fillForm(id,name,tier,_ymd){
-    idEl.value=id||'';
-    nameEl.value=name||'';
+    idEl.value=id;
+    nameEl.value=name;
     tierEl.value=String(tier??3);
     limitEl.value='';
 document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'nearest'});
