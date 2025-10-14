@@ -211,7 +211,7 @@ function parseLuckyData(data){
 function renderResponse(j){
   const list = parseLuckyData(j);
   const rows = list.filter(r =>
-  Number(r.date) === currS && ['A','B'].includes(r.shift.toUpperCase()) && Number(r.tier) > 0 && Number(r.tier) < 3000);
+  Number(r.date) === currS && ['A','B'].includes(r.shift.toUpperCase()) && Number(r.tier) > 0 && Number(r.tier) < 3000).sort((a, b) => Number(a.tier) - Number(b.tier));
 
   const A=[], B=[];
   rows.forEach(r => (String(r.shift).toUpperCase()==='A' ? A : B).push(r));
