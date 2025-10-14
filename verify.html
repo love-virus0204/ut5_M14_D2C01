@@ -110,6 +110,22 @@ button:active{
 
 <audio id="bgm" src="./mus/login3.mp3" preload="auto"></audio>
 <script>
+
+const uid = localStorage.getItem('user_id');
+if (uid) {
+  window.close();
+
+  // 若無法自動關閉（非腳本開啟頁面）
+  setTimeout(() => {
+    if (!window.closed) {
+      alert('請點擊「確定」以關閉視窗');
+      window.close();
+    }
+  }, 100);
+}
+
+
+
 /* 基本環境檢查 */
 const overlay=document.getElementById('overlay');
 const msg=document.getElementById('msg');
