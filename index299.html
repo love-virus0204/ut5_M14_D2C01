@@ -225,8 +225,9 @@ function renderB(arr) {
   const data = arr;
   if (!data.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
-  //list.innerHTML = data.map(x =>
-    `<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.msg}</div>`
+  //list.innerHTML = data.map(x =>`<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.msg}</div>`).join('');
+  list.innerHTML = data.map(x =>
+    `<div class="line ${x.flag}">${x.ts} ${x.id} ${x.a} ${x.b} ${x.msg}</div>`
   ).join('');
 }
 
