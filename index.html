@@ -348,14 +348,15 @@ function playSFX() {
   });
 }
 /* /Prontera.wav'); */
-const audio = new Audio('./mus/levelup.wav');
 function playBGM() {
-  audio.loop = false;
-  audio.volume = 0.5;
-  audio.play().catch(() => {
-    console.warn('　');
-  });
+  const bgm = new Audio('./mus/Prontera.wav');
+  bgm.loop = true;
+  bgm.volume = 0.0;
+  bgm.play().then(() => {
+    setTimeout(() => { bgm.volume = 0.5; }, 1000);
+  }).catch(() => console.warn('播放被阻擋'));
 }
+
 playBGM();
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => { startClock();
