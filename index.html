@@ -186,8 +186,6 @@ main{display:block;padding:8px 0 0;overflow:visible;}
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
 
 <div id="toast"></div>
-<audio id="bgm" src="./mus/Prontera.wav" loop></audio>
-<audio id="sfx" src="./mus/levelup.wav"></audio>
 <script>
   let lock_st = 0, selA='平日', selB='N';
   const DAYS = [];
@@ -200,8 +198,6 @@ const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 const en=document.getElementById('toast');
-const bgm=document.getElementById('bgm');
-const sfx=document.getElementById('sfx');
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -343,12 +339,14 @@ function fillDateSelect(){
   lock_st = 0;
 }
 
-const playAudio = () => {
-    bgm.volume = 0.5;
-    bgm.play().catch(() => {
-      console.warn('自動播放被瀏覽器阻擋，等待使用者互動');
-    });
-  };
+function playBGM() {
+  const audio = new Audio('./mus/Prontera.wav');
+  audio.loop = false;
+  audio.volume = 0.5;
+  audio.play().catch(() => {
+    console.warn('播放被阻擋，等待互動');
+  });
+}
 
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
@@ -365,7 +363,7 @@ addEventListener('DOMContentLoaded', () => {
   bBtns.forEach(b => b.addEventListener('click', onB));
   sendBtn.addEventListener('click', send);
   fillDateSelect();
-  playAudio();
+  playBGM();
   enableSend();
   checkCutoff();
   renderB(DRAFTB);
