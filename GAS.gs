@@ -96,7 +96,7 @@ function _submit(sh, p){
     return _json({status:"ok", mode:"更新"});
   } else {
     sh.appendRow(row);
-    var last = sheet.getLastRow();
+    var last = sh.getLastRow();
     sh.getRange(last, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
   }
