@@ -54,3 +54,20 @@ window.ymdToYM = function(Ntime){
   const [y, m, d] = Ntime.split('/');
   return Number(y + m.padStart(2,'0'));
 }
+
+
+/* ===== 音效清單 ===== */
+window.SOUND_LIST = [
+  './mus/levelup.wav',  
+  './mus/login2.wav'  
+];
+
+/* ===== 播放指定索引 ===== */
+window.playSound = function(i){
+  const src = SOUND_LIST[i];
+  if(!src) return;
+  const a = new Audio(src);
+  a.volume = 0.9;
+  a.loop = false;
+  a.play().catch(()=>{});
+};
