@@ -110,20 +110,17 @@ button:active{
 
   <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
 <script>
-  bgm.src = './mus/login3.mp3';
-  bgm.load();
-
-  const uid = localStorage.getItem('user_id');
+const uid = localStorage.getItem('user_id');
 if (uid) { window.close();
   setTimeout(() => {
     if (!window.closed) {
-      alert('請點擊「確定」');
-      window.close();
-    }
+      location.href = 'index.html'; }
   }, 100);
 }
 
 /* 基本環境檢查 */
+bgm.src = './mus/login3.mp3';
+bgm.load();
 const overlay=document.getElementById('overlay');
 const msg=document.getElementById('msg');
 function showOverlay(on){overlay.style.display=on?'flex':'none';}
