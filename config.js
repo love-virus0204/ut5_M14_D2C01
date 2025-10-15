@@ -78,18 +78,6 @@ window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart'
 ];
 
 
-window.events = window.events || ['pointerdown', 'keydown'];
-
-window.playing = false;
-window.bgm = null;
-
-window.tryPlay = function () {
-  if (!window.bgm || window.playing) return;
-  window.playing = true;
-  window.bgm.volume = 0.7;
-  window.bgm.play().catch(() => { window.playing = false; });
-};
-
 
 
 if ('serviceWorker' in navigator) {
