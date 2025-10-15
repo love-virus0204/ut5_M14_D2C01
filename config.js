@@ -72,26 +72,32 @@ window.playSFX = function(i){
   a.play().catch(()=>{});
 };
 
-
-window.playBGM = function () {
-  const bgm = document.getElementById('bgm');
-  if (!bgm) return;
-  bgm.volume = 0.7;
-  bgm.play().catch(() => {}); };
-
 window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
+// 建議放在 <audio id="bgm"> 之後或用 defer 載入
+const events = ['pointerdown','mousedown','touchstart','keydown','wheel','click'];
+let bgm;
 
-window.onInteract = function () {
-  playBGM(); };
+function playBGM() {
+  if (!bgm) return;
+  bgm.volume = 0.7;
+  bgm.play().catch(()=>{});
+}
+
+function attachOnce() {
+  for (const ev of events) {
+    window.addEventListener(ev, playBGM, { once:true, passive:true });
+  }
+}
 
 window.addEventListener('DOMContentLoaded', () => {
-  window.events.forEach(ev => {
-    window.addEventListener(ev, window.onInteract, { once: true, passive: true });
-  });
+  bgm = document.getElementById('bgm');
+  if (!bgm) return;
+  attachOnce();
+  bgm.addEventListener('ended', attachOnce);
 });
 
 if ('serviceWorker' in navigator) {
