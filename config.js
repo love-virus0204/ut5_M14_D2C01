@@ -93,7 +93,7 @@ window.addEventListener('DOMContentLoaded', () => {
   window.bgm.addEventListener('ended', () => { window.playing = false; });
 
   for (const ev of window.events) {
-    window.addEventListener(ev, window.tryPlay, { passive:true });
+    window.addEventListener(ev, window.tryPlay, { once:true, passive:true });
   }
 });
 
