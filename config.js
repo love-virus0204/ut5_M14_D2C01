@@ -89,14 +89,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.onInteract = function () {
   window.bgm = document.getElementById('bgm');
-  if (bgm) window.playing = true;
+  if (window.bgm) window.playing = true;
 };
 
 window.playBGM = function () {
-  if (!playing) return;
-  playing = false;
-  bgm.volume = 0.7;
-  bgm.play().catch(() => {playing = true });
+  if (!window.playing) return;
+  window.playing = false;
+  window.bgm.volume = 0.7;
+  window.bgm.play().catch(() => {
+    window.playing = true;
+  });
 };
 
 if ('serviceWorker' in navigator) {
