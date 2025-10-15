@@ -78,7 +78,11 @@ window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart'
 ];
 
 
+window.events = window.events || ['pointerdown', 'keydown'];
+
 window.playing = false;
+window.bgm = null;
+
 window.tryPlay = function () {
   if (!window.bgm || window.playing) return;
   window.playing = true;
@@ -93,7 +97,7 @@ window.addEventListener('DOMContentLoaded', () => {
   window.bgm.addEventListener('ended', () => { window.playing = false; });
 
   for (const ev of window.events) {
-    window.addEventListener(ev, window.tryPlay, { once:true, passive:true });
+    window.addEventListener(ev, window.tryPlay, { passive: true });
   }
 });
 
