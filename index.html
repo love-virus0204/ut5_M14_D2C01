@@ -382,18 +382,6 @@ addEventListener('DOMContentLoaded', () => {
   setInterval(startClock,1000);
   setInterval(checkCutoff, 5 * 60 * 1000);
 });
-
-let last = misi;
-const THRESHOLD = 11 * 60 * 1000;
-setInterval(() => last = misi, 60 * 1000);
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    const gap = Date.now() - last;
-    if (gap >= THRESHOLD) {
-    }
-  }
-});
 </script>
 </body>
 </html>
