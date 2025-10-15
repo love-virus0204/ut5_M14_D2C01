@@ -91,7 +91,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (!bgm) return;
   bgm.addEventListener('ended', () => { playing = false; });
 
-  for (const ev of events) {
+  for (const ev of window.events) {
     window.addEventListener(ev, tryPlay, { passive:true });
   }
 });
