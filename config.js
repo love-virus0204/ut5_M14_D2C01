@@ -77,15 +77,18 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
+window.events = ['pointerdown','mousedown','touchstart','keydown','click'];
+
 let bgm;
+
 function playBGM() {
   if (!bgm) return;
   bgm.volume = 0.7;
   bgm.play().catch(()=>{});
 }
 
-function attachOnce() {
-  for (const ev of events) {
+function atOnce() {
+  for (const ev of window.events) {
     window.addEventListener(ev, playBGM, { once:true, passive:true });
   }
 }
@@ -94,7 +97,7 @@ window.addEventListener('DOMContentLoaded', () => {
   bgm = document.getElementById('bgm');
   if (!bgm) return;
   attachOnce();
-  bgm.addEventListener('ended', attachOnce);
+  bgm.addEventListener('ended', atOnce);
 });
 
 if ('serviceWorker' in navigator) {
