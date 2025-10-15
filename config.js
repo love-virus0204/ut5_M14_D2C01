@@ -77,22 +77,23 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
-window.bgm = null;
+
 window.playing = false;
-window.tryPlay function() {
-  if (!bgm || playing) return;
-  playing = true;
-  bgm.volume = 0.7;
-  bgm.play().catch(() => { playing = false; });
-}
+window.tryPlay = function () {
+  if (!window.bgm || window.playing) return;
+  window.playing = true;
+  window.bgm.volume = 0.7;
+  window.bgm.play().catch(() => { window.playing = false; });
+};
 
 window.addEventListener('DOMContentLoaded', () => {
-  bgm = document.getElementById('bgm');
-  if (!bgm) return;
-  bgm.addEventListener('ended', () => { playing = false; });
+  window.bgm = document.getElementById('bgm');
+  if (!window.bgm) return;
+
+  window.bgm.addEventListener('ended', () => { window.playing = false; });
 
   for (const ev of window.events) {
-    window.addEventListener(ev, tryPlay, { passive:true });
+    window.addEventListener(ev, window.tryPlay, { passive:true });
   }
 });
 
