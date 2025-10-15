@@ -77,7 +77,7 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
-windoe.bgm = null;
+window.bgm = null;
 window.playing = false;
 function tryPlay() {
   if (!bgm || playing) return;
