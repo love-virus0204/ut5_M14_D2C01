@@ -79,7 +79,7 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 
 window.onInteract = function () {
   window.bgm = document.getElementById('bgm');
-  window.playing = true; };
+  if (bgm) window.playing = true; };
 
 window.addEventListener('DOMContentLoaded', () => {
   window.events.forEach(ev => {
