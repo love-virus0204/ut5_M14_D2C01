@@ -78,7 +78,7 @@ window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart'
 window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 
 window.onInteract = function () {
-  window.bgm = document.getElementById('bgm');
+  if (!window.playing) window.bgm = document.getElementById('bgm');
   if (!bgm) return;
   playBGM(); };
 
@@ -90,6 +90,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.playing = false;
 window.playBGM = function () {
+  playing = true;
   bgm.volume = 0.7;
   bgm.play().catch(() => {playing = false}); };
 
