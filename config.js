@@ -77,33 +77,19 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
+const bgm = document.getElementById('bgm');
+let playing = false;
 
-window.events = ['pointerdown','mousedown','touchstart','keydown','click'];
-
-let bgm;
-let armed = false;
-
-function atOnce() {
-  if (armed) return;
-  armed = true;
-  for (const ev of window.events) {
-    window.addEventListener(ev, playBGM, { once:true, passive:true });
-  }
-}
-
-function playBGM() {
-  if (!bgm) return;
-  armed = false;
+function tryPlay() {
+  if (playing || !bgm) return;
+  playing = true;
   bgm.volume = 0.7;
-  bgm.play().catch(()=>{});
+  bgm.play().catch(() => { playing = false; });
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  bgm = document.getElementById('bgm');
-  if (!bgm) return;
-  bgm.onended = atOnce;
-  atOnce();
-});
+events.forEach(ev => window.addEventListener(ev, tryPlay, { passive:true }));
+
+bgm?.addEventListener('ended', () => { playing = false; });
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js')
