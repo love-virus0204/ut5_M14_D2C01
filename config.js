@@ -77,10 +77,7 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
-// 建議放在 <audio id="bgm"> 之後或用 defer 載入
-const events = ['pointerdown','mousedown','touchstart','keydown','wheel','click'];
 let bgm;
-
 function playBGM() {
   if (!bgm) return;
   bgm.volume = 0.7;
