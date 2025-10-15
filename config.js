@@ -90,14 +90,7 @@ window.tryPlay = function () {
   window.bgm.play().catch(() => { window.playing = false; });
 };
 
-window.addEventListener('DOMContentLoaded', () => {
-  window.bgm = document.getElementById('bgm');
-  if (!window.bgm) return;
 
-  for (const ev of window.events) {
-    window.addEventListener(ev, window.tryPlay, { passive: true });
-  }
-});
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js')
