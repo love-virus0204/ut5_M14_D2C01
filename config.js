@@ -77,8 +77,6 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
-window.events = ['pointerdown','mousedown','touchstart','keydown','click'];
-
 let bgm;
 
 function playBGM() {
