@@ -87,8 +87,7 @@ window.tryPlay = function () {
   window.bgm.play().catch(() => { window.playing = false; }); };
 
 
-
-  window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
   window.bgm = document.getElementById('bgm');
   if (!bgm) return;
   window.events.forEach(ev => {
