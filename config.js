@@ -79,7 +79,7 @@ window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart'
 
 window.bgm = null;
 window.playing = false;
-function tryPlay() {
+window.tryPlay function() {
   if (!bgm || playing) return;
   playing = true;
   bgm.volume = 0.7;
