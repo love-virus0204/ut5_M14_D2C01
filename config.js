@@ -89,7 +89,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.onInteract = function () {
   window.bgm = document.getElementById('bgm');
-  if (window.bgm) window.playing = true;
+  if (window.bgm) {
+    window.playing = true;
+    window.bgm.onended = () => { window.playing = true; };
+  }
 };
 
 window.playBGM = function () {
