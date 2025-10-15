@@ -79,23 +79,31 @@ window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart'
 
 let bgm;
 
-function playBGM() {
-  if (!bgm) return;
-  bgm.volume = 0.7;
-  bgm.play().catch(()=>{});
-}
+window.events = ['pointerdown','mousedown','touchstart','keydown','click'];
+
+let bgm;
+let armed = false;
 
 function atOnce() {
+  if (armed) return;
+  armed = true;
   for (const ev of window.events) {
     window.addEventListener(ev, playBGM, { once:true, passive:true });
   }
 }
 
+function playBGM() {
+  if (!bgm) return;
+  armed = false;
+  bgm.volume = 0.7;
+  bgm.play().catch(()=>{});
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   bgm = document.getElementById('bgm');
   if (!bgm) return;
-  attachOnce();
-  bgm.addEventListener('ended', atOnce);
+  bgm.onended = atOnce;
+  atOnce();
 });
 
 if ('serviceWorker' in navigator) {
