@@ -91,9 +91,10 @@ window.addEventListener('DOMContentLoaded', () => {
   window.bgm = document.getElementById('bgm');
   if (!window.bgm) return;
 
-  for (const ev of window.events) {
+  window.addEventListener('DOMContentLoaded', () => {
+  window.events.forEach(ev => {
     window.addEventListener(ev, window.tryPlay, { passive: true });
-  }
+  });
 });
 
 
