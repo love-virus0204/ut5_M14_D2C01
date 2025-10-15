@@ -89,7 +89,7 @@ window.tryPlay = function () {
 
 window.addEventListener('DOMContentLoaded', () => {
   window.bgm = document.getElementById('bgm');
-  if (!bgm) return;
+  if (!window.bgm) return;
 
   for (const ev of window.events) {
     window.addEventListener(ev, window.tryPlay, { passive: true });
