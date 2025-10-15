@@ -72,10 +72,10 @@ window.playSFX = function(i){
   a.play().catch(()=>{});
 };
 
-window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
-
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
+
+window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 
 
 window.playing = false;
