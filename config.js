@@ -77,23 +77,27 @@ window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart'
 
 window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 
-window.onInteract = function () {
-  window.bgm = document.getElementById('bgm');
-  if (bgm) window.playing = true; };
-
 window.addEventListener('DOMContentLoaded', () => {
   window.events.forEach(ev => {
-    window.addEventListener(ev, window.onInteract, { once: true ;passive: true });
+    window.addEventListener(ev, window.onInteract, { once: true, passive: true });
+  });
+
   window.events.forEach(ev => {
     window.addEventListener(ev, window.playBGM, { passive: true });
   });
 });
 
+window.onInteract = function () {
+  window.bgm = document.getElementById('bgm');
+  if (bgm) window.playing = true;
+};
+
 window.playBGM = function () {
   if (!playing) return;
   playing = false;
   bgm.volume = 0.7;
-  bgm.play().catch(() => {playing = true }); };
+  bgm.play().catch(() => {playing = true });
+};
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js')
