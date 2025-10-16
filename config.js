@@ -69,7 +69,7 @@ window.playSFX = function(i){
   const src = SOUND_LIST[i];
   if(!src) return;
   const a = new Audio(src);
-  a.volume = 0.9;
+  a.volume = 1.0;
   a.loop = false;
   a.play().catch(()=>{});
 };
