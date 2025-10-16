@@ -10,12 +10,12 @@ const MODULES = {
       './mus/login3.mp3'
     ]
   },
-    cache: 'mus2-v1.1',
+    cache: 'mus2-v1.2',
     assets: [
       './mus/clock02.wav',
       './mus/clock01.mp3',
       './mus/levelup.wav',
-      './mus/login2.wav',
+      './mus/login2.wav'
     ]
   },
 };
