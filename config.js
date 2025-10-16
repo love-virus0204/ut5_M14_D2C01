@@ -79,27 +79,25 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
+window.onInteract = () => {
+  const bgm = document.getElementById('bgm');
+  if (!bgm) return;
+  window.bgm = bgm;
+  window.playing = true;
+  bgm.onended = () => (window.playing = true);
+};
+
+window.playBGM = () => {
+  if (!window.playing || !window.bgm) return;
+  window.playing = false;
+  window.bgm.volume = 0.7;
+  window.bgm.play().catch(() => (window.playing = true));
+};
+
 for (const ev of window.events) {
   window.addEventListener(ev, window.onInteract, { once: true, passive: true });
   window.addEventListener(ev, window.playBGM, { passive: true });
 }
-
-window.onInteract = function () {
-  window.bgm = document.getElementById('bgm');
-  if (window.bgm) {
-    window.playing = true;
-    window.bgm.onended = () => { window.playing = true; };
-  }
-};
-
-window.playBGM = function () {
-  if (!window.playing) return;
-  window.playing = false;
-  window.bgm.volume = 0.7;
-  window.bgm.play().catch(() => {
-    window.playing = true;
-  });
-};
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js')
