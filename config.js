@@ -79,13 +79,10 @@ window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'keydown', 'keyup', 'wheel', 'scroll', 'click', 'dblclick','contextmenu'
 ];
 
-window.events.forEach(ev => {
+for (const ev of window.events) {
   window.addEventListener(ev, window.onInteract, { once: true, passive: true });
-});
-
-window.events.forEach(ev => {
   window.addEventListener(ev, window.playBGM, { passive: true });
-});
+}
 
 window.onInteract = function () {
   window.bgm = document.getElementById('bgm');
