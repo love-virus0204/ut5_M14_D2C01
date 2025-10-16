@@ -11,9 +11,9 @@ const MODULES = {
     ]
   },
   mus2: {
-    cache: 'mus2-v1.22',
+    cache: 'mus2-v1.23',
     assets: [
-      './mus/levelup.wav',
+      './mus/levelup.mp3',
       './mus/clock01.wav',
       './mus/clock02.mp3',
       './mus/clock03.mp3'
