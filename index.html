@@ -182,7 +182,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.6</div>
+  <div class="ver">版本：v1.5.7</div>
   <div class="clock" id="clock">--/-- --:--:--</div></div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
@@ -324,23 +324,24 @@ function checkCutoff(){
   }
 }
 
-/* ===== 輸入與選項 ===== */
-function bindInput(){
-  el.value=loadA();
-  el.addEventListener('input',()=>{let x=el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5);el.value=x.toUpperCase();if(el.value.length===5)saveA(el.value);});
-  el.addEventListener('focus',()=>{if(el.value)el.value='';});
-}
-
-function setSel(btns,val,attr){
-  btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
-}
-
 function toast(msg, duration = 2200){
   if(!en) return;
   en.textContent = msg;
   en.classList.add('show');
   clearTimeout(en._t);
   en._t = setTimeout(()=>en.classList.remove('show'), duration);
+}
+
+/* ===== 輸入與選項 ===== */
+function onElEvent(e) {
+  if (e.type === 'focus') return (el.value = '');
+  const v = el.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 5);
+  el.value = v;
+  if (v.length === 5) saveA(v);
+}
+
+function setSel(btns,val,attr){
+  btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
 
 /* ===== 產生 7 天清單並灌入下拉 ===== */
@@ -368,6 +369,10 @@ function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); ena
 function enableSend(){ 
 document.getElementById('sendBtn').disabled=!(selA&&selB);}
 
+
+el.addEventListener('focus', onElEvent);
+el.addEventListener('input', onElEvent);
+
 aBtns.forEach(a => 
   a.addEventListener('click', e => {
     playSFX(3);
@@ -380,20 +385,22 @@ bBtns.forEach(b =>
     onB(e);
     })
   );
+
 sendBtn.addEventListener('click', () => {
   playSFX(1);
   send();
 });
 
 sel.addEventListener('change', () => {
-  playSFX(2); });
+  playSFX(2);
+});
 
 /* ===== 啟動 ===== */
 setSel(aBtns, selA, 'a');
 setSel(bBtns, selB, 'b');
 enableSend();
 fillDateSelect();
-bindInput();
+el.value=loadA();
 renderB(DRAFTB);
 probeStatus();
 startClock();
