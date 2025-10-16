@@ -121,10 +121,10 @@ button:active{
 </div>
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
 
-  <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
+  <audio id="bgm" src="./mus/clock03.mp3" preload="auto"></audio>
 <script>
 /* 基本環境檢查 */
-bgm.src = './mus/login3.mp3';
+bgm.src = './mus/login2.mp3';
 bgm.load();
 const overlay=document.getElementById('overlay');
 const msg=document.getElementById('msg');
@@ -141,7 +141,6 @@ uidEl.addEventListener('input',()=>{
 let verifying = false;
 async function verify(){
   if (verifying) return;
-  playSFX(1);
 
   const $uid = document.getElementById('uid');
   const $pwd = document.getElementById('pwd');
@@ -198,7 +197,10 @@ async function verify(){
   }
 }
 
-document.getElementById('loginBtn').addEventListener('click',verify);
+document.getElementById('loginBtn').addEventListener('click', function() {
+  playSFX(3);
+  verify();
+});
 </script>
 </body>
 </html>
