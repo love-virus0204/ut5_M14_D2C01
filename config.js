@@ -58,20 +58,29 @@ window.ymdToYM = function(Ntime){
 
 /* ===== 音效清單 ===== */
 window.SOUND_LIST = [
-  './mus/levelup.wav',  
+  './mus/levelup.wav',
   './mus/login2.wav',
   './mus/clock01.mp3',
   './mus/clock02.wav'
 ];
 
+/* ===== 預載所有音效 ===== */
+window.SFX_POOL = window.SOUND_LIST.map(src => {
+  const a = new Audio(src);
+  a.preload = 'auto';
+  a.load();
+  return a;
+});
+
 /* ===== 播放指定索引 ===== */
 window.playSFX = function(i){
-  const src = SOUND_LIST[i];
-  if(!src) return;
-  const a = new Audio(src);
-  a.volume = 1.0;
-  a.loop = false;
-  a.play().catch(()=>{});
+  const a = window.SFX_POOL[i];
+  if(!a) return;
+  try {
+    a.pause();
+    a.currentTime = 0;
+    a.play();
+  } catch(e){}
 };
 
 window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
