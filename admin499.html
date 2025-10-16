@@ -180,13 +180,10 @@
   const limitEl = document.getElementById('limit');
 
   const rowById = Object.create(null);
-  pingGas();
   let uploadCount = 0;
 
   // ====== 時鐘（台北時區） ======
 function tickClock(){ el.textContent= now;}
-tickClock();
-setInterval(tickClock, 1000);
 
   // ====== 遮罩 ======
   function showMask()
@@ -319,6 +316,10 @@ document.getElementById('btnReload').addEventListener('click', reloadData);
   // 初始載入
 window.addEventListener('load', () => {
   setTimeout(reloadData, 1000); });
+
+tickClock();
+  setInterval(tickClock, 1000);
+pingGas();
   setInterval(pingGas, 45000);
 </script>
 </body>
