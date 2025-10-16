@@ -3,25 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>音檔測試</title>
+<title>音檔載入與快取測試</title>
 <style>
 body{
   background:#111;
   color:#e5e7eb;
-  font-family:system-ui, monospace;
+  font-family:system-ui,monospace;
   padding:20px;
-  line-height:1.6;
 }
+h2{color:#0ff;}
 .ok{color:#00ff9d;}
 .err{color:#ff5c5c;}
+.box{margin-bottom:24px;}
 </style>
 </head>
 <body>
-<h2>音檔播放測試</h2>
-<div id="result">測試中...</div>
+<h2>音檔載入與快取測試</h2>
+<div id="direct" class="box"><h3>直接載入測試</h3></div>
+<div id="cache" class="box"><h3>快取讀取測試</h3></div>
 
 <script>
-const musFiles = [
+// === 音檔清單 ===
+const MUS_FILES = [
   './mus/Detektiv.mp3',
   './mus/Prontera.mp3',
   './mus/login1.mp3',
@@ -32,24 +35,77 @@ const musFiles = [
   './mus/levelup.wav'
 ];
 
-const box = document.getElementById('result');
-box.textContent = '';
+// === DOM 元素 ===
+const boxDirect = document.getElementById('direct');
+const boxCache  = document.getElementById('cache');
 
-musFiles.forEach(src => {
-  const audio = new Audio(src);
-  audio.play().then(() => {
-    audio.pause();
-    const line = document.createElement('div');
-    line.className = 'ok';
-    line.textContent = `✅ OK: ${src}`;
-    box.appendChild(line);
-  }).catch(err => {
-    const line = document.createElement('div');
-    line.className = 'err';
-    line.textContent = `❌ 播放失敗: ${src} (${err.message})`;
-    box.appendChild(line);
+// === 測試直接載入 ===
+function testDirect() {
+  MUS_FILES.forEach(src => {
+    const audio = new Audio(src + '?v=' + Date.now());
+    audio.play().then(() => {
+      audio.pause();
+      const ok = document.createElement('div');
+      ok.className = 'ok';
+      ok.textContent = '✅ 直接載入成功：' + src;
+      boxDirect.appendChild(ok);
+    }).catch(err => {
+      const errLine = document.createElement('div');
+      errLine.className = 'err';
+      errLine.textContent = '❌ 直接載入失敗：' + src + ' (' + err.message + ')';
+      boxDirect.appendChild(errLine);
+    });
   });
-});
+}
+
+// === 測試快取讀取 ===
+async function testCache() {
+  if (!('caches' in window)) {
+    boxCache.innerHTML += '<div class="err">瀏覽器不支援 Cache API</div>';
+    return;
+  }
+
+  const cacheName = 'mus-test-v1';
+  const c = await caches.open(cacheName);
+  await c.addAll(MUS_FILES).catch(e => {
+    const msg = document.createElement('div');
+    msg.className = 'err';
+    msg.textContent = '❌ 快取建立失敗 (' + e.message + ')';
+    boxCache.appendChild(msg);
+  });
+
+  for (const src of MUS_FILES) {
+    const r = await c.match(src);
+    if (!r) {
+      const miss = document.createElement('div');
+      miss.className = 'err';
+      miss.textContent = '❌ 快取找不到：' + src;
+      boxCache.appendChild(miss);
+      continue;
+    }
+    try {
+      const blob = await r.blob();
+      const audio = new Audio(URL.createObjectURL(blob));
+      await audio.play();
+      audio.pause();
+      const ok = document.createElement('div');
+      ok.className = 'ok';
+      ok.textContent = '✅ 快取播放成功：' + src;
+      boxCache.appendChild(ok);
+    } catch (e) {
+      const errLine = document.createElement('div');
+      errLine.className = 'err';
+      errLine.textContent = '❌ 快取播放失敗：' + src + ' (' + e.message + ')';
+      boxCache.appendChild(errLine);
+    }
+  }
+}
+
+// === 啟動測試 ===
+(async () => {
+  testDirect();
+  await testCache();
+})();
 </script>
 </body>
 </html>
