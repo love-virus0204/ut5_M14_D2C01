@@ -87,8 +87,7 @@ async function fetchList(){
 
 function splitDays(rows){
   const N = 7;
-  const minSerial = 45678;
-
+  const minSerial = ymdToSerial(now);
   const buckets = new Map();
 
   for (const r of rows) {
