@@ -364,10 +364,10 @@ function fillDateSelect(){
 
 function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
 
-function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend();}
+function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend(); }
 
 function enableSend(){ 
-document.getElementById('sendBtn').disabled=!(selA&&selB);}
+document.getElementById('sendBtn').disabled=!(selA&&selB); }
 
 
 el.addEventListener('focus', onElEvent);
