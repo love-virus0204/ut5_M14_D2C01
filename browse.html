@@ -94,7 +94,7 @@ function splitDays(rows){
     buckets.get(d).push(r);
   }
 
-  const dates = [...buckets.keys()].sort((a,b)=>b-a).slice(0, N);
+  const dates = [...buckets.keys()].sort((a,b)=>a-b).slice(0, N);
 
   const sortRow = (a,b)=>{
     const d = String(b.dN||'').localeCompare(String(a.dN||''));
