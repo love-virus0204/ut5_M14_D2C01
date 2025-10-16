@@ -1,8 +1,9 @@
 // sw.js
 // --- 分模組定義 ---
+// --- 分模組定義 ---
 const MODULES = {
-  mus: {
-    cache: 'mus1-v1.0',
+  mus1: {
+    cache: 'mus1-v1.01',
     assets: [
       './mus/Detektiv.mp3',
       './mus/Prontera.mp3',
@@ -10,14 +11,15 @@ const MODULES = {
       './mus/login3.mp3'
     ]
   },
-    cache: 'mus2-v1.2',
+  mus2: {
+    cache: 'mus2-v1.21',
     assets: [
       './mus/clock02.wav',
       './mus/clock01.mp3',
       './mus/levelup.wav',
       './mus/login2.wav'
     ]
-  },
+  }
 };
 
 // 建立路徑→模組與快取對照
