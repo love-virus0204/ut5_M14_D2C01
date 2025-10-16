@@ -204,6 +204,9 @@ const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 const en=document.getElementById('toast');
+const aBtns = Array.from(document.querySelectorAll('[data-a]'));
+const bBtns = Array.from(document.querySelectorAll('[data-b]'));
+const sendBtn = document.getElementById('sendBtn');
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -331,7 +334,6 @@ function bindInput(){
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
-function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
 
 function toast(msg, duration = 2200){
   if(!en) return;
@@ -359,23 +361,36 @@ function fillDateSelect(){
   lock_st = 0;
 }
 
+function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
+
+function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend();}
+
+function enableSend(){ 
+document.getElementById('sendBtn').disabled=!(selA&&selB);}
+
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
   startClock();
 
   sel.addEventListener('change', () => {
   playSFX(2); });
-  const aBtns = Array.from(document.querySelectorAll('[data-a]'));
-  const bBtns = Array.from(document.querySelectorAll('[data-b]'));
-  const sendBtn = document.getElementById('sendBtn');
+
   setSel(aBtns, selA, 'a');
   setSel(bBtns, selB, 'b');
 
-  function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
-  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend();}
-  aBtns.forEach(b => b.addEventListener('click', onA));
-  bBtns.forEach(b => b.addEventListener('click', onB));
-  sendBtn.addEventListener('click', send);
+  aBtns.forEach(a => 
+    a.addEventListener('click', e => {
+      playSFX(3);
+      onA(e);
+    })
+  );
+
+  bBtns.forEach(b => b.addEventListener('click', onB, playSFX(3)));
+
+  sendBtn.addEventListener('click', () => {
+  playSFX(2);
+  send();
+  });
   enableSend();
   fillDateSelect();
   checkCutoff();
