@@ -1,52 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <title>音樂播放測試</title>
-  <style>
-    body {
-      background: #111;
-      color: #eee;
-      font-family: system-ui, "Microsoft JhengHei";
-      text-align: center;
-      padding-top: 20vh;
-    }
-    button {
-      background: #0af;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover { background: #09c; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音檔測試</title>
+<style>
+body{
+  background:#111;
+  color:#e5e7eb;
+  font-family:system-ui, monospace;
+  padding:20px;
+  line-height:1.6;
+}
+.ok{color:#00ff9d;}
+.err{color:#ff5c5c;}
+</style>
 </head>
 <body>
-  <h1>🎵 音樂播放測試</h1>
-  <p>請確保與本頁同資料夾有 <code>levelup</code></p>
-  <audio id="player" src="./mus/Prontera.wav"></audio>
-  <div style="margin-top:20px;">
-    <button id="playBtn">播放 / 暫停</button>
-  </div>
+<h2>音檔播放測試</h2>
+<div id="result">測試中...</div>
 
-  <script>
-    const audio = document.getElementById('player');
-    const btn = document.getElementById('playBtn');
+<script>
+const musFiles = [
+  './mus/Detektiv.mp3',
+  './mus/Prontera.mp3',
+  './mus/login1.mp3',
+  './mus/login2.wav',
+  './mus/login3.mp3',
+  './mus/clock01.mp3',
+  './mus/clock02.wav',
+  './mus/levelup.wav'
+];
 
-    btn.addEventListener('click', () => {
-      if (audio.paused) {
-        audio.play().catch(err => alert("播放失敗：" + err.message));
-      } else {
-        audio.pause();
-      }
-    });
-  </script>
+const box = document.getElementById('result');
+box.textContent = '';
+
+musFiles.forEach(src => {
+  const audio = new Audio(src);
+  audio.play().then(() => {
+    audio.pause();
+    const line = document.createElement('div');
+    line.className = 'ok';
+    line.textContent = `✅ OK: ${src}`;
+    box.appendChild(line);
+  }).catch(err => {
+    const line = document.createElement('div');
+    line.className = 'err';
+    line.textContent = `❌ 播放失敗: ${src} (${err.message})`;
+    box.appendChild(line);
+  });
+});
+</script>
 </body>
 </html>
-
-<div id="pl">
-<audio controls autoplay loop>
-  <source src="./mus/Prontera.wav" type="audio/mpeg">您的瀏覽器不支持音頻標籤
-</audio></div>
