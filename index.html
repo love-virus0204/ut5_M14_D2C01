@@ -182,7 +182,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.3</div>
+  <div class="ver">版本：v1.5.4</div>
   <div class="clock" id="clock">--/-- --:--:--</div></div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
@@ -266,7 +266,6 @@ function submitData(p){
 /* ===== 送出動作 ===== */
 async function send(){
   const curr = currentS();
-   playSFX(1);
   const uid = localStorage.getItem('user_id');
   if (!uid) {
     window.open('verify.html', '_blank');
@@ -368,29 +367,30 @@ function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); ena
 function enableSend(){ 
 document.getElementById('sendBtn').disabled=!(selA&&selB);}
 
+aBtns.forEach(a => 
+  a.addEventListener('click', e => {
+    playSFX(3);
+    onA(e);
+    })
+  );
+bBtns.forEach(b => 
+  b.addEventListener('click', e => {
+    playSFX(3);
+    onB(e);
+    })
+  );
+sendBtn.addEventListener('click', () => {
+  playSFX(1);
+  send();
+});
+
 /* ===== 啟動 ===== */
 addEventListener('DOMContentLoaded', () => {
   startClock();
-
   sel.addEventListener('change', () => {
   playSFX(2); });
-
   setSel(aBtns, selA, 'a');
   setSel(bBtns, selB, 'b');
-
-  aBtns.forEach(a => 
-    a.addEventListener('click', e => {
-      playSFX(3);
-      onA(e);
-    })
-  );
-
-  bBtns.forEach(b => b.addEventListener('click', onB, playSFX(3)));
-
-  sendBtn.addEventListener('click', () => {
-  playSFX(2);
-  send();
-  });
   enableSend();
   fillDateSelect();
   checkCutoff();
