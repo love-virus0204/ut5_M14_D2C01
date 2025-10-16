@@ -189,7 +189,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
 
   <div id="toast"></div>
 
-  <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
+  <audio id="bgm" src="./mus/clock03.wav" preload="auto"></audio>
 <script>
   bgm.src = './mus/login1.mp3';
   bgm.load();
@@ -375,19 +375,19 @@ el.addEventListener('input', onElEvent);
 
 aBtns.forEach(x => 
   x.addEventListener('click', e => {
-    playSFX(3);
+    playSFX(1);
     onA(e);
     })
   );
 bBtns.forEach(x => 
   x.addEventListener('click', e => {
-    playSFX(3);
+    playSFX(1);
     onB(e);
     })
   );
 
 sendBtn.addEventListener('click', () => {
-  playSFX(1);
+  playSFX(3);
   send();
 });
 
