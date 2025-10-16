@@ -5,16 +5,16 @@ const MODULES = {
     cache: 'mus1-v1.0',
     assets: [
       './mus/Detektiv.mp3',
-      './mus/Prontera.mp3'
+      './mus/Prontera.mp3',
+      './mus/login1.mp3',
+      './mus/login3.mp3'
     ]
   },
     cache: 'mus2-v1.0',
     assets: [
       './mus/clock01.mp3',
       './mus/levelup.wav',
-      './mus/login1.mp3',
       './mus/login2.wav',
-      './mus/login3.mp3'
     ]
   },
 };
