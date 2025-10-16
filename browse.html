@@ -86,15 +86,19 @@ async function fetchList(){
 }
 
 function splitDays(rows){
-  const N = 8;
-  const buckets = new Map();
-  for (const r of rows){
-    const d = Number(r.date)||0;
-    if(!buckets.has(d)) buckets.set(d, []);
-    buckets.get(d).push(r);
-  }
+  const N = 7;
+  const minSerial = 45678;
 
-  const dates = [...buckets.keys()].sort((a,b)=>a-b).slice(0, N);
+  const buckets = new Map();
+
+  for (const r of rows) {
+    const d = Number(r.date) || 0;
+    if (d < minSerial) continue;
+    if (!buckets.has(d)) buckets.set(d, []);
+    buckets.get(d).push(r);
+}
+
+  const dates = [...buckets.keys()].sort((a, b) => a - b).slice(0, N);
 
   const sortRow = (a,b)=>{
     const d = String(b.dN||'').localeCompare(String(a.dN||''));
