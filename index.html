@@ -373,14 +373,14 @@ document.getElementById('sendBtn').disabled=!(selA&&selB); }
 el.addEventListener('focus', onElEvent);
 el.addEventListener('input', onElEvent);
 
-aBtns.forEach(a => 
-  a.addEventListener('click', e => {
+aBtns.forEach(x => 
+  x.addEventListener('click', e => {
     playSFX(3);
     onA(e);
     })
   );
-bBtns.forEach(b => 
-  b.addEventListener('click', e => {
+bBtns.forEach(x => 
+  x.addEventListener('click', e => {
     playSFX(3);
     onB(e);
     })
