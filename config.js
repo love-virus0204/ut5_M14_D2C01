@@ -59,7 +59,8 @@ window.ymdToYM = function(Ntime){
 /* ===== 音效清單 ===== */
 window.SOUND_LIST = [
   './mus/levelup.wav',  
-  './mus/login2.wav'  
+  './mus/login2.wav',
+  './mus/clock01.mp3'
 ];
 
 /* ===== 播放指定索引 ===== */
