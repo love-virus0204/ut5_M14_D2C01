@@ -79,14 +79,12 @@ window.events = ['pointerdown','pointerup', 'mousedown', 'mouseup', 'touchstart'
 
 window.events = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel'];
 
-window.addEventListener('DOMContentLoaded', () => {
-  window.events.forEach(ev => {
-    window.addEventListener(ev, window.onInteract, { once: true, passive: true });
-  });
+window.events.forEach(ev => {
+  window.addEventListener(ev, window.onInteract, { once: true, passive: true });
+});
 
-  window.events.forEach(ev => {
-    window.addEventListener(ev, window.playBGM, { passive: true });
-  });
+window.events.forEach(ev => {
+  window.addEventListener(ev, window.playBGM, { passive: true });
 });
 
 window.onInteract = function () {
