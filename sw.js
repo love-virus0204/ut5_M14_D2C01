@@ -3,7 +3,7 @@
 // --- 分模組定義 ---
 const MODULES = {
   mus1: {
-    cache: 'mus1-v1.01',
+    cache: 'mus1-v1.0',
     assets: [
       './mus/Detektiv.mp3',
       './mus/Prontera.mp3',
