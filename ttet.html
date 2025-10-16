@@ -3,14 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>音檔載入與快取測試</title>
+<title>音檔載入與快取測試2</title>
 <style>
-body{
-  background:#111;
-  color:#e5e7eb;
-  font-family:system-ui,monospace;
-  padding:20px;
-}
+body{background:#111;color:#e5e7eb;font-family:system-ui,monospace;padding:20px;}
 h2{color:#0ff;}
 .ok{color:#00ff9d;}
 .err{color:#ff5c5c;}
@@ -23,23 +18,21 @@ h2{color:#0ff;}
 <div id="cache" class="box"><h3>快取讀取測試</h3></div>
 
 <script>
-// === 音檔清單 ===
+const BASE = '/ut5_M14_D2C01/mus/';
 const MUS_FILES = [
-  './mus/Detektiv.mp3',
-  './mus/Prontera.mp3',
-  './mus/login1.mp3',
-  './mus/login2.wav',
-  './mus/login3.mp3',
-  './mus/clock01.mp3',
-  './mus/clock02.wav',
-  './mus/levelup.wav'
+  BASE + 'Detektiv.mp3',
+  BASE + 'Prontera.mp3',
+  BASE + 'login1.mp3',
+  BASE + 'login2.wav',
+  BASE + 'login3.mp3',
+  BASE + 'clock01.mp3',
+  BASE + 'clock02.wav',
+  BASE + 'levelup.wav'
 ];
 
-// === DOM 元素 ===
 const boxDirect = document.getElementById('direct');
 const boxCache  = document.getElementById('cache');
 
-// === 測試直接載入 ===
 function testDirect() {
   MUS_FILES.forEach(src => {
     const audio = new Audio(src + '?v=' + Date.now());
@@ -50,15 +43,14 @@ function testDirect() {
       ok.textContent = '✅ 直接載入成功：' + src;
       boxDirect.appendChild(ok);
     }).catch(err => {
-      const errLine = document.createElement('div');
-      errLine.className = 'err';
-      errLine.textContent = '❌ 直接載入失敗：' + src + ' (' + err.message + ')';
-      boxDirect.appendChild(errLine);
+      const line = document.createElement('div');
+      line.className = 'err';
+      line.textContent = '❌ 直接載入失敗：' + src + ' (' + err.message + ')';
+      boxDirect.appendChild(line);
     });
   });
 }
 
-// === 測試快取讀取 ===
 async function testCache() {
   if (!('caches' in window)) {
     boxCache.innerHTML += '<div class="err">瀏覽器不支援 Cache API</div>';
@@ -101,7 +93,6 @@ async function testCache() {
   }
 }
 
-// === 啟動測試 ===
 (async () => {
   testDirect();
   await testCache();
