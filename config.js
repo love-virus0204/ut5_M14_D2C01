@@ -58,7 +58,7 @@ window.ymdToYM = function(Ntime){
 
 /* ===== 音效清單 ===== */
 window.SOUND_LIST = [
-  './mus/levelup.wav',
+  './mus/levelup.mp3',
   './mus/clock01.wav',
   './mus/clock02.mp3',
   './mus/clock03.mp3'
