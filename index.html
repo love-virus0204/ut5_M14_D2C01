@@ -182,7 +182,7 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.4</div>
+  <div class="ver">版本：v1.5.6</div>
   <div class="clock" id="clock">--/-- --:--:--</div></div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
@@ -204,9 +204,9 @@ const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 const en=document.getElementById('toast');
+const sendBtn = document.getElementById('sendBtn');
 const aBtns = Array.from(document.querySelectorAll('[data-a]'));
 const bBtns = Array.from(document.querySelectorAll('[data-b]'));
-const sendBtn = document.getElementById('sendBtn');
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -330,6 +330,7 @@ function bindInput(){
   el.addEventListener('input',()=>{let x=el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5);el.value=x.toUpperCase();if(el.value.length===5)saveA(el.value);});
   el.addEventListener('focus',()=>{if(el.value)el.value='';});
 }
+
 function setSel(btns,val,attr){
   btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
@@ -384,22 +385,21 @@ sendBtn.addEventListener('click', () => {
   send();
 });
 
-/* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded', () => {
-  startClock();
-  sel.addEventListener('change', () => {
+sel.addEventListener('change', () => {
   playSFX(2); });
-  setSel(aBtns, selA, 'a');
-  setSel(bBtns, selB, 'b');
-  enableSend();
-  fillDateSelect();
-  checkCutoff();
-  renderB(DRAFTB);
-  bindInput();
-  probeStatus();
-  setInterval(startClock,1000);
-  setInterval(checkCutoff, 5 * 60 * 1000);
-});
+
+/* ===== 啟動 ===== */
+setSel(aBtns, selA, 'a');
+setSel(bBtns, selB, 'b');
+enableSend();
+fillDateSelect();
+bindInput();
+renderB(DRAFTB);
+probeStatus();
+startClock();
+setInterval(startClock,1000);
+checkCutoff();
+setInterval(checkCutoff, 5 * 60 * 1000);
 </script>
 </body>
 </html>
