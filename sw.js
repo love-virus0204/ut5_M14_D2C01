@@ -3,21 +3,21 @@
 // --- 分模組定義 ---
 const MODULES = {
   mus1: {
-    cache: 'mus1-v1.0',
+    cache: 'mus1-v1.1',
     assets: [
       './mus/Detektiv.mp3',
       './mus/Prontera.mp3',
       './mus/login1.mp3',
-      './mus/login3.mp3'
+      './mus/login2.mp3'
     ]
   },
   mus2: {
-    cache: 'mus2-v1.21',
+    cache: 'mus2-v1.22',
     assets: [
-      './mus/clock02.wav',
-      './mus/clock01.mp3',
       './mus/levelup.wav',
-      './mus/login2.wav'
+      './mus/clock01.wav',
+      './mus/clock02.mp3',
+      './mus/clock03.mp3'
     ]
   }
 };
