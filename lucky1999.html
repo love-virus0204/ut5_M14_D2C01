@@ -153,14 +153,12 @@ body{display:flex;flex-direction:column;overflow:hidden;}
 
 <div id="mask" class="mask">處理中…</div>
 
-<audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
+<audio id="bgm" src="./mus/clock03.mp3" preload="auto"></audio>
 <script>
 // Prontera.mp3
 bgm.src = './mus/Detektiv.mp3';
 bgm.load();
 /* ===== 綁定 ===== */
-document.getElementById('btnRead').onclick=reloadData;
-document.getElementById('btnDraw').onclick=draw;
 const mask=document.getElementById('mask');
 const el = document.getElementById('nowTime');
 const rowsEl = document.getElementById('rows');
@@ -345,6 +343,9 @@ function BgCycle(state) {
 daySel.addEventListener('change', () => {
   playSFX(2);
 });
+
+document.getElementById('btnRead').onclick=reloadData;
+document.getElementById('btnDraw').onclick=draw;
 // document.addEventListener('DOMContentLoaded', reloadData);
 </script>
 </body>
