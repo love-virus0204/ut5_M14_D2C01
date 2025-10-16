@@ -79,6 +79,8 @@ window.playSFX = function(i){
   try {
     a.pause();
     a.currentTime = 0;
+    a.volume = 1.0;
+    a.loop = false;
     a.play();
   } catch(e){}
 };
