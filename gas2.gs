@@ -1,7 +1,6 @@
 function _drawLucky(sh, p, rankedIds,p) {
   const dateSerial = Number(p.dateSerial);
   const epoch = Date.UTC(1899,11,30);
-  const now = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
 
   const last  = sh.getLastRow();
   const start = Math.max(2, last - 519);
@@ -33,7 +32,7 @@ function _drawLucky(sh, p, rankedIds,p) {
     big[i][G_BIG] = name;
     sub[i][G_SUB] = name;
     sub[i][H_SUB] = p.uid;
-    sub[i][I_SUB] = now;
+    sub[i][I_SUB] = nowTw();
 
     let val = '9999';
     if (eFlg !== 'n' && r > 0) {
