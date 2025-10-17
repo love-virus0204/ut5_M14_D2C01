@@ -78,9 +78,8 @@ function doPost(e){
 }
 
 function _submit(sh, p){
-  var submittedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
   var row = [
-    submittedAt, // 1
+    nowTw(),     // 1
     p.key,       // 2
     p.date,      // 3
     p.id,        // 4
@@ -224,14 +223,12 @@ function _listRecent2(sh) {
 
 
 function _upsert(sh, p){
-  const updatedAt = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
-
   const row = [
     p.id,          // A id
     p.name,        // B name
     p.tier,        // C tier
     p.limit_date,  // D limit_date
-    updatedAt,     // E updatedAt
+    nowTw(),       // E updatedAt
     p.uid          // F uid
   ];
 
