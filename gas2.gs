@@ -1,4 +1,4 @@
-function _drawLucky(sh, p, rankedIds,p) {
+function _drawLucky(sh, p, rankedIds) {
   const dateSerial = Number(p.dateSerial);
   const epoch = Date.UTC(1899,11,30);
   const nw = nowTw();
