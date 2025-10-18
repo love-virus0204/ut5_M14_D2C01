@@ -55,46 +55,21 @@ function doPost(e){
     case "upsert":
     case "lucky":
     case "soft_delete":
-      sheet = _sheet(sn_2);
-var ok = (function () {
-  var cache = CacheService.getScriptCache();
-  var CK = 'auth_table_cache';
-  var json = cache.get(CK), map;
 
-  if (json) {
-    map = JSON.parse(json);
-  } else {
-    var lastRow = sheet.getLastRow();
-    if (lastRow < 2) return false;
 
-    var lock = LockService.getScriptLock();
-    lock.tryLock(12000);
-    try {
-      json = cache.get(CK);
-      if (json) {
-        map = JSON.parse(json);
-      } else {
-        var uids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
-        var swds = sheet.getRange(2, 7, lastRow - 1, 1).getValues();
-        map = {};
-        for (var i = 0; i < uids.length; i++) {
-          var uid = String(uids[i][0] || '').trim();
-          var swd = String(swds[i][0] || '').trim();
-          if (uid) map[uid] = swd;
-        }
-        cache.put(CK, JSON.stringify(map), 300);
-      }
-    } finally {
-      try { lock.releaseLock(); } catch (e) {}
-    }
-  }
+  var daok = (function () {
+    const CK = 'auth_table_cache';
+    const cache = CacheService.getScriptCache();
+    const json = cache.get(CK);
+    if (!json) return false;
+    let map;
+    try { map = JSON.parse(json); } catch (e) { return false; }
+    const uid = String(p.uid || '').trim();
+    const swd = String(p.swd || '').trim();
+    return map && map[uid] && map[uid] === swd;
+  })();
 
-  var uid = String(p.uid || '').trim();
-  var swd = String(p.swd || '').trim();
-  return map && map[uid] && map[uid] === swd;
-})();
-
-if (ok !== true) return _json({ status: "error", msg: "auth_failed" });
+  if (daok !== true) return _json({ status: "error", msg: "auth_failed" });
 
       return withLock(60000, () => {
         switch (action) {
