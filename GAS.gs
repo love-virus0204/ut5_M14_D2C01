@@ -113,31 +113,6 @@ function _listRecent(sh){
   });
 }
 
-function _submit22(sh, p){
-  var row = [
-    nowTw(),     // 1
-    p.key,       // 2
-    p.date,      // 3
-    p.id,        // 4
-    p.shift,     // 5
-    p.dN,        // 6
-    p.uid        // 7
-  ];
-
-  var hitRow = _findRowByKey(sh, String(p.key), 2);
-  if (hitRow > 1){
-    sh.getRange(hitRow, 1, 1, 7).setValues([row]);
-    sh.getRange(hitRow, 3).setNumberFormat('mm/dd');
-    return _json({status:"ok", mode:"更新"});
-  } else {
-    sh.appendRow(row);
-    var last = sh.getLastRow();
-    sh.getRange(last, 3).setNumberFormat('mm/dd');
-    return _json({status:"ok", mode:"新增"});
-  }
-}
-
-
 function _submit(sh, p){
   var row = [
     nowTw(),     // 1
@@ -172,6 +147,7 @@ function idxSync(sh, col, key, val, mode) {
   if (mode === 'upd') {
     if (!map) return false;
     map[String(key)] = val;
+    cache.put(tag, JSON.stringify(map), TTL);
     return true;
   }
 
