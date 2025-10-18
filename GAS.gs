@@ -194,7 +194,7 @@ function _check(sh, p, internal = false ) {
   const lastCol = sh.getLastColumn();
   const values = sh.getRange(2, 1, lastRow - 1, lastCol).getValues();
 
-  const found = values.find(r => r[0] === p.id);
+  const found = values.find(r => r[0] === p.uid);
   if (!found) {
     return _json({ status: "error", msg: "用戶未登錄" });
   }
