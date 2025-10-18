@@ -271,13 +271,13 @@ async function reloadData(){
 }
 
 async function draw(){
-  showMask('抽籤中…');
   currS = currentS();
   const uid = localStorage.getItem('user_id3');
   if (!uid) {
     window.open('verify.html', '_blank');
     return;
   }
+  showMask('抽籤中…');
   try {
     const pwd = localStorage.getItem('user_ps3');
     const p = new URLSearchParams();
