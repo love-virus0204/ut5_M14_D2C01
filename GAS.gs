@@ -139,6 +139,7 @@ function _submit(sh, p){
 }
 
 function idxSync(sh, col, key, val, mode) {
+  const TTL = 21600;
   const cache = CacheService.getScriptCache();
   const tag = 'IDX:' + sh.getName() + ':' + col;
   let j = cache.get(tag);
@@ -151,7 +152,6 @@ function idxSync(sh, col, key, val, mode) {
     return true;
   }
 
-  const TTL = 21600;
   if (!map) {
     const last = sh.getLastRow();
     if (last < 2) return 0;
