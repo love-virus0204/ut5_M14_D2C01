@@ -37,6 +37,7 @@ function sweepExpiredAndNotify(){
       }
     }
 
+    if (newTn % 7 !== 3) return;
     // === sh_1 清理 ==
     const sh1   = _sheet(sn_1);
     const cache = CacheService.getScriptCache();
