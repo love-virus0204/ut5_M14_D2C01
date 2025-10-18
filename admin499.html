@@ -290,6 +290,7 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
     const fot=new URLSearchParams();
     fot.append('action','upsert');
     fot.append('uid',p.uid);
+    fot.append('pwd',p.pwd);
     fot.append('id',p.id);
     fot.append('name',p.name);
     fot.append('tier',String(p.tier));
