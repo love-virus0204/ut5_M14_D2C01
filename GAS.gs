@@ -193,6 +193,13 @@ function _toSerialInt(v, epoch){
   return Math.floor((Date.UTC(y, m, d) - epoch) / 86400000);
 }
 
+function nowTw() {
+  const raw = Utilities.formatDate(new Date(), TZ, 'yyyy/MM/dd HH:mm:ss');
+  const parts = raw.split(' ');
+  const time = parts[1].split(':').map(v => v.padStart(2, '0')).join(':');
+  return `${parts[0]} ${time}`;
+}
+
 function _json(obj){
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
