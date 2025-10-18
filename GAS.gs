@@ -194,10 +194,6 @@ function _check(sh, p, ct) {
   }
 
   if (found[6] === p.swd) {
-    return _json({ status: "ok", mode: "秘鑰通過" });
-  }
-
-  if (found[6] === p.swd) {
     if (ct === 1) return;
     return _json({ status: "ok", mode: "秘鑰通過" });
   }
