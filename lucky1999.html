@@ -279,11 +279,11 @@ async function draw(){
     return;
   }
   try {
-    const swd = localStorage.getItem('user_ps3');
+    const pwd = localStorage.getItem('user_ps3');
     const p = new URLSearchParams();
     p.append('action','lucky');
     p.append('uid', uid);
-    p.append('swd', swd);
+    p.append('swd', pwd);
     p.append('dateSerial', currS);
 
     const r = await fetch(api_url, { method:'POST', body:p });
