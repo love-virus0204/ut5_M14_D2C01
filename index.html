@@ -257,6 +257,7 @@ function submitData(p){
   const params=new URLSearchParams();
   params.append('action','submit');
   params.append('uid',p.uid);
+  params.append('pwd',p.pwd);
   params.append('key',p.key);
   params.append('date',p.date);
   params.append('shift',p.shift);
