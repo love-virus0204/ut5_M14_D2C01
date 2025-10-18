@@ -155,7 +155,7 @@ async function verify(){
   showOverlay(true);
   msg.textContent = '';
 
-  const p = new URLSearchParams({ action: 'auth_check', id: uid, swd: pwd });
+  const p = new URLSearchParams({ action: 'auth_check', uid: uid, swd: pwd });
 
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), 12000);
