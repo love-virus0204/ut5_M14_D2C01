@@ -129,7 +129,8 @@ bgm.load();
 const overlay=document.getElementById('overlay');
 const msg=document.getElementById('msg');
 function showOverlay(on){overlay.style.display=on?'flex':'none';}
-function saveUser(u){localStorage.setItem('user_id2',u);}
+function saveUserId(u){localStorage.setItem('user_id2',u);}
+function saveUserPs(p){localStorage.setItem('user_ps2',p);}
 
 /* 帳號即時轉大寫 */
 const uidEl=document.getElementById('uid');
@@ -165,7 +166,8 @@ async function verify(){
     const j = await r.json();
 
     if (j.status === 'ok' && j.mode === '秘鑰通過') {
-      saveUser(uid);
+      saveUserId(uid);
+      saveUserPs(pws);
       msg.style.color = '#22c55e';
       msg.textContent = '驗證成功，3 秒後關閉...';
       setTimeout(closeOrN, 3000);
