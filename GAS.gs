@@ -35,12 +35,12 @@ function doPost(e){
   var action = String(p.action || "").toLowerCase();
   if (!action) return _json({ status: "error", msg: "unknown_action" });
 
-  sheet = _sheet(sn_1);
   switch (action) {
     case "ping":
       return _json({ status: "ok" });
 
     case "list_recent":
+      sheet = _sheet(sn_1);
       return _listRecent(sheet);
 
     case "list_recent2":
@@ -60,6 +60,7 @@ function doPost(e){
       return withLock(60000, () => {
         switch (action) {
           case "submit":
+            sheet = _sheet(sn_1);
             return _submit(sheet, p);
 
           case "upsert":
