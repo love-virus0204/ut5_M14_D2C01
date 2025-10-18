@@ -58,7 +58,7 @@ function doPost(e){
 
 const mhp = getCache();
 const daok = mhp && (String(mhp[p.uid] || '') === String(p.swd || ''));
-if (!daok) return _json({ status: 'error', msg: 'auth_failed' });
+if (!daok) return _json({ status: 'errorPW', msg: 'auth_failed' });
 
       return withLock(60000, () => {
         switch (action) {
