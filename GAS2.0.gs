@@ -1,6 +1,7 @@
 /** 清理 sh_1 緩存*/
 function Notify(){
   return withLock(60000, () => {
+    cache.remove(CK);
     const sh1   = _sheet(sn_1);
     const cache = CacheService.getScriptCache();
     cache.remove('IDX:' + sh1.getName() + ':2');
