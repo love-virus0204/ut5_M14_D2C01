@@ -273,15 +273,17 @@ async function reloadData(){
 async function draw(){
   showMask('抽籤中…');
   currS = currentS();
-  const uid = localStorage.getItem('user_id2');
+  const uid = localStorage.getItem('user_id3');
   if (!uid) {
     window.open('verify.html', '_blank');
     return;
   }
   try {
+    const pwd = localStorage.getItem('user_ps3');
     const p = new URLSearchParams();
     p.append('action','lucky');
     p.append('uid', uid);
+    p.append('pwd', pwd);
     p.append('dateSerial', currS);
 
     const r = await fetch(api_url, { method:'POST', body:p });
