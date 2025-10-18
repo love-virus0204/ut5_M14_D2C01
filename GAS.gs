@@ -86,30 +86,6 @@ if (!daok) return _json({ status: 'error', msg: 'auth_failed' });
   }
 }
 
-function _submit(sh, p){
-  var row = [
-    nowTw(),     // 1
-    p.key,       // 2
-    p.date,      // 3
-    p.id,        // 4
-    p.shift,     // 5
-    p.dN,        // 6
-    p.uid        // 7
-  ];
-
-  var hitRow = _findRowByKey(sh, String(p.key), 2);
-  if (hitRow > 0){
-    sh.getRange(hitRow, 1, 1, 7).setValues([row]);
-    sh.getRange(hitRow, 3).setNumberFormat('mm/dd');
-    return _json({status:"ok", mode:"更新"});
-  } else {
-    sh.appendRow(row);
-    var last = sh.getLastRow();
-    sh.getRange(last, 3).setNumberFormat('mm/dd');
-    return _json({status:"ok", mode:"新增"});
-  }
-}
-
 /* 讀取：取底部 520 列， fields+values */
 function _listRecent(sh){
   var lastRow = sh.getLastRow();
@@ -137,6 +113,89 @@ function _listRecent(sh){
   });
 }
 
+function _submit22(sh, p){
+  var row = [
+    nowTw(),     // 1
+    p.key,       // 2
+    p.date,      // 3
+    p.id,        // 4
+    p.shift,     // 5
+    p.dN,        // 6
+    p.uid        // 7
+  ];
+
+  var hitRow = _findRowByKey(sh, String(p.key), 2);
+  if (hitRow > 0){
+    sh.getRange(hitRow, 1, 1, 7).setValues([row]);
+    sh.getRange(hitRow, 3).setNumberFormat('mm/dd');
+    return _json({status:"ok", mode:"更新"});
+  } else {
+    sh.appendRow(row);
+    var last = sh.getLastRow();
+    sh.getRange(last, 3).setNumberFormat('mm/dd');
+    return _json({status:"ok", mode:"新增"});
+  }
+}
+
+
+function _submit(sh, p){
+  var row = [
+    nowTw(),     // 1
+    p.key,       // 2
+    p.date,      // 3
+    p.id,        // 4
+    p.shift,     // 5
+    p.dN,        // 6
+    p.uid        // 7
+  ];
+
+  var hitR = idxSync(sh, 2, p.key);
+  if (hitR > 0){
+    sh.getRange(hitR, 1, 1, 7).setValues([row]);
+    sh.getRange(hitR, 3).setNumberFormat('mm/dd');
+    return _json({status:"ok", mode:"更新"});
+  } else {
+    sh.appendRow(row);
+    const last = sh.getLastRow();
+    sh.getRange(last, 3).setNumberFormat('mm/dd');
+    idxSync(sh, 2, p.key, last, 'upd');
+    return _json({status:"ok", mode:"新增"});
+  }
+}
+
+function idxSync(sh, col, key, val, mode) {
+  const cache = CacheService.getScriptCache();
+  const tag = 'IDX:' + sh.getName() + ':' + col;
+  let j = cache.get(tag);
+  let map = j ? JSON.parse(j) : null;
+
+  if (mode === 'upd') {
+    if (!map) map = {};
+    map[String(key)] = val;
+    cache.put(tag, JSON.stringify(map), TTL);
+    return true;
+  }
+
+  const TTL = 21600;
+  if (!map) {
+    const last = sh.getLastRow();
+    if (last < 2) return 0;
+    const vals = sh.getRange(2, col, last - 1, 1).getValues();
+    map = {};
+    for (let i = 0; i < vals.length; i++) {
+      const k = String(vals[i][0] || '').trim();
+      if (k && !map[k]) map[k] = i + 2;
+    }
+    cache.put(tag, JSON.stringify(map), TTL);
+  } else {
+    cache.put(tag, JSON.stringify(map), TTL);
+  }
+  const found = map[String(key)] || 0;
+  return found;
+}
+
+
+
 /* 工具 - on */
 function _sheet(sn) {
 var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -147,15 +206,12 @@ throw _json({ status: "error", msg: "sheet_not_found" });
 return sh;
 }
 
-function _findRowByKey(sh, key, ct){
-  var lastRow = sh.getLastRow();
-  if (lastRow < 2) return 0;
-  var rows = lastRow - 1;
-  var keys  = sh.getRange(2, ct, rows, 1).getValues();
-  for (var i=0;i<rows;i++){
-    if (String(keys[i][0]) === key) return i + 2;
-  }
-  return 0;
+function _findRowByKey(sh, key, col){
+  const last = sh.getLastRow();
+  if (last < 2) return 0;
+  const arr = sh.getRange(2, col, last-1, 1).getValues().flat().map(v=>String(v));
+  const i = arr.indexOf(String(key));
+  return i >= 0 ? i+2 : 0;
 }
 
 /*** 日期序號轉換（yyyy-mm-dd）***/
