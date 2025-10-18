@@ -269,7 +269,7 @@ function submitData(p){
 /* ===== 送出動作 ===== */
 async function send(){
   const curr = currentS();
-  const uid = localStorage.getItem('user_id2');
+  const uid = localStorage.getItem('user_id3');
   if (!uid) {
     window.open('verify.html', '_blank');
     return; }
@@ -281,11 +281,20 @@ async function send(){
   const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA, uid: uid };
   showOverlay(true);
   let ok=false,res;
-  try{ res=await submitData(payload); ok=res&&res.status==='ok'; }
-  catch(_){ ok=false; }
+  try {
+    res = await submitData(payload);
+    if (res?.status === 'error') {
+      localStorage.removeItem('user_id3');
+      window.open('verify.html','_blank');
+      return;
+    }
+    ok = res?.status === 'ok';
+  } catch(_) {
+    ok = false;
+  }
   showOverlay(false);
-  let ts= now.slice(5, 16);
 
+  let ts= now.slice(5, 16);
   const status = ok ? 'ok':'ng';
   const resultText = ok ? '成功' : '失敗';
   const flag = !ok
