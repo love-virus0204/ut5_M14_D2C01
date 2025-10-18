@@ -56,7 +56,6 @@ function doPost(e){
     case "lucky":
     case "soft_delete":
       sheet = _sheet(sn_2);
-
 var ok = (function () {
   var cache = CacheService.getScriptCache();
   var CK = 'auth_table_cache';
@@ -67,30 +66,32 @@ var ok = (function () {
   } else {
     var lastRow = sheet.getLastRow();
     if (lastRow < 2) return false;
-      var lock = LockService.getScriptLock();
-      lock.tryLock(5000);
-      try {
-        json = cache.get(CK);
-        if (json) {
-          map = JSON.parse(json);
-        } else {
-          var uids  = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
-          var swds = sheet.getRange(2, 7, lastRow - 1, 1).getValues();
-          map = {};
-          for (var i = 0; i < ids.length; i++) {
-            var uid  = String(uids[i][0]  || '').trim();
-            var swd = String(swds[i][0] || '').trim();
-            if (uid) map[id] = swd;
-          }
-          cache.put(CK, JSON.stringify(map), 300);
+
+    var lock = LockService.getScriptLock();
+    lock.tryLock(12000);
+    try {
+      json = cache.get(CK);
+      if (json) {
+        map = JSON.parse(json);
+      } else {
+        var uids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+        var swds = sheet.getRange(2, 7, lastRow - 1, 1).getValues();
+        map = {};
+        for (var i = 0; i < uids.length; i++) {
+          var uid = String(uids[i][0] || '').trim();
+          var swd = String(swds[i][0] || '').trim();
+          if (uid) map[uid] = swd;
         }
-      } finally {
-        try { lock.releaseLock(); } catch (e) {}
+        cache.put(CK, JSON.stringify(map), 300);
       }
+    } finally {
+      try { lock.releaseLock(); } catch (e) {}
     }
-     var uid  = String(p.uid  || '').trim();
-     var swd = String(p.swd || '').trim();
-     return map && map[id] && map[id] === swd;
+  }
+
+  var uid = String(p.uid || '').trim();
+  var swd = String(p.swd || '').trim();
+  return map && map[uid] && map[uid] === swd;
 })();
 
 if (ok !== true) return _json({ status: "error", msg: "auth_failed" });
