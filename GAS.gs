@@ -49,7 +49,7 @@ function doPost(e){
 
     case "auth_check":
       sheet = _sheet(sn_2);
-      return _check(sheet,p);
+      return _check(sheet, p);
 
     case "submit":
     case "upsert":
@@ -57,21 +57,25 @@ function doPost(e){
     case "soft_delete":
       sheet = _sheet(sn_2);
       if (!_check(sheet, p, true)) return _json({ status: "error", msg: "auth_failed" });
+
       return withLock(60000, () => {
         switch (action) {
           case "submit":
-            sheet = _sheet(sn_1);
-            return _submit(sheet, p);
+            return _submit(_sheet(sn_1), p);
 
           case "upsert":
-            sheet = _sheet(sn_2);
-            return _upsert(sheet, p);
+            return _upsert(_sheet(sn_2), p);
 
-          case "lucky": 
-            sheet = _sheet(sn_2);
-            const rankedIds = _buildLuckyRanks(sheet);
-            sheet = _sheet(sn_1);
-            return _drawLucky(sheet, p, rankedIds);
+          case "lucky": {
+            const rankedIds = _buildLuckyRanks(_sheet(sn_2));
+            return _drawLucky(_sheet(sn_1), p, rankedIds);
+          }
+
+          case "soft_delete":
+            return _softDelete(_sheet(sn_2), p);
+
+          default:
+            return _json({ status: "error", msg: "unknown_action" });
         }
       });
 
