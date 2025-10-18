@@ -166,10 +166,10 @@ async function verify(){
     const j = await r.json();
 
     if (j.status === 'ok' && j.mode === '秘鑰通過') {
-      saveUserId(uid);
-      saveUserPs(pws);
       msg.style.color = '#22c55e';
       msg.textContent = '驗證成功，3 秒後關閉...';
+      saveUserId(uid);
+      saveUserPs(pwd);
       setTimeout(closeOrN, 3000);
       return;
     }
