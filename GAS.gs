@@ -56,7 +56,8 @@ function doPost(e){
     case "lucky":
     case "soft_delete":
       sheet = _sheet(sn_2);
-      if (!_check(sheet, p, true)) return _json({ status: "error", msg: "auth_failed" });
+      if (_check(sheet, p, true) !== true) { return _json({ status: "error", msg: "auth_failed" });
+      }
 
       return withLock(60000, () => {
         switch (action) {
