@@ -125,7 +125,7 @@ function _submit22(sh, p){
   ];
 
   var hitRow = _findRowByKey(sh, String(p.key), 2);
-  if (hitRow > 0){
+  if (hitRow > 1){
     sh.getRange(hitRow, 1, 1, 7).setValues([row]);
     sh.getRange(hitRow, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
@@ -150,7 +150,7 @@ function _submit(sh, p){
   ];
 
   var hitR = idxSync(sh, 2, p.key);
-  if (hitR > 0){
+  if (hitR > 1){
     sh.getRange(hitR, 1, 1, 7).setValues([row]);
     sh.getRange(hitR, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
@@ -170,9 +170,8 @@ function idxSync(sh, col, key, val, mode) {
   let map = j ? JSON.parse(j) : null;
 
   if (mode === 'upd') {
-    if (!map) map = {};
+    if (!map) return false;
     map[String(key)] = val;
-    cache.put(tag, JSON.stringify(map), TTL);
     return true;
   }
 
