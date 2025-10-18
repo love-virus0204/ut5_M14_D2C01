@@ -56,8 +56,44 @@ function doPost(e){
     case "lucky":
     case "soft_delete":
       sheet = _sheet(sn_2);
-      if (_check(sheet, p, true) !== true) { return _json({ status: "error", msg: "auth_failed" });
+
+var ok = (function () {
+  var cache = CacheService.getScriptCache();
+  var CK = 'auth_table_cache';
+  var json = cache.get(CK), map;
+
+  if (json) {
+    map = JSON.parse(json);
+  } else {
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return false;
+      var lock = LockService.getScriptLock();
+      lock.tryLock(5000);
+      try {
+        json = cache.get(CK);
+        if (json) {
+          map = JSON.parse(json);
+        } else {
+          var uids  = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+          var swds = sheet.getRange(2, 7, lastRow - 1, 1).getValues();
+          map = {};
+          for (var i = 0; i < ids.length; i++) {
+            var uid  = String(uids[i][0]  || '').trim();
+            var swd = String(swds[i][0] || '').trim();
+            if (uid) map[id] = swd;
+          }
+          cache.put(CK, JSON.stringify(map), 300);
+        }
+      } finally {
+        try { lock.releaseLock(); } catch (e) {}
       }
+    }
+     var uid  = String(p.uid  || '').trim();
+     var swd = String(p.swd || '').trim();
+     return map && map[id] && map[id] === swd;
+})();
+
+if (ok !== true) return _json({ status: "error", msg: "auth_failed" });
 
       return withLock(60000, () => {
         switch (action) {
@@ -187,7 +223,7 @@ function _json(obj){
 }
 /* 工具 - off */
 
-function _check(sh, p, internal = false ) {
+function _check(sh, p) {
   const lastRow = sh.getLastRow();
   if (lastRow < 2) return _json({ status: "error", msg: "no_data" });
 
@@ -200,7 +236,6 @@ function _check(sh, p, internal = false ) {
   }
 
   if (found[6] === p.swd) {
-    if (internal) return true;
     return _json({ status: "ok", mode: "秘鑰通過" });
   }
 
