@@ -56,20 +56,9 @@ function doPost(e){
     case "lucky":
     case "soft_delete":
 
-
-  var daok = (function () {
-    const CK = 'auth_table_cache';
-    const cache = CacheService.getScriptCache();
-    const json = cache.get(CK);
-    if (!json) return false;
-    let map;
-    try { map = JSON.parse(json); } catch (e) { return false; }
-    const uid = String(p.uid || '').trim();
-    const swd = String(p.swd || '').trim();
-    return map && map[uid] && map[uid] === swd;
-  })();
-
-  if (daok !== true) return _json({ status: "error", msg: "auth_failed" });
+      var mhp = getCache();
+      var daok = !!(mhp && mhp[String(p.uid || '')] === String(p.swd || ''));
+      if (!daok) return _json({ status: 'error', msg: 'auth_failed' });
 
       return withLock(60000, () => {
         switch (action) {
