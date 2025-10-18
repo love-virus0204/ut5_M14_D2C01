@@ -278,7 +278,8 @@ async function send(){
     el.focus();
     return;
   }
-  const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA, uid: uid };
+  const pwd = localStorage.getItem('user_ps3');
+  const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA, uid: uid, pwd: pwd };
   showOverlay(true);
   let ok=false,res;
   try {
