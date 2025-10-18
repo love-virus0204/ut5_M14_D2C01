@@ -263,10 +263,10 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
     if (!uid) {
       window.open('verify.html', '_blank');
       return; }
-    const swd = localStorage.getItem('user_ps3');
+    const pwd = localStorage.getItem('user_ps3');
     const p={
       uid:uid,
-      swd:swd,
+      swd:pwd,
       id:(idEl.value||'').trim().toUpperCase(),
       name:(nameEl.value||'').trim(),
       tier:parseInt(tierEl.value,10),
