@@ -1,4 +1,4 @@
-/** 解禁 + 寄信 + 清理 sh_1（sn_2 無資料即整體跳過）*/
+/** 解禁 + 寄信 + 清理 sh_1（sn_2 無資料跳過）*/
 function sweepExpiredAndNotify(){
   return withLock(60000, () => {
     const sh = _sheet(sn_2);
@@ -37,8 +37,8 @@ function sweepExpiredAndNotify(){
       }
     }
 
-    if (newTn % 7 !== 3) return;
     // === sh_1 清理 ==
+    if (newTn % 7 !== 3) return;
     const sh1   = _sheet(sn_1);
     const cache = CacheService.getScriptCache();
     cache.remove('IDX:' + sh1.getName() + ':2');
