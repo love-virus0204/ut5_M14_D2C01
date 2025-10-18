@@ -39,6 +39,12 @@ function sweepExpiredAndNotify(){
 
     // === sh_1 清理 ==
     const sh1   = _sheet(sn_1);
+    const cache = CacheService.getScriptCache();
+cache.remove('IDX:' + sh1.getName() + ':2');
+     cache.removeAll([
+       'IDX:' + sh1.getName() + ':2',
+       'IDX:' + sh1.getName() + ':3'
+     ]);
     const aLast = sh1.getLastRow();
     const upper = Math.min(520 , aLast - 1);
     if (upper < 2) return;
