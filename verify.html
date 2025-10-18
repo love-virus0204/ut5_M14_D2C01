@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <script src="./config.js"></script>
 <script>
-const uid = localStorage.getItem('user_id');
+const uid = localStorage.getItem('user_id2');
 if (uid) closeOrN(); 
 function closeOrN() {
   window.close();
@@ -129,7 +129,7 @@ bgm.load();
 const overlay=document.getElementById('overlay');
 const msg=document.getElementById('msg');
 function showOverlay(on){overlay.style.display=on?'flex':'none';}
-function saveUser(u){localStorage.setItem('user_id',u);}
+function saveUser(u){localStorage.setItem('user_id2',u);}
 
 /* 帳號即時轉大寫 */
 const uidEl=document.getElementById('uid');

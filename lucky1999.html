@@ -269,24 +269,35 @@ async function reloadData(){
   }catch(e){showMask('讀取失敗');setTimeout(hideMask,1500);}
   finally{hideMask();}
 }
+
 async function draw(){
   showMask('抽籤中…');
   currS = currentS();
-  const uid = localStorage.getItem('user_id');
+  const uid = localStorage.getItem('user_id2');
   if (!uid) {
     window.open('verify.html', '_blank');
-    return; }
-  try{
-    const p=new URLSearchParams();
+    return;
+  }
+  try {
+    const p = new URLSearchParams();
     p.append('action','lucky');
-    p.append('uid',uid);
-    p.append('dateSerial',currS);
-    const r=await fetch(api_url,{method:'POST',body:p});
-    const j=await r.json();
-    renderResponse(j);
-    showMask('抽籤完成');
-    setTimeout(hideMask,1000);
-  }catch(e){showMask('抽籤失敗');setTimeout(hideMask,1500);}
+    p.append('uid', uid);
+    p.append('dateSerial', currS);
+
+    const r = await fetch(api_url, { method:'POST', body:p });
+    const j = await r.json();
+
+    if (j && j.status === 'ok') {
+      renderResponse(j);
+      showMask('抽籤完成');
+    } else {
+      showMask('❌ 抽籤失敗：' + (j.msg ||'未知錯誤'));
+    }
+    setTimeout(hideMask, 1200);
+  } catch(e) {
+    showMask('❌ 連線或解析失敗');
+    setTimeout(hideMask, 1500);
+  }
 }
 
 /* ===== 即時時間顯示 ===== */

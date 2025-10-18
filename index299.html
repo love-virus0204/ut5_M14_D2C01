@@ -14,7 +14,10 @@
 html,body{ padding-bottom:var(--footer-h); margin:0;height:100%;background:radial-gradient(circle at top,#0b1725,#060b15 80%); color:var(--text);font-family:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif; overflow-x:hidden;box-sizing:border-box; }
 *,*::before,*::after{box-sizing:inherit}
 header{ text-align:center;padding:16px 0;font-size:20px;font-weight:700;letter-spacing:.08em; background:linear-gradient(90deg,#0d1b2a,#1b263b);box-shadow:0 2px 10px rgba(0,0,0,.4); }
-main{display:block;padding:8px 0 0;overflow:visible;}
+main{padding:8px 0 0;overflow:visible;
+display:block; height:100%; }
+  @supports (height:100dvh)
+{ .main{min-height:100dvh;} }
 .container{width:80%;max-width:480px;min-width:240px;margin:0 auto;}
 .panel{ width:100%;background:var(--panel);border-radius:20px;padding:20px;margin:0;
   box-shadow:0 0 25px rgba(0,0,0,.4),inset 0 0 15px rgba(255,255,255,.06);backdrop-filter:blur(8px);
@@ -182,14 +185,14 @@ main{display:block;padding:8px 0 0;overflow:visible;}
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.3</div>
-  <div class="clock" id="clock">--/-- --:--:--</div>
-</div>
+  <div class="ver">版本：v1.5.7</div>
+  <div class="clock" id="clock">--/-- --:--:--</div></div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
+
   <div id="toast"></div>
 
-  <audio id="bgm" src="./mus/login2.wav" preload="auto"></audio>
+  <audio id="bgm" src="./mus/clock03.mp3" preload="auto"></audio>
 <script>
   bgm.src = './mus/login1.mp3';
   bgm.load();
@@ -204,6 +207,9 @@ const sel = document.getElementById('selDate');
 const el=document.getElementById('code');
 const tn=document.getElementById('clock');
 const en=document.getElementById('toast');
+const sendBtn = document.getElementById('sendBtn');
+const aBtns = Array.from(document.querySelectorAll('[data-a]'));
+const bBtns = Array.from(document.querySelectorAll('[data-b]'));
 
 /* ===== 草稿A ===== */
 const DRAFTA_KEY='d2_draft_a_v1';
@@ -225,7 +231,6 @@ function renderB(arr) {
   const data = arr;
   if (!data.length){ box.style.display='none'; list.innerHTML=''; return; }
   box.style.display='block';
-  //list.innerHTML = data.map(x =>`<div class="line ${x.flag}">${x.ts} | ${x.id} | ${x.a} | ${x.b} | ${x.msg}</div>`).join('');
   list.innerHTML = data.map(x =>
     `<div class="line ${x.flag}">${x.ts} ${x.id} ${x.a} ${x.b} ${x.msg}</div>`
   ).join('');
@@ -264,8 +269,7 @@ function submitData(p){
 /* ===== 送出動作 ===== */
 async function send(){
   const curr = currentS();
-  playSFX(1);
-  const uid = localStorage.getItem('user_id');
+  const uid = localStorage.getItem('user_id2');
   if (!uid) {
     window.open('verify.html', '_blank');
     return; }
@@ -283,7 +287,7 @@ async function send(){
   let ts= now.slice(5, 16);
 
   const status = ok ? 'ok':'ng';
-  const resultText = ok ? '上傳成功' : '連線失敗';
+  const resultText = ok ? '成功' : '失敗';
   const flag = !ok
     ? 'ng'
     : selB === 'N'
@@ -295,6 +299,7 @@ async function send(){
           : 'ok';
   //const bDisp = selB === 'N' ? '_' : selB;
   //  const aDisp = `${curr.b} - ${selB === 'N' ? '取消' : selA}`;
+
   const bDisp = selB === 'N' ? '\u00A0' : selB;
   const aDisp = `${curr.b} ${selB === 'N' ? '取消' : selA}`;
   saveB({ ts, id, a: aDisp, b: bDisp, msg:  `${resultText}`, flag });
@@ -322,23 +327,24 @@ function checkCutoff(){
   }
 }
 
-/* ===== 輸入與選項 ===== */
-function bindInput(){
-  el.value=loadA();
-  el.addEventListener('input',()=>{let x=el.value.replace(/[^A-Za-z0-9]/g,'').slice(0,5);el.value=x.toUpperCase();if(el.value.length===5)saveA(el.value);});
-  el.addEventListener('focus',()=>{if(el.value)el.value='';});
-}
-function setSel(btns,val,attr){
-  btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
-}
-function enableSend(){document.getElementById('sendBtn').disabled=!(selA&&selB);}
-
 function toast(msg, duration = 2200){
   if(!en) return;
   en.textContent = msg;
   en.classList.add('show');
   clearTimeout(en._t);
   en._t = setTimeout(()=>en.classList.remove('show'), duration);
+}
+
+/* ===== 輸入與選項 ===== */
+function onElEvent(e) {
+  if (e.type === 'focus') return (el.value = '');
+  const v = el.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 5);
+  el.value = v;
+  if (v.length === 5) saveA(v);
+}
+
+function setSel(btns,val,attr){
+  btns.forEach(b=>{const on=b.dataset[attr]===val;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on?'true':'false');});
 }
 
 /* ===== 產生 7 天清單並灌入下拉 ===== */
@@ -359,29 +365,51 @@ function fillDateSelect(){
   lock_st = 0;
 }
 
-/* ===== 啟動 ===== */
-addEventListener('DOMContentLoaded', () => {
-  startClock();
-  const aBtns = Array.from(document.querySelectorAll('[data-a]'));
-  const bBtns = Array.from(document.querySelectorAll('[data-b]'));
-  const sendBtn = document.getElementById('sendBtn');
-  setSel(aBtns, selA, 'a');
-  setSel(bBtns, selB, 'b');
+function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
 
-  function onA(e){ selA = e.currentTarget.dataset.a; setSel(aBtns, selA, 'a'); enableSend(); }
-  function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend();}
-  aBtns.forEach(b => b.addEventListener('click', onA));
-  bBtns.forEach(b => b.addEventListener('click', onB));
-  sendBtn.addEventListener('click', send);
-  enableSend();
-  fillDateSelect();
-  //checkCutoff();
-  renderB(DRAFTB);
-  bindInput();
-  probeStatus();
-  setInterval(startClock,1000);
-  //setInterval(checkCutoff, 5 * 60 * 1000);
+function onB(e){ selB = e.currentTarget.dataset.b; setSel(bBtns, selB, 'b'); enableSend(); }
+
+function enableSend(){ 
+document.getElementById('sendBtn').disabled=!(selA&&selB); }
+
+
+el.addEventListener('focus', onElEvent);
+el.addEventListener('input', onElEvent);
+
+aBtns.forEach(x => 
+  x.addEventListener('click', e => {
+    playSFX(1);
+    onA(e);
+    })
+  );
+bBtns.forEach(x => 
+  x.addEventListener('click', e => {
+    playSFX(1);
+    onB(e);
+    })
+  );
+
+sendBtn.addEventListener('click', () => {
+  playSFX(3);
+  send();
 });
+
+sel.addEventListener('change', () => {
+  playSFX(2);
+});
+
+/* ===== 啟動 ===== */
+setSel(aBtns, selA, 'a');
+setSel(bBtns, selB, 'b');
+enableSend();
+fillDateSelect();
+el.value=loadA();
+renderB(DRAFTB);
+probeStatus();
+startClock();
+setInterval(startClock,1000);
+//checkCutoff();
+//setInterval(checkCutoff, 5 * 60 * 1000);
 </script>
 </body>
 </html>
