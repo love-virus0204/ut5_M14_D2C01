@@ -49,14 +49,14 @@ function doPost(e){
 
     case "auth_check":
       sheet = _sheet(sn_2);
-      return _check(sheet,p,0);
+      return _check(sheet,p);
 
     case "submit":
     case "upsert":
     case "lucky":
     case "soft_delete":
       sheet = _sheet(sn_2);
-      return _check(sheet,p,1);
+      return _check(sheet,p,true);
       return withLock(60000, () => {
         switch (action) {
           case "submit":
@@ -181,7 +181,7 @@ function _json(obj){
 }
 /* 工具 - off */
 
-function _check(sh, p, ct) {
+function _check(sh, p, internal = false ) {
   const lastRow = sh.getLastRow();
   if (lastRow < 2) return _json({ status: "error", msg: "no_data" });
 
@@ -195,6 +195,11 @@ function _check(sh, p, ct) {
 
   if (found[6] === p.swd) {
     if (Number(ct) === 1) return;
+    return _json({ status: "ok", mode: "秘鑰通過" });
+  }
+
+  if (found[6] === p.swd) {
+    if (internal) return true;
     return _json({ status: "ok", mode: "秘鑰通過" });
   }
 
