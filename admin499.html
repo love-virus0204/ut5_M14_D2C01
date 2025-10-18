@@ -259,12 +259,14 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
 
   // === 上傳（僅 limit>0 計算；0 → 傳空） ===
   function uploadOne(){
-    const uid = localStorage.getItem('user_id2');
+    const uid = localStorage.getItem('user_id3');
     if (!uid) {
       window.open('verify.html', '_blank');
       return; }
+    const pwd = localStorage.getItem('user_ps3');
     const p={
       uid:uid,
+      pwd:pwd,
       id:(idEl.value||'').trim().toUpperCase(),
       name:(nameEl.value||'').trim(),
       tier:parseInt(tierEl.value,10),
