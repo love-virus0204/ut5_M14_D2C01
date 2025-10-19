@@ -18,11 +18,20 @@ function doGet(e){
 }
 
 function doPost(e) {
-  if (!e || !e.parameter) return _json({ 
-status: "error", msg: "no_post_data" });
+  if (!e || !e.postData) return _json({status:"error", msg:"no_post_data"});
 
-  const p = e.parameter;
-  const action = String(p.action || "").toLowerCase();
+  var p = {};
+  try {
+    if (e.postData.type === 'application/json') {
+      p = JSON.parse(e.postData.contents || "{}");
+    } else {
+      p = e.parameter || {};
+    }
+  } catch (_){
+    return _json({status:"error", msg:"bad_json"});
+  }
+
+  var action = String(p.action || "").toLowerCase();
   if (!action) return _json({ status: "error", msg: "unknown_action" });
 
   switch (action) {
