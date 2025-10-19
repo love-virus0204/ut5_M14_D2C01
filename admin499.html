@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <script src="./config.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>資料庫管理頁</title>
+<title>資料庫管理區</title>
 <style>
   :root { --min-font:16px; --gap:10px; --card-w:90vw; }
   html, body { height:100%; margin:0; font-family:system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; font-size:var(--min-font); line-height:1.4; overflow: hidden; overscroll-behavior-y: none; }
@@ -115,7 +115,7 @@
   <section class="top">
     <div class="card">
       <div class="card-head">
-        <strong>資料庫列表</strong>
+        <strong>權重池管理</strong>
         <button id="btnReload" class="btn secondary">更新</button>
         <button id="btnUpload" class="btn primary">上傳</button>
       </div>
@@ -188,7 +188,7 @@ function tickClock(){ el.textContent= now;}
   // ====== 遮罩 ======
   function showMask()
 { mask.style.display='flex'; }
-  function hideMask(){ mask.style.display='none'; }
+  function hideMask() { mask.style.display='none'; }
 
   // ====== GAS 健康檢查（GET） ======
   function pingGas(){
@@ -219,7 +219,7 @@ function tickClock(){ el.textContent= now;}
   }
 
 /* 附加或替換至表頭（樂觀更新） */
-  function appendOrReplaceBottom(p){
+  function pushEnd(p){
     const old=rowById[p.id]; if(old) old.remove();
     const tr=document.createElement('tr');
     tr.innerHTML = `
@@ -300,9 +300,11 @@ document.querySelector('.bottom').scrollIntoView({behavior:'smooth',block:'neare
       .then(r=>r.json())
       .then(resp=>{
         if(resp.status==='ok'){
-          appendOrReplaceBottom({id:p.id,name:p.name,tier:p.tier,ymd: ymdShow});
-          uploadCount++; if(uploadCount>=10){ uploadCount=0; setTimeout(reloadData, 1000); }
+          pushEnd({id:p.id,name:p.name,tier:p.tier,ymd: ymdShow});
+          uploadCount++;
+//if(uploadCount>=10){ uploadCount=0; setTimeout(reloadData, 1000); }
           idEl.value=''; nameEl.value=''; tierEl.value='3'; limitEl.value='';
+          playSFX(0);
         }else{
           alert(resp.msg||'上傳失敗');
         }

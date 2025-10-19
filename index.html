@@ -185,7 +185,7 @@ display:block; height:100%; }
     <div class="sitem"><span class="dot" id="dotSs"></span>wb</div>
     <div class="sitem"><span class="dot" id="dotSh"></span>sh1</div>
   </div>
-  <div class="ver">版本：v1.5.7</div>
+  <div class="ver">版本：v1.5.8</div>
   <div class="clock" id="clock">--/-- --:--:--</div></div>
 
   <div class="overlay" id="overlay"><div class="spinner"></div></div>
@@ -285,7 +285,7 @@ async function send(){
   let ok=false,res;
   try {
     res = await submitData(payload);
-    if (res?.status === 'error') {
+    if (res?.status === 'errorPW') {
       localStorage.removeItem('user_id3');
       showOverlay(false);
       window.open('verify.html','_blank');

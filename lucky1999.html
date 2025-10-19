@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <script src="./config.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>抽籤執行系統</title>
+<title>抽籤系統</title>
 <style>
 :root {
   --cols:4ch 12ch auto 4em 1em;
@@ -292,6 +292,7 @@ async function draw(){
     if (j && j.status === 'ok') {
       renderResponse(j);
       showMask('抽籤完成');
+      playSFX(0);
     } else {
       showMask('❌ 抽籤失敗：' + (j.msg ||'未知錯誤'));
     }
