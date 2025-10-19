@@ -273,7 +273,9 @@ async function reloadData(){
 async function draw(){
   currS = currentS();
   const uid = localStorage.getItem('user_id3');
-  if (!uid) {
+  const pwd = localStorage.getItem('user_ps3');
+  if (!uid || !pwd) {
+    localStorage.removeItem('user_id3');
     window.open('verify.html', '_blank');
     return;
   }
