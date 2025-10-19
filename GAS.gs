@@ -256,7 +256,7 @@ function _upsert(sh, p){
     p.uid          // F uid
   ];
 
-  const hitR = _idxSync(sh, 1, 1, p.id);
+  const hitR = _idxSync(sh, 999, 1, p.id);
 
   if (hitR > 0) {
     sh.getRange(hitR, 1, 1, 6).setValues([row]);
