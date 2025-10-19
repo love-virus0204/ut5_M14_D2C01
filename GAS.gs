@@ -17,22 +17,12 @@ function doGet(e){
   return _json(payload);
 }
 
+function doPost(e) {
+  if (!e || !e.parameter) return _json({ 
+status: "error", msg: "no_post_data" });
 
-function doPost(e){
-  if (!e || !e.postData) return _json({status:"error", msg:"no_post_data"});
-
-  var p = {};
-  try {
-    if (e.postData.type === 'application/json') {
-      p = JSON.parse(e.postData.contents || "{}");
-    } else {
-      p = e.parameter || {};
-    }
-  } catch (_){
-    return _json({status:"error", msg:"bad_json"});
-  }
-
-  var action = String(p.action || "").toLowerCase();
+  const p = e.parameter;
+  const action = String(p.action || "").toLowerCase();
   if (!action) return _json({ status: "error", msg: "unknown_action" });
 
   switch (action) {
@@ -54,31 +44,33 @@ function doPost(e){
     case "submit":
     case "upsert":
     case "lucky":
-    case "soft_delete":
 
-if (!p.uid || !p.swd) return _json({
-  status: 'errorPW',msg: 'miss_uid_or_swd'
-});
+sheet = _sheet(sn_2);
+const last = sh.getLastRow();
+let ko = false;
 
-if (!refAuth(p.uid, p.swd)) return _json({
-  status: 'errorPW',msg: 'auth_failed'
-});
+if (last >= 2) {
+  const vals = sh.getRange(1, 1, last, 7).getValues();
+  for (let i = 0; i < vals.length; i++) {
+    if (String(vals[i][0]) === String(p.uid) && String(vals[i][6]) === String(p.swd)) {
+      ko = true;
+      break;
+    }
+  }
+}
+
+if (!ko) return _json({ status: 'errPW', msg: 'auth_failed' }) ;
 
       return withLock(60000, () => {
         switch (action) {
           case "submit":
             return _submit(_sheet(sn_1), p);
-
           case "upsert":
             return _upsert(_sheet(sn_2), p);
-
           case "lucky": {
             const rankedIds = _buildLuckyRanks(_sheet(sn_2));
             return _drawLucky(_sheet(sn_1), p, rankedIds);
           }
-
-          case "soft_delete":
-            return _softDelete(_sheet(sn_2), p);
 
           default:
             return _json({ status: "error", msg: "unknown_action" });
@@ -128,8 +120,8 @@ function _submit(sh, p){
     p.uid        // 7
   ];
 
-  var hitR = idxSync(sh, 2, p.key);
-  if (hitR > 1){
+  var hitR = _idxSync(sh, 520, 2, p.key);
+  if (hitR > 0){
     sh.getRange(hitR, 1, 1, 7).setValues([row]);
     sh.getRange(hitR, 3).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
@@ -137,43 +129,9 @@ function _submit(sh, p){
     sh.appendRow(row);
     const last = sh.getLastRow();
     sh.getRange(last, 3).setNumberFormat('mm/dd');
-    idxSync(sh, 2, p.key, last, 'upd');
     return _json({status:"ok", mode:"新增"});
   }
 }
-
-function idxSync(sh, col, key, val, mode) {
-  const TTL = 21600;
-  const cache = CacheService.getScriptCache();
-  const tag = 'IDX:' + sh.getName() + ':' + col;
-  let j = cache.get(tag);
-  let map = j ? JSON.parse(j) : null;
-
-  if (mode === 'upd') {
-    if (!map) return false;
-    map[String(key)] = val;
-    cache.put(tag, JSON.stringify(map), TTL);
-    return true;
-  }
-
-  if (!map) {
-    const last = sh.getLastRow();
-    if (last < 2) return 0;
-    const vals = sh.getRange(2, col, last - 1, 1).getValues();
-    map = {};
-    for (let i = 0; i < vals.length; i++) {
-      const k = String(vals[i][0] || '').trim();
-      if (k && !map[k]) map[k] = i + 2;
-    }
-    cache.put(tag, JSON.stringify(map), TTL);
-  } else {
-    cache.put(tag, JSON.stringify(map), TTL);
-  }
-  const found = map[String(key)] || 0;
-  return found;
-}
-
-
 
 /* 工具 - on */
 function _sheet(sn) {
@@ -185,12 +143,19 @@ throw _json({ status: "error", msg: "sheet_not_found" });
 return sh;
 }
 
-function _findRowByKey(sh, key, col){
+function _idxSync(sh, limit, col, key) {
   const last = sh.getLastRow();
   if (last < 2) return 0;
-  const arr = sh.getRange(2, col, last-1, 1).getValues().flat().map(v=>String(v));
-  const i = arr.indexOf(String(key));
-  return i >= 0 ? i+2 : 0;
+
+  const target = String(key);
+  const start = Math.max(2, last - limit);
+  const row   = last - start + 1;
+  const vals = sh.getRange(start, col, row, 1).getValues();
+
+  for (let i = vals.length - 1; i >= 0; i--) {
+    if (String(vals[i][0]) === target) return start + i;
+  }
+  return 0;
 }
 
 /*** 日期序號轉換（yyyy-mm-dd）***/
@@ -272,7 +237,6 @@ function _listRecent2(sh) {
   });
 }
 
-
 function _upsert(sh, p){
   const row = [
     p.id,          // A id
@@ -283,9 +247,9 @@ function _upsert(sh, p){
     p.uid          // F uid
   ];
 
-  const hitRow = _findRowByKey(sh, String(p.id), 1);
+  const hitR = _idxSync(sh, 1, 1, p.id);
 
-  if (hitRow > 0){
+  if (hitR > 0) {
     sh.getRange(hitRow, 1, 1, 6).setValues([row]);
     sh.getRange(hitRow, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
