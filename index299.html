@@ -271,7 +271,9 @@ function submitData(p){
 async function send(){
   const curr = currentS();
   const uid = localStorage.getItem('user_id3');
-  if (!uid) {
+  const pwd = localStorage.getItem('user_ps3');
+  if (!uid || !pwd) {
+    localStorage.removeItem('user_id3');
     window.open('verify.html', '_blank');
     return; }
   const id = el.value.trim().toUpperCase();
@@ -279,13 +281,12 @@ async function send(){
     el.focus();
     return;
   }
-  const pwd = localStorage.getItem('user_ps3');
   const payload = { id, date: curr.s, key: `${curr.s}|${id}`, shift: selB, dN: selA, uid: uid, swd: pwd };
   showOverlay(true);
   let ok=false,res;
   try {
     res = await submitData(payload);
-    if (res?.status === 'errorPW') {
+    if (res?.status === 'errPW') {
       localStorage.removeItem('user_id3');
       showOverlay(false);
       window.open('verify.html','_blank');
