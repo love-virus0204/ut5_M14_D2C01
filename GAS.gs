@@ -259,8 +259,8 @@ function _upsert(sh, p){
   const hitR = _idxSync(sh, 1, 1, p.id);
 
   if (hitR > 0) {
-    sh.getRange(hitRow, 1, 1, 6).setValues([row]);
-    sh.getRange(hitRow, 4).setNumberFormat('mm/dd');
+    sh.getRange(hitR, 1, 1, 6).setValues([row]);
+    sh.getRange(hitR, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
     sh.appendRow([row]);
