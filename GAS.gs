@@ -263,7 +263,7 @@ function _upsert(sh, p){
     sh.getRange(hitR, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"更新"});
   } else {
-    sh.appendRow([row]);
+    sh.appendRow(row);
     const last = sh.getLastRow();
     sh.getRange(last, 4).setNumberFormat('mm/dd');
     return _json({status:"ok", mode:"新增"});
