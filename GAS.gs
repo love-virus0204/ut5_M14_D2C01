@@ -56,8 +56,13 @@ function doPost(e){
     case "lucky":
     case "soft_delete":
 
-if (!refAuth(p.uid, p.swd)) return _json({ 
-status: 'errorPW', msg: 'auth_failed' });
+if (!p.uid || !p.swd) return _json({
+  status: 'errorPW',msg: 'miss_uid_or_swd'
+});
+
+if (!refAuth(p.uid, p.swd)) return _json({
+  status: 'errorPW',msg: 'auth_failed'
+});
 
       return withLock(60000, () => {
         switch (action) {
