@@ -46,11 +46,11 @@ status: "error", msg: "no_post_data" });
     case "lucky":
 
 sheet = _sheet(sn_2);
-const last = sh.getLastRow();
+const last = sheet.getLastRow();
 let ko = false;
 
 if (last >= 2) {
-  const vals = sh.getRange(1, 1, last, 7).getValues();
+  const vals = sheet.getRange(1, 1, last, 7).getValues();
   for (let i = 0; i < vals.length; i++) {
     if (String(vals[i][0]) === String(p.uid) && String(vals[i][6]) === String(p.swd)) {
       ko = true;
