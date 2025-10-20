@@ -18,20 +18,11 @@ function doGet(e){
 }
 
 function doPost(e) {
-  if (!e || !e.postData) return _json({status:"error", msg:"no_post_data"});
+  if (!e.parameter) return _json({ 
+status: "error", msg: "no_post_data" });
 
-  var p = {};
-  try {
-    if (e.postData.type === 'application/json') {
-      p = JSON.parse(e.postData.contents || "{}");
-    } else {
-      p = e.parameter || {};
-    }
-  } catch (_){
-    return _json({status:"error", msg:"bad_json"});
-  }
-
-  var action = String(p.action || "").toLowerCase();
+  const p = e.parameter;
+  const action = String(p.action || "").toLowerCase();
   if (!action) return _json({ status: "error", msg: "unknown_action" });
 
   switch (action) {
@@ -58,9 +49,9 @@ sheet = _sheet(sn_2);
 const last = sheet.getLastRow();
 let ko = false;
 
-if (last >= 2) {
+if (last > 1) {
   const vals = sheet.getRange(1, 1, last, 7).getValues();
-  for (let i = 0; i < vals.length; i++) {
+  for (let i = 1; i < vals.length; i++) {
     if (String(vals[i][0]) === String(p.uid) && String(vals[i][6]) === String(p.swd)) {
       ko = true;
       break;
