@@ -202,12 +202,16 @@ function _check(sh, p) {
   const lastCol = sh.getLastColumn();
   const values = sh.getRange(2, 1, lastRow - 1, lastCol).getValues();
 
-  const found = values.find(r => r[0] === p.uid);
+  // 統一轉字串後比較
+  const targetUid = String(p.uid);
+  const targetPwd = String(p.swd);
+
+  const found = values.find(r => String(r[0]) === targetUid);
   if (!found) {
     return _json({ status: "error", msg: "用戶未登錄" });
   }
 
-  if (found[6] === p.swd) {
+  if (String(found[6]) === targetPwd) {
     return _json({ status: "ok", mode: "秘鑰通過" });
   }
 
