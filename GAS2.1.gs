@@ -1,8 +1,8 @@
-    // === sh_1 清理 ==
+    // === sh_1 清理 ===
   const sh1  = _sheet(sn_1);
   const last = sh1.getLastRow();
+  if (last < 2) return;
   const end  = Math.min(300, last);
-  if (end < 2) return;
 
   const colC = sh1.getRange(1, 3, end, 1).getValues();
   const delRows = [];
